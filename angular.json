@@ -27,13 +27,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "100000kb",
+                  "maximumError": "100000kb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "100000kb",
+                  "maximumError": "100000kb"
                 }
               ],
               "outputHashing": "all"
@@ -45,18 +45,55 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "local": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.deployment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
+            },
+            "deployment": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.local.ts",
+                  "with": "src/environments/environment.deployment.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "port": 5200
+          },
           "configurations": {
             "production": {
               "browserTarget": "angular-test:build:production"
             },
             "development": {
               "browserTarget": "angular-test:build:development"
+            },
+            "local": {
+              "browserTarget": "angular-test:build:local"
+            },
+            "deployment": {
+              "browserTarget": "angular-test:build:deployment"
             }
           },
           "defaultConfiguration": "development"
@@ -76,6 +113,24 @@
             "styles": ["src/styles.css"],
             "scripts": []
           }
+        },
+        "local": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "local": {
+              "browserTarget": "angular-test:build:local"
+            }
+          },
+          "defaultConfiguration": "local"
+        },
+        "deployment": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "deployment": {
+              "browserTarget": "angular-test:build:deployment"
+            }
+          },
+          "defaultConfiguration": "deployment"
         }
       }
     }

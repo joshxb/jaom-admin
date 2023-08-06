@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+  <button
+    appSidebarToggle
+    type="button"
+    id="sidebarCollapse"
+    class="btn btn-info"
+  >
+    <i class="fa fa-align-justify"></i>
+  </button>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNav"
+    aria-controls="navbarNav"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">
+        <button
+          type="button"
+          id="sidebarCollapse"
+          class="btn btn-info new-admin"
+        >
+          New Admin
+        </button>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <!-- <div class="notification"> -->
+          <img [src]="imageUrls.notify" alt="" />
+        </a>
+        <!-- <svg class="notification-active" viewBox="0 0 25 25">
+            <circle cx="12.5" cy="12.5" r="5" fill="#00FF00" />
+          </svg> -->
+        <!-- </div> -->
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <img [src]="imageUrls.message" alt="" />
+        </a>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="#">
+        <img style="width: 35px;height: 35px;border-radius: 50%;" [src]="imageUrls.user_default" alt="" />
+      </a></li>
+    </ul>
+  </div>
+</nav>

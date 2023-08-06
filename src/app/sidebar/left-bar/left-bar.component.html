@@ -1,0 +1,81 @@
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <img
+      style="width: 45x; height: 45px; border-radius: 50%"
+      [src]="imageUrls.user_default"
+      alt=""
+    />
+    <div>
+      <p style="color: #fff; text-align: center">Joshua Algadipe</p>
+      <span class="dot"></span><span style="font-size: 13px">Online</span>
+    </div>
+  </div>
+  <ul class="list-unstyled components">
+    <p id="admin-txt">Administrator</p>
+    <li>
+      <a href="#">Dashboard</a>
+    </li>
+    <li>
+      <a
+        href="#dashSubmenu"
+        data-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+        >User Management</a
+      >
+      <ul class="collapse list-unstyled" id="dashSubmenu">
+        <li><a href="#">Users</a></li>
+        <li><a href="#">Chats</a></li>
+        <li><a href="#">Rooms</a></li>
+        <li><a href="#">Updates</a></li>
+        <li><a href="#">To-do List</a></li>
+        <li><a href="#">Configurations</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#transSubmenu"
+        data-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+        >Transactions</a
+      >
+      <ul class="collapse list-unstyled" id="transSubmenu">
+        <li><a href="#">Donations</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#analyticsSubmenu"
+        data-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+        >Analytics</a
+      >
+      <ul class="collapse list-unstyled" id="analyticsSubmenu">
+        <li><a href="#">Page Visits</a></li>
+        <li><a href="#">User History</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#modifySubmenu"
+        data-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+        >Modifications</a
+      >
+      <ul class="collapse list-unstyled" id="modifySubmenu">
+        <li><a href="#">Donation’s Info</a></li>
+        <li><a href="#">Contact Details</a></li>
+        <li><a href="#">FAQS</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Feedbacks / Concerns</a></li>
+    <li><a href="#">Security and Control</a></li>
+    <li><a href="#">Settings</a></li>
+  </ul>
+  <ul class="list-unstyled CTAs">
+    <li><a href="#" class="download">Log Out</a></li>
+  </ul>
+</nav>
