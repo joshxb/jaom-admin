@@ -1,19 +1,23 @@
-<nav id="sidebar">
+<nav >
   <div class="sidebar-header">
     <img
-      style="width: 45x; height: 45px; border-radius: 50%"
+      style="width: 40x; height: 40px; border-radius: 50%"
       [src]="imageUrls.user_default"
       alt=""
     />
     <div>
-      <p style="color: #fff; text-align: center">Joshua Algadipe</p>
+      <p style="color: #fff; text-align: center; font-size: 16px">
+        Joshua Algadipe
+      </p>
       <span class="dot"></span><span style="font-size: 13px">Online</span>
     </div>
   </div>
   <ul class="list-unstyled components">
     <p id="admin-txt">Administrator</p>
-    <li>
-      <a href="#">Dashboard</a>
+    <li class="active">
+      <a href="#"
+        ><img [src]="imageUrls.dash" alt="" /> &nbsp;&nbsp;Dashboard</a
+      >
     </li>
     <li>
       <a
@@ -21,7 +25,8 @@
         data-toggle="collapse"
         aria-expanded="false"
         class="dropdown-toggle"
-        >User Management</a
+        ><img [src]="imageUrls.user_management" alt="" /> &nbsp;&nbsp;User
+        Management</a
       >
       <ul class="collapse list-unstyled" id="dashSubmenu">
         <li><a href="#">Users</a></li>
@@ -38,7 +43,7 @@
         data-toggle="collapse"
         aria-expanded="false"
         class="dropdown-toggle"
-        >Transactions</a
+        ><img [src]="imageUrls.trans" alt="" /> &nbsp;&nbsp;Transactions</a
       >
       <ul class="collapse list-unstyled" id="transSubmenu">
         <li><a href="#">Donations</a></li>
@@ -50,7 +55,7 @@
         data-toggle="collapse"
         aria-expanded="false"
         class="dropdown-toggle"
-        >Analytics</a
+        ><img [src]="imageUrls.analytics" alt="" /> &nbsp;&nbsp;Analytics</a
       >
       <ul class="collapse list-unstyled" id="analyticsSubmenu">
         <li><a href="#">Page Visits</a></li>
@@ -63,7 +68,7 @@
         data-toggle="collapse"
         aria-expanded="false"
         class="dropdown-toggle"
-        >Modifications</a
+        ><img [src]="imageUrls.edit" alt="" /> &nbsp;&nbsp;Modifications</a
       >
       <ul class="collapse list-unstyled" id="modifySubmenu">
         <li><a href="#">Donation’s Info</a></li>
@@ -71,9 +76,23 @@
         <li><a href="#">FAQS</a></li>
       </ul>
     </li>
-    <li><a href="#">Feedbacks / Concerns</a></li>
-    <li><a href="#">Security and Control</a></li>
-    <li><a href="#">Settings</a></li>
+    <li>
+      <a href="#"
+        ><img [src]="imageUrls.faqs" alt="" />&nbsp;&nbsp;Feedbacks /
+        Concerns</a
+      >
+    </li>
+    <li>
+      <a href="#"
+        ><img [src]="imageUrls.security" alt="" />&nbsp;&nbsp;Security and
+        Control</a
+      >
+    </li>
+    <li>
+      <a href="#"
+        ><img [src]="imageUrls.settings" alt="" />&nbsp;&nbsp;Settings</a
+      >
+    </li>
   </ul>
   <ul class="list-unstyled CTAs">
     <li><a href="#" class="download">Log Out</a></li>

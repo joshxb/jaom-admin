@@ -7,11 +7,13 @@
   </head>
   <body>
     <div class="wrapper">
-      <div class="left-bar">
-        <app-left-bar></app-left-bar>
-      </div>
+
+        <app-left-bar id="sidebar"></app-left-bar>
+
       <div class="content">
-        <app-top-bar></app-top-bar>
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+        <p>Dashboard</p>
         <div class="content-wrapper">
           <h2>Collapsible Sidebar Using Bootstrap 4</h2>
           <p>
@@ -55,6 +57,7 @@
           </p>
           <div class="line"></div>
         </div>
+      </div>
       </div>
     </div>
   </body>

@@ -19,15 +19,16 @@ export class AppComponent {
 
 export class imageUrls {
   favicon: string = './../assets/favicon.png';
+  analytics: string = './../assets/analytics.png';
   logo: string = './../assets/favicon.png';
   search: string = './../assets/search.png';
   notify: string = './../assets/notify.png';
   collapse: string = './../assets/homebar.png';
-  home: string = './../assets/home.png';
+  dash: string = './../assets/home.png';
   chat: string = './../assets/chat.png';
-  room: string = './../assets/room.png';
+  user_management: string = './../assets/room.png';
   update: string = './../assets/updates.png';
-  todo: string = './../assets/todo.png';
+  trans: string = './../assets/todo.png';
   faqs: string = './../assets/faqs.png';
   settings: string = './../assets/settings.png';
   user_default: string = './../assets/default_user.png';
@@ -43,4 +44,6 @@ export class imageUrls {
   edit: string = './../assets/edit.png';
   edit_updates: string = './../assets/edit-updates.png';
   message : string = './../assets/message.png';
+  security : string = './../assets/security.png';
+  logout : string = './../assets/logout.png';
 }

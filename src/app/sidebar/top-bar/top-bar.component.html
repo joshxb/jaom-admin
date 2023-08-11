@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-dark">
   <button
-    appSidebarToggle
-    type="button"
-    id="sidebarCollapse"
-    class="btn btn-info"
-  >
-    <i class="fa fa-align-justify"></i>
-  </button>
+  type="button"
+  class="btn btn-info sidebar-toggle"
+  id="sidebarCollapseBtn"
+>
+  <i class="fa fa-align-justify"></i>
+</button>
+  <img class="logo" [src]="imageUrls.logo" alt="" />
   <button
     class="navbar-toggler"
     type="button"
@@ -22,13 +22,13 @@
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
         <a class="nav-link" href="#">
-        <button
-          type="button"
-          id="sidebarCollapse"
-          class="btn btn-info new-admin"
-        >
-          New Admin
-        </button>
+          <button
+            type="button"
+            id="sidebarCollapse"
+            class="btn btn-info new-admin"
+          >
+            New Admin
+          </button>
         </a>
       </li>
       <li class="nav-item">
@@ -46,9 +46,30 @@
           <img [src]="imageUrls.message" alt="" />
         </a>
       </li>
-      <li class="nav-item"><a class="nav-link" href="#">
-        <img style="width: 35px;height: 35px;border-radius: 50%;" [src]="imageUrls.user_default" alt="" />
-      </a></li>
+      <li class="nav-item profile-logo" #profileLogo>
+        <div class="dropdown custom-dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            id="userDropdown"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <img class="user-profile" [src]="imageUrls.user_default" alt="" />
+          </a>
+          <div
+            class="dropdown-menu dropdown-menu-right"
+            aria-labelledby="userDropdown"
+          >
+            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="#"
+              >Log Out <img class="logout-icon" [src]="imageUrls.logout"
+            /></a>
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
 </nav>
