@@ -24,20 +24,32 @@ export class TopBarComponent implements OnInit{
 
   base = new Base();
   private baseUrl = this.base.baseUrl;
-  public data : any;
+  public data: any;
 
   ngOnInit() {
-    this.adminService.getUserData().subscribe((response) => {
-      this.data = response;
-    });
+    this.adminService.getUserData().subscribe(
+      (response) => {
+        if (response?.type === 'admin') {
+          this.data = response;
+        } else {
+          this.redirectToUserPage();
+        }
+      },
+      () => {
+        this.redirectToUserPage();
+      }
+    );
   }
 
-  logOut() {
-    this.authService.logout();
-    if (this.baseUrl == Redirects.localServerUrl) {
+  private redirectToUserPage(): void {
+    if (this.baseUrl === Redirects.localServerUrl) {
       window.location.href = Redirects.localUserUrl;
     } else {
       window.location.href = Redirects.deployUserUrl;
     }
+  }
+
+  logOut() {
+    this.authService.logout();
   }
 }

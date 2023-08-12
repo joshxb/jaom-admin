@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiUrls, Base } from '../configuration.component';
+import { ApiUrls, Base, Redirects } from '../configuration.component';
 import { CookieService } from 'ngx-cookie-service';
 import { AdminService } from './admin.service';
 
@@ -18,10 +18,9 @@ export class AuthService {
   private apiUrlLogOut = `${this.baseUrl}/${this.suffixUrl}/logout`;
   private tokenKey = 'auth_token';
 
-  public data : any;
+  public data: any;
 
-  constructor(private http: HttpClient, private cookieService: CookieService,
-) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   login(emailOrPhone: string, password: string): Observable<any> {
     let body;
@@ -33,7 +32,7 @@ export class AuthService {
       body = { phone: emailOrPhone, password };
     }
 
-   // this.cookieService.set('bin_digit', this.hexService.stringToHex(password));
+    // this.cookieService.set('bin_digit', this.hexService.stringToHex(password));
 
     const headers = new HttpHeaders().set('Content-Type', ApiUrls.ContentType);
 
@@ -47,11 +46,11 @@ export class AuthService {
       token: token,
       expiration: expirationDate.getTime(),
     };
-    this.cookieService.set(this.tokenKey, JSON.stringify(tokenObject));
+    localStorage.setItem(this.tokenKey, JSON.stringify(tokenObject));
   }
 
   getToken(): any {
-    const tokenString = this.cookieService.get(this.tokenKey);
+    const tokenString = localStorage.getItem(this.tokenKey);
     if (tokenString) {
       const tokenObject = JSON.parse(tokenString);
       const expiration = tokenObject.expiration;
@@ -67,6 +66,7 @@ export class AuthService {
 
   clearToken(): void {
     this.cookieService.delete(this.tokenKey);
+    localStorage.removeItem(this.tokenKey);
   }
 
   logout(): void {
@@ -77,6 +77,12 @@ export class AuthService {
       this.clearToken();
       this.cookieService.deleteAll();
       localStorage.clear();
+
+      if (this.baseUrl == Redirects.localServerUrl) {
+        window.location.href = Redirects.localUserUrl;
+      } else {
+        window.location.href = Redirects.deployUserUrl;
+      }
     });
   }
 
