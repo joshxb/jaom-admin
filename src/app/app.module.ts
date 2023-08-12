@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TopBarComponent } from './sidebar/top-bar/top-bar.component';
 
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { ProcessLoginComponent } from './process-login/process-login.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
     DashboardComponent,
     LeftBarComponent,
     SidebarToggleDirective,
-    TopBarComponent
+    TopBarComponent,
+    ProcessLoginComponent
   ],
   imports: [
     BrowserModule,

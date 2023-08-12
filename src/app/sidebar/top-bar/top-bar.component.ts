@@ -34,7 +34,6 @@ export class TopBarComponent implements OnInit{
 
   logOut() {
     this.authService.logout();
-    alert(this.baseUrl);
     if (this.baseUrl == Redirects.localServerUrl) {
       window.location.href = Redirects.localUserUrl;
     } else {
