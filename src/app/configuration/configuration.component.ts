@@ -1,13 +1,20 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment.deployment';
+import { AdminService } from './services/admin.service';
 
 @Component({
   selector: 'app-configuration',
   template: '',
 })
 export class Configuration implements OnInit {
+
+  constructor(
+    private adminService : AdminService
+  ) {}
+
   ngOnInit(): void {
+
   }
 
   setCollapseCookie(cookieValue: string) {
@@ -42,4 +49,13 @@ export class PusherCredentials {
   cluster = 'ap1';
   channel = 'chat';
   event = 'message';
+}
+
+export enum Redirects {
+  localAdminUrl = 'http://localhost:5200',
+  deployAdminUrl = 'https://jaom-admin.vercel.app',
+  localUserUrl = 'http://localhost:4200',
+  deployUserUrl = 'https://jaomconnect.vercel.app',
+  localServerUrl = 'http://localhost:8000',
+  deployServerUrl = 'https://jaom-server.vercel.app',
 }

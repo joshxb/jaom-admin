@@ -8,6 +8,7 @@
 body {
   font-family: sans-serif;
   background: #fafafa;
+  zoom: 0.95;
 }
 html, body {
   height: 100%;
@@ -157,8 +158,11 @@ a.download:hover {
   padding: 0px 30px;
 }
 .content-wrapper {
-  height: 80%;
   overflow-y: auto;
+}
+.content {
+  width: 100%;
+  height: 100%;
 }
 @media (maz-width: 768px) {
   #sidebar {

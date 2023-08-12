@@ -44,3 +44,7 @@ nav {
   top: -1px !important;
   margin-left: 5px !important;
 }
+
+.top-items {
+  cursor: pointer;
+}

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiUrls, Base } from '../configuration.component';
 import { CookieService } from 'ngx-cookie-service';
+import { AdminService } from './admin.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,10 @@ export class AuthService {
   private apiUrlLogOut = `${this.baseUrl}/${this.suffixUrl}/logout`;
   private tokenKey = 'auth_token';
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  public data : any;
+
+  constructor(private http: HttpClient, private cookieService: CookieService,
+) {}
 
   login(emailOrPhone: string, password: string): Observable<any> {
     let body;
@@ -72,6 +76,7 @@ export class AuthService {
     this.http.post(`${this.apiUrlLogOut}`, {}, { headers }).subscribe(() => {
       this.clearToken();
       this.cookieService.deleteAll();
+      localStorage.clear();
     });
   }
 

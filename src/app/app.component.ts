@@ -46,4 +46,8 @@ export class imageUrls {
   message : string = './../assets/message.png';
   security : string = './../assets/security.png';
   logout : string = './../assets/logout.png';
+  totalUser : string = './../assets/totalUser.png';
+  arrowRight : string = './../assets/arrow-right.png';
+  allChat : string = './../assets/allChat.png';
+  updateChats : string = './../assets/updateChats.png';
 }

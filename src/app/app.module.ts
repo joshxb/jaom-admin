@@ -14,6 +14,8 @@ import { Ng2ImgMaxModule } from 'ng2-img-max';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TopBarComponent } from './sidebar/top-bar/top-bar.component';
 
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +32,8 @@ import { TopBarComponent } from './sidebar/top-bar/top-bar.component';
     BrowserAnimationsModule,
     Ng2ImgMaxModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CanvasJSAngularChartsModule
   ],
   exports: [NgModel],
 
