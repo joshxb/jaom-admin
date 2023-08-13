@@ -1,28 +1,64 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CanvasJS, CanvasJSChart } from '@canvasjs/angular-charts';
 import { imageUrls } from 'src/app/app.component';
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/admin.service';
-import { AuthService } from 'src/app/configuration/services/auth.service';
+import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
+  @ViewChild('chart')
+  chart!: CanvasJSChart;
+
   imageUrls = new imageUrls();
 
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private adminService: AdminService
+    private dashboardService: DashboardService,
+    private adminService: AdminService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
   base = new Base();
   private baseUrl = this.base.baseUrl;
   public data: any;
+  public donationTransactions: any;
+  public userCounts = 0;
+  public userStatusCounts: any;
+  public chatCounts = 0;
+  public roomCounts = 0;
+  public updateCounts = 0;
 
-  ngOnInit(): void {
-   
+  private page = 1;
+
+  selectedMonth: string = '';
+  selectedMonthIndex: number = Number(new Date().getMonth());
+  selectedYear: number = new Date().getFullYear();
+
+  yearOptions: number[] = this.generateYearOptions();
+
+  async ngOnInit(): Promise<void> {
+    this.setCurrentMonthAndYear();
+
+    this.getUserCounts();
+    this.countUsersByStatus();
+    this.getChatCounts();
+    this.getRoomCounts();
+    this.getUpdateCounts();
+    this.renderChartData();
   }
 
   ngAfterViewInit() {
@@ -41,55 +77,184 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  chartOptions = {
-    title: {
-      text: '',
-    },
-    animationEnabled: true,
-    axisX: {
-      interval: 10,
-      intervalType: 'day',
-      valueFormatString: 'D MMM',
-      labelFontColor: 'rgb(0,75,141)',
-      minimum: new Date(2012, 6, 10),
-    },
-    axisY: {
-      title: '',
-      interlacedColor: '#EBF2FA',
-      tickColor: 'azure',
-      titleFontColor: '#4f81bc',
-      valueFormatString: '#M,,.',
-    },
-    data: [
-      {
-        name: 'views',
-        type: 'area',
-        markerSize: 8,
-        dataPoints: [
+  getMonths() {
+    const monthNames = [
+      'january',
+      'february',
+      'march',
+      'april',
+      'may',
+      'june',
+      'july',
+      'august',
+      'september',
+      'october',
+      'november',
+      'december',
+    ];
+
+    return monthNames;
+  }
+
+  async setCurrentMonthAndYear() {
+    const currentDate = new Date();
+
+    this.selectedMonth = this.getMonths()[currentDate.getMonth()];
+    // Set default parameters or the desired initial values
+
+    if (
+      !(
+        this.route.snapshot.queryParamMap.has('month') &&
+        this.route.snapshot.queryParamMap.has('year')
+      )
+    ) {
+      this.setParams();
+      await this.getDonationTransactions(
+        this.page,
+        this.selectedMonth,
+        this.selectedYear
+      );
+    } else {
+      this.route.queryParamMap.subscribe(async (queryParams) => {
+        const month = queryParams.get('month');
+        const year = queryParams.get('year');
+
+        if (month && year) {
+          this.selectedMonth = month;
+          this.selectedYear = Number(year);
+          await this.getDonationTransactions(this.page, month, Number(year));
+        }
+      });
+    }
+  }
+
+  setParams() {
+    const defaultParams = {
+      month: this.selectedMonth,
+      year: this.selectedYear,
+    };
+
+    this.router.navigate([''], {
+      relativeTo: this.route,
+      queryParams: defaultParams,
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  async getDonationTransactions(
+    page: number,
+    selectedMonth: string,
+    selectedYear: number
+  ): Promise<void> {
+    try {
+      const res = await this.dashboardService
+        .getDonationTransactions(page, selectedMonth, selectedYear)
+        .toPromise();
+      this.donationTransactions = res;
+
+      this.renderChartData();
+    } catch (error) {
+      console.error('Error fetching donation transactions:', error);
+    }
+  }
+
+  renderChartData() {
+    if (this.donationTransactions) {
+      let chartDataPoints: { x: Date; y: number; indexLabel: string }[] = [];
+
+      this.donationTransactions.transactions.forEach((response: any) => {
+        const date = new Date(response?.date);
+        const monthIndex = date.getMonth();
+        const dayOfMonth = date.getDate();
+        const year = date.getFullYear();
+
+        chartDataPoints.push({
+          x: new Date(year, monthIndex, dayOfMonth),
+          y: Number(response?.amount),
+          indexLabel: response?.amount,
+        });
+      });
+
+      const data = { x: new Date(2023, 2, 26), y: 600, indexLabel: '500' };
+
+      this.initializeChart(...chartDataPoints);
+    } else {
+    }
+  }
+
+  generateYearOptions(): number[] {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2022;
+    const yearRange = currentYear - startYear + 1;
+    return Array.from({ length: yearRange }, (_, index) => startYear + index);
+  }
+
+  onMonthYearChange() {
+    this.setParams();
+  }
+
+  getUserCounts() {
+    this.adminService.getUserCounts().subscribe((res) => {
+      this.userCounts = res?.user_count;
+    });
+  }
+
+  countUsersByStatus() {
+    this.adminService.countUsersByStatus().subscribe((res) => {
+      //active_user_count , inactive_user_count
+      this.userStatusCounts = res;
+    });
+  }
+
+  getChatCounts() {
+    this.dashboardService.getChatCounts().subscribe((res) => {
+      this.chatCounts = res?.chat_count;
+    });
+  }
+
+  getRoomCounts() {
+    this.dashboardService.getRoomCounts().subscribe((res) => {
+      this.roomCounts = res?.room_count;
+    });
+  }
+
+  getUpdateCounts() {
+    this.dashboardService.getUpdatesCounts().subscribe((res) => {
+      this.updateCounts = res?.update_count;
+    });
+  }
+
+  initializeChart(...dataPoints: any) {
+    var chart;
+
+    if (dataPoints.length > 0) {
+      chart = new CanvasJS.Chart('chartContainer', {
+        title: {
+          text: '',
+        },
+        animationEnabled: true,
+        axisX: {
+          interval: 4,
+          intervalType: 'day',
+          valueFormatString: 'M-DD-YY', // Format for x-axis labels
+        },
+        data: [
           {
-            x: new Date(2012, 6, 15),
-            y: 0,
-            indexLabel: 'Initial',
-            indexLabelFontColor: 'orangered',
-            markerColor: 'orangered',
+            type: 'area',
+            dataPoints: [...dataPoints],
           },
-          { x: new Date(2012, 6, 18), y: 2000000 },
-          { x: new Date(2012, 6, 23), y: 6000000 },
-          { x: new Date(2012, 7, 1), y: 10000000, indexLabel: '10M' },
-          { x: new Date(2012, 7, 11), y: 21000000 },
-          { x: new Date(2012, 7, 23), y: 50000000 },
-          { x: new Date(2012, 7, 31), y: 75000000 },
-          { x: new Date(2012, 8, 4), y: 100000000, indexLabel: '100M' },
-          { x: new Date(2012, 8, 10), y: 125000000 },
-          { x: new Date(2012, 8, 13), y: 150000000 },
-          { x: new Date(2012, 8, 16), y: 175000000 },
-          { x: new Date(2012, 8, 18), y: 200000000, indexLabel: '200M' },
-          { x: new Date(2012, 8, 21), y: 225000000 },
-          { x: new Date(2012, 8, 24), y: 250000000 },
-          { x: new Date(2012, 8, 26), y: 275000000 },
-          { x: new Date(2012, 8, 28), y: 302000000, indexLabel: '300M' },
         ],
-      },
-    ],
-  };
+      });
+    } else {
+      chart = new CanvasJS.Chart('chartContainer', {
+        title: {
+          text: 'No Donation Transactions Data',
+          fontSize: 18, // Adjust the font size
+          horizontalAlign: 'center', // Center align the title
+        },
+      });
+    }
+
+    chart.render();
+  }
 }

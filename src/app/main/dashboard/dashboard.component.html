@@ -18,7 +18,7 @@
               <div>
                 <img [src]="imageUrls.totalUser" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>100</h3>
+                <h3>{{userCounts}}</h3>
               </div>
               <p>Total Users</p>
             </div>
@@ -33,23 +33,46 @@
                   <div class="active-indicator"></div>
                 </div>
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>100</h3>
+                <h3>{{userStatusCounts?.active_user_count}}</h3>
               </div>
               <p>Active Users</p>
             </div>
             <div class="custom-div">
               <div>
+                <div class="total-users-active-wrapper active">
+                  <img
+                    class="total-users-active"
+                    [src]="imageUrls.totalUser"
+                    alt=""
+                  />
+                  <div style="background-color: #dc3545;" class="active-indicator"></div>
+                </div>
+                <img [src]="imageUrls.arrowRight" alt="" />
+                <h3>{{userStatusCounts?.inactive_user_count}}</h3>
+              </div>
+              <p>Inactive Users</p>
+            </div>
+            <div class="custom-div">
+              <div>
                 <img [src]="imageUrls.allChat" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>100</h3>
+                <h3>{{chatCounts}}</h3>
               </div>
               <p>Chats</p>
             </div>
             <div class="custom-div">
               <div>
+                <img [src]="imageUrls.user_management" alt="" />
+                <img [src]="imageUrls.arrowRight" alt="" />
+                <h3>{{roomCounts}}</h3>
+              </div>
+              <p>Rooms</p>
+            </div>
+            <div class="custom-div">
+              <div>
                 <img [src]="imageUrls.updateChats" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>100</h3>
+                <h3>{{updateCounts}}</h3>
               </div>
               <p>Updates</p>
             </div>
@@ -59,51 +82,59 @@
             <div class="options">
               <div class="d-flex options-control">
                 <label for="monthSelect">Month:</label>&nbsp;
-                <select class="form-control" id="monthSelect">
-                  <option value="01">January</option>
-                  <option value="02">February</option>
-                  <option value="03">March</option>
-                  <option value="04">April</option>
-                  <option value="05">May</option>
-                  <option value="06">June</option>
-                  <option value="07">July</option>
-                  <option value="08">August</option>
-                  <option value="09">September</option>
-                  <option value="10">October</option>
-                  <option value="11">November</option>
-                  <option value="12">December</option>
+                <select
+                  class="form-control"
+                  id="monthSelect"
+                  [(ngModel)]="selectedMonth"
+                  name="selectedMonth"
+                  (ngModelChange)="onMonthYearChange()"
+                >
+                  <option value="january">January</option>
+                  <option value="february">February</option>
+                  <option value="march">March</option>
+                  <option value="april">April</option>
+                  <option value="may">May</option>
+                  <option value="june">June</option>
+                  <option value="july">July</option>
+                  <option value="august">August</option>
+                  <option value="september">September</option>
+                  <option value="october">October</option>
+                  <option value="november">November</option>
+                  <option value="december">December</option>
                 </select>
               </div>
               <div class="d-flex options-control">
                 <label for="yearSelect">Year:</label>&nbsp;
-                <select class="form-control" id="yearSelect">
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
+                <select
+                  class="form-control"
+                  id="yearSelect"
+                  [(ngModel)]="selectedYear"
+                  name="selectedYear"
+                  (ngModelChange)="onMonthYearChange()"
+                >
+                <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
                 </select>
               </div>
             </div>
           </div>
           <div class="content-wrapper">
-            <div>
-              <canvasjs-chart
-                [options]="chartOptions"
-                [styles]="{ width: '100%', height: '360px' }"
-              ></canvasjs-chart>
-            </div>
+            <div id="chartContainer" style="height: 360px; width: 100%;"></div>
             <div class="line"></div>
           </div>
           <div class="donations-information">
             <div class="donation-sub-list">
               <p>Total donations:</p>
               <div class="donations-amount">
-                <p>Php. 23,000.00</p>
+                <p>Php. {{ donationTransactions?.total_amount }} / {{donationTransactions?.total_user_donations }} users</p>
               </div>
             </div>
             <div class="donation-sub-list">
-              <p>Donations of a month:</p>
+              <p>Donations per month & year:</p>
               <div class="donations-amount">
-                <p>Php. 500.00</p>
+                <p>
+                  Php.
+                  {{ donationTransactions?.total_amount_per_month_and_year }}
+                </p>
               </div>
             </div>
           </div>
