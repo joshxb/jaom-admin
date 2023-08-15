@@ -58,7 +58,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.getChatCounts();
     this.getRoomCounts();
     this.getUpdateCounts();
-    this.renderChartData();
   }
 
   ngAfterViewInit() {
@@ -75,6 +74,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       }
     });
+
+    this.renderChartData();
   }
 
   getMonths() {
@@ -174,8 +175,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           indexLabel: response?.amount,
         });
       });
-
-      const data = { x: new Date(2023, 2, 26), y: 600, indexLabel: '500' };
 
       this.initializeChart(...chartDataPoints);
     } else {
