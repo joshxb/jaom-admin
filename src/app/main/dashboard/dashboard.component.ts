@@ -110,11 +110,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       )
     ) {
       this.setParams();
-      await this.getDonationTransactions(
-        this.page,
-        this.selectedMonth,
-        this.selectedYear
-      );
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } else {
       this.route.queryParamMap.subscribe(async (queryParams) => {
         const month = queryParams.get('month');
