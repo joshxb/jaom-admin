@@ -79,7 +79,7 @@ table tbody tr:hover {
   position: relative;
 }
 
-.dialog-message {
+.update-dialog-message {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -92,7 +92,7 @@ table tbody tr:hover {
   display: none;
 }
 
-.delete-dialog-message{
+.dialog-messages{
   position: fixed;
   top: 50%;
   left: 50%;
@@ -105,7 +105,7 @@ table tbody tr:hover {
   display: none;
 }
 
-.delete-dialog-message p {
+.dialog-messages p, .update-dialog-message p {
   position: relative;
   top: 7px;
 }

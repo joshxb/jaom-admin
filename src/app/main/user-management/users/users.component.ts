@@ -365,8 +365,10 @@ export class UsersComponent implements OnInit {
                 .subscribe(
                   (result) => {
                     const dialogMessage =
-                      this.elRef.nativeElement.querySelector('.dialog-message');
-                    dialogMessage.style.display = 'none';
+                      this.elRef.nativeElement.querySelector(
+                        '.update-dialog-message'
+                      );
+                    dialogMessage.style.display = 'block';
 
                     this.processImage(result);
                   },
@@ -378,6 +380,11 @@ export class UsersComponent implements OnInit {
                   }
                 );
             } else {
+              const dialogMessage = this.elRef.nativeElement.querySelector(
+                '.update-dialog-message'
+              );
+              dialogMessage.style.display = 'block';
+
               setTimeout(() => {
                 window.location.reload();
               }, 2000);
