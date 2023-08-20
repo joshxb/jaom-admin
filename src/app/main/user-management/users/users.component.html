@@ -13,6 +13,22 @@
         <app-top-bar id="top-bar"></app-top-bar>
         <div class="content-container">
           <p>User Management</p>
+          <div class="d-flex justify-content-end" style="margin: 20px;">
+            <div class="input-group" style="width: 20%;">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="applySearchFilter()"
+                placeholder="Search by First Name, Last Name, Email, Phone #"
+                class="form-control"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <i class="fa fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
           <table class="table table-bordered users-table">
             <thead>
               <tr>
@@ -25,7 +41,7 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody *ngFor="let user of usersData?.data">
+            <tbody *ngFor="let user of filteredUsers">
               <tr>
                 <td>{{ user?.id }}</td>
                 <td>{{ user?.firstname }}</td>
@@ -44,7 +60,11 @@
                     alt=""
                     (click)="openEditModal(user?.id)"
                   />
-                  <img (click)="deleteSpecificUser(user?.id)" [src]="imageUrls.delete" alt="" />
+                  <img
+                    (click)="deleteSpecificUser(user?.id)"
+                    [src]="imageUrls.delete"
+                    alt=""
+                  />
                 </td>
               </tr>
               <small class="table-date text-muted p-2"
@@ -102,15 +122,24 @@
     </div>
     <div class="modal-overlay">
       <div class="modal-container">
-        <div class="modal-content" >
-          <button (click)="closeEditModal()" type="button" class="close exit-modal" aria-label="Close">
+        <div class="modal-content">
+          <button
+            (click)="closeEditModal()"
+            type="button"
+            class="close exit-modal"
+            aria-label="Close"
+          >
             X
-         </button>
+          </button>
           <!-- Your modal content here -->
           <h2>Edit User</h2>
           <div class="profile-image-cont">
-            <img class="profile-image" [src]="selectedImageSrc" alt="">
-            <input type="file" accept="image/jpeg, image/png" (change)="onImageChange($event)">
+            <img class="profile-image" [src]="selectedImageSrc" alt="" />
+            <input
+              type="file"
+              accept="image/jpeg, image/png"
+              (change)="onImageChange($event)"
+            />
             <p class="text-danger invalid-image">Invalid image format!</p>
           </div>
           <form class="form">
@@ -167,12 +196,12 @@
                   disabled
                 />
                 <input
-                id="hiddenFullNickName"
-                type="text"
-                class="form-control mr-3 d-none"
-                value=""
-                disabled
-              />
+                  id="hiddenFullNickName"
+                  type="text"
+                  class="form-control mr-3 d-none"
+                  value=""
+                  disabled
+                />
                 <input
                   id="inputNickName"
                   type="text"
@@ -273,12 +302,8 @@
                   value=""
                   disabled
                 />
-                <select
-                  id="selectStatus"
-                  type="text"
-                  class="form-control"
-                >
-                <option value="">select status</option>
+                <select id="selectStatus" type="text" class="form-control">
+                  <option value="">select status</option>
                   <option value="active">active</option>
                   <option value="inactive">inactive</option>
                 </select>
@@ -297,12 +322,8 @@
                   value=""
                   disabled
                 />
-                <select
-                  id="selectRole"
-                  type="text"
-                  class="form-control"
-                >
-                <option value="">select role</option>
+                <select id="selectRole" type="text" class="form-control">
+                  <option value="">select role</option>
                   <option value="local">local</option>
                   <option value="admin">admin</option>
                 </select>
@@ -320,13 +341,8 @@
                   value=""
                   disabled
                 />
-                <select
-                  id="selectVisibility"
-                  type="text"
-                  class="form-control"
-
-                >
-                <option value="">select visibility</option>
+                <select id="selectVisibility" type="text" class="form-control">
+                  <option value="">select visibility</option>
                   <option value="visible">visible</option>
                   <option value="hidden">hidden</option>
                 </select>
@@ -334,14 +350,20 @@
             </div>
             <div class="form-group row">
               <div class="col-sm-9">
-                <br>
-                <button (click)="updateUserData()" class="btn btn-primary submit-btn" type="button">
+                <br />
+                <button
+                  (click)="updateUserData()"
+                  class="btn btn-primary submit-btn"
+                  type="button"
+                >
                   Update
                 </button>
               </div>
             </div>
           </form>
-          <p class="text-danger text-center no-changes-txt">No any changes yet!</p>
+          <p class="text-danger text-center no-changes-txt">
+            No any changes yet!
+          </p>
         </div>
         <div class="update-dialog-message">
           <p class="text-success">Data updated successfully!</p>

@@ -42,8 +42,10 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
 export class UsersComponent implements OnInit {
   imageUrls = new imageUrls();
 
+  searchTerm: string = '';
   usersData!: any;
   selectedUser: any;
+  filteredUsers: any[] = [];
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -58,6 +60,21 @@ export class UsersComponent implements OnInit {
     private ng2ImgMax: Ng2ImgMaxService,
     private validationService: ValidationService
   ) {}
+
+  applySearchFilter() {
+    if (!this.searchTerm) {
+      this.filteredUsers = this.usersData?.data;
+    } else {
+      this.filteredUsers = this.usersData?.data.filter((user: { [s: string]: unknown; } | ArrayLike<unknown>) =>
+        Object.values(user).some(value => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(this.searchTerm.toLowerCase());
+          }
+          return false;
+        })
+      );
+    }
+  }
 
   openDialog(s: any, type: string) {
     const dialogRef = this.dialog.open(ModalComponent, {
@@ -81,6 +98,7 @@ export class UsersComponent implements OnInit {
   fetchUsersData(page: number) {
     this.usersManagementService.getAllUserData(page).subscribe((res) => {
       this.usersData = res[0];
+      this.filteredUsers = this.usersData?.data;
     });
   }
 
