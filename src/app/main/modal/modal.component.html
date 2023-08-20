@@ -1,0 +1,24 @@
+<div *ngIf="data.level == 'success'" class="alert-container">
+  <div class="alert success-alert">
+    <p>{{ data.content }}</p>
+  </div>
+</div>
+
+<div *ngIf="data.level == 'warning'" class="alert-container">
+  <div class="alert warning-alert">
+    <p>{{ data.content }}</p>
+  </div>
+</div>
+
+<div *ngIf="data.level == 'danger'" class="alert-container">
+  <div class="alert danger-alert">
+    <p>{{ data.content }}</p>
+  </div>
+</div>
+
+<div *ngIf="data.level === 'leave-group'" class="alert-container">
+  <div class="alert">
+    <p>{{ data.content }}</p>
+    <button class="proceed-button" (click)="confirmLeave()">Proceed</button>
+  </div>
+</div>

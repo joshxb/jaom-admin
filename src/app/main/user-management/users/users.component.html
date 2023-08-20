@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - User Management / Users</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>User Management</p>
+          <table class="table table-bordered users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone #</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let user of usersData?.data">
+              <tr>
+                <td>{{ user?.id }}</td>
+                <td>{{ user?.firstname }}</td>
+                <td>{{ user?.lastname }}</td>
+                <td>{{ user?.email }}</td>
+                <td>{{ user?.phone }}</td>
+                <td
+                  [class.text-success]="user?.status === 'active'"
+                  [class.text-danger]="user?.status !== 'active'"
+                >
+                  {{ user.status }}
+                </td>
+                <td class="action-cont">
+                  <img
+                    [src]="imageUrls.editUsers"
+                    alt=""
+                    (click)="openEditModal(user?.id)"
+                  />
+                  <img (click)="deleteSpecificUser(user?.id)" [src]="imageUrls.delete" alt="" />
+                </td>
+              </tr>
+              <small class="table-date text-muted p-2"
+                >Date joined: {{ user?.created_at | date : "longDate" }}</small
+              >
+              <br /><br />
+            </tbody>
+          </table>
+          <div class="pagination-cont">
+            <ul class="pagination">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="onPageChange(1)"><<</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="onPageChange(currentPage - 1)"
+                  >Previous</a
+                >
+              </li>
+              <li
+                class="page-item"
+                *ngFor="let page of getPageRange()"
+                [class.active]="currentPage === page"
+              >
+                <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === usersData?.last_page"
+              >
+                <a class="page-link" (click)="onPageChange(currentPage + 1)"
+                  >Next</a
+                >
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === usersData?.last_page"
+              >
+                <a
+                  class="page-link"
+                  (click)="onPageChange(usersData?.last_page)"
+                  >>></a
+                >
+              </li>
+            </ul>
+            <p class="text-muted showing-pagination">
+              Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
+              {{ usersData?.total }} users
+            </p>
+          </div>
+          <div class="delete-dialog-message">
+            <p class="text-danger">User deleted successfully</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-content" >
+          <button (click)="closeEditModal()" type="button" class="close exit-modal" aria-label="Close">
+            X
+         </button>
+          <!-- Your modal content here -->
+          <h2>Edit User</h2>
+          <div class="profile-image-cont">
+            <img class="profile-image" [src]="selectedImageSrc" alt="">
+            <input type="file" accept="image/jpeg, image/png" (change)="onImageChange($event)">
+            <p class="text-danger invalid-image">Invalid image format!</p>
+          </div>
+          <form class="form">
+            <div class="form-group row">
+              <label for="defaultFirstName" class="col-sm-3 col-form-label"
+                >First Name</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultFirstName"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputFirstName"
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultLastName" class="col-sm-3 col-form-label"
+                >Last Name</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultLastName"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputLastName"
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultNickName" class="col-sm-3 col-form-label"
+                >Nick Name</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultNickName"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                id="hiddenFullNickName"
+                type="text"
+                class="form-control mr-3 d-none"
+                value=""
+                disabled
+              />
+                <input
+                  id="inputNickName"
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultAge" class="col-sm-3 col-form-label"
+                >Age</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultAge"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputAge"
+                  type="number"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultEmail" class="col-sm-3 col-form-label"
+                >Email</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultEmail"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputEmail"
+                  type="email"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultPhone" class="col-sm-3 col-form-label"
+                >Phone</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultPhone"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputPhone"
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultLocation" class="col-sm-3 col-form-label"
+                >Location</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultLocation"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <input
+                  id="inputLocation"
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new value"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultStatus" class="col-sm-3 col-form-label"
+                >Status</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultStatus"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <select
+                  id="selectStatus"
+                  type="text"
+                  class="form-control"
+                >
+                <option value="">select status</option>
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                </select>
+              </div>
+            </div>
+            <!-- temporary disable thuis configuration -->
+            <div class="form-group row d-none">
+              <label for="defaultRole" class="col-sm-3 col-form-label"
+                >Role</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultRole"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <select
+                  id="selectRole"
+                  type="text"
+                  class="form-control"
+                >
+                <option value="">select role</option>
+                  <option value="local">local</option>
+                  <option value="admin">admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="defaultVisiblity" class="col-sm-3 col-form-label"
+                >Visibility</label
+              >
+              <div class="col-sm-9 d-flex align-items-center">
+                <input
+                  id="defaultVisiblity"
+                  type="text"
+                  class="form-control mr-3"
+                  value=""
+                  disabled
+                />
+                <select
+                  id="selectVisibility"
+                  type="text"
+                  class="form-control"
+
+                >
+                <option value="">select visibility</option>
+                  <option value="visible">visible</option>
+                  <option value="hidden">hidden</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-9">
+                <br>
+                <button (click)="updateUserData()" class="btn btn-primary submit-btn" type="button">
+                  Update
+                </button>
+              </div>
+            </div>
+          </form>
+          <p class="text-danger text-center no-changes-txt">No any changes yet!</p>
+        </div>
+        <div class="dialog-message">
+          <p class="text-success">Data updated successfully!</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

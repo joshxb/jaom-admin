@@ -1,4 +1,4 @@
-<nav >
+<nav>
   <div class="sidebar-header">
     <img
       style="width: 40x; height: 40px; border-radius: 50%"
@@ -7,7 +7,7 @@
     />
     <div>
       <p style="color: #fff; text-align: center; font-size: 16px">
-        {{data?.firstname + ' ' + data?.lastname}}
+        {{ data?.firstname + " " + data?.lastname }}
       </p>
       <span class="dot"></span><span style="font-size: 13px">Online</span>
     </div>
@@ -15,7 +15,7 @@
   <ul class="list-unstyled components">
     <p id="admin-txt">Administrator</p>
     <li class="active">
-      <a href="#"
+      <a href="/dashboard"
         ><img [src]="imageUrls.dash" alt="" /> &nbsp;&nbsp;Dashboard</a
       >
     </li>
@@ -25,11 +25,11 @@
         data-toggle="collapse"
         aria-expanded="false"
         class="dropdown-toggle"
-        ><img style="width: 28px;" [src]="imageUrls.user_management" alt="" /> &nbsp;&nbsp;User
-        Management</a
+        ><img style="width: 28px" [src]="imageUrls.user_management" alt="" />
+        &nbsp;&nbsp;User Management</a
       >
       <ul class="collapse list-unstyled" id="dashSubmenu">
-        <li><a href="#">Users</a></li>
+        <li><a href="user-management/users">Users</a></li>
         <li><a href="#">Chats</a></li>
         <li><a href="#">Rooms</a></li>
         <li><a href="#">Updates</a></li>

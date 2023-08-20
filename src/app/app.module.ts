@@ -13,9 +13,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { Ng2ImgMaxModule } from 'ng2-img-max';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TopBarComponent } from './sidebar/top-bar/top-bar.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { ProcessLoginComponent } from './process-login/process-login.component';
+import { UsersComponent } from './main/user-management/users/users.component';
+import { ModalComponent } from './main/modal/modal.component';
+import { ValidationService } from './configuration/assets/validation.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,9 @@ import { ProcessLoginComponent } from './process-login/process-login.component';
     LeftBarComponent,
     SidebarToggleDirective,
     TopBarComponent,
-    ProcessLoginComponent
+    ProcessLoginComponent,
+    UsersComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,11 +40,12 @@ import { ProcessLoginComponent } from './process-login/process-login.component';
     Ng2ImgMaxModule,
     FormsModule,
     ReactiveFormsModule,
-    CanvasJSAngularChartsModule
+    CanvasJSAngularChartsModule,
+    MatDialogModule
   ],
   exports: [NgModel],
 
-  providers: [AuthGuard, DatePipe],
-  bootstrap: [AppComponent]
+  providers: [AuthGuard, DatePipe, ValidationService],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
