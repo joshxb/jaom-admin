@@ -6,6 +6,10 @@
   font-size: 10px !important;
 }
 
+.content-container {
+  height: 80%;
+  overflow-y: auto;
+}
 .action-cont {
   display: flex;
   align-items: center;
