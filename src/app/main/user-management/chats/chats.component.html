@@ -41,8 +41,8 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody *ngFor="let chat of filteredChats">
-              <tr>
+            <tbody>
+              <tr *ngFor="let chat of filteredChats">
                 <td>{{ chat?.id }}</td>
                 <td>{{ chat?.sender_id }}</td>
                 <td>{{ chat?.receiver_id }}</td>
