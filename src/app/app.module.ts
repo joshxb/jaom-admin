@@ -19,6 +19,7 @@ import { ProcessLoginComponent } from './process-login/process-login.component';
 import { UsersComponent } from './main/user-management/users/users.component';
 import { ModalComponent } from './main/modal/modal.component';
 import { ValidationService } from './configuration/assets/validation.service';
+import { ChatsComponent } from './main/user-management/chats/chats.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { ValidationService } from './configuration/assets/validation.service';
     ProcessLoginComponent,
     UsersComponent,
     ModalComponent,
+    ChatsComponent,
   ],
   imports: [
     BrowserModule,

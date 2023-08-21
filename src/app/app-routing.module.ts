@@ -4,6 +4,7 @@ import { DashboardComponent } from './main/dashboard/dashboard.component';
 import { AuthGuard } from './configuration/services/auth.guard';
 import { ProcessLoginComponent } from './process-login/process-login.component';
 import { UsersComponent } from './main/user-management/users/users.component';
+import { ChatsComponent } from './main/user-management/chats/chats.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,11 @@ const routes: Routes = [
   {
     path: 'user-management/users',
     component: UsersComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'user-management/chats',
+    component: ChatsComponent,
     canActivate: [AuthGuard],
   },
 ];
