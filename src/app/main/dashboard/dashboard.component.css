@@ -80,6 +80,11 @@
   font-weight: bold;
 }
 
+.content-container {
+  height: 80%;
+  overflow-y: auto;
+}
+
 .donations-information {
   display: flex;
   align-items: center;
