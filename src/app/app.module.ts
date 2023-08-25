@@ -20,6 +20,7 @@ import { UsersComponent } from './main/user-management/users/users.component';
 import { ModalComponent } from './main/modal/modal.component';
 import { ValidationService } from './configuration/assets/validation.service';
 import { ChatsComponent } from './main/user-management/chats/chats.component';
+import { RoomsComponent } from './main/user-management/rooms/rooms.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { ChatsComponent } from './main/user-management/chats/chats.component';
     UsersComponent,
     ModalComponent,
     ChatsComponent,
+    RoomsComponent,
   ],
   imports: [
     BrowserModule,
