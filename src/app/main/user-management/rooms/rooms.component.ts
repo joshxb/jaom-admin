@@ -173,12 +173,10 @@ export class RoomsComponent implements OnInit {
       return [];
     }
 
+    const currentPage = selection === 0 ? this.currentPage : this.currentPage2;
     const totalPages = data.last_page || 0;
     const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
+    const startPage = Math.max(currentPage - Math.floor(displayedPages / 2), 1);
     const endPage = Math.min(startPage + displayedPages - 1, totalPages);
 
     return Array.from(
