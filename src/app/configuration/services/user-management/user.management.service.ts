@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { UsersService } from './users.service';
 import { ChatsService } from './chats.service';
 import { RoomService } from '../room.service';
+import { UpdatesService } from '../updates.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class UsersManagementService {
   constructor(
     private usersService: UsersService,
     private chatsService: ChatsService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private updateService: UpdatesService
   ) {}
 
   getAllUserData(page: number): Observable<any> {
@@ -56,5 +58,17 @@ export class UsersManagementService {
 
   deleteSpecificRoomChat(id: number): Observable<any> {
     return this.roomService.deleteSpecificRoomChat(id);
+  }
+
+  getAllUpdates(page: number): Observable<any> {
+    return this.updateService.getAllUpdates(page);
+  }
+
+  deleteSpecificUpdate(id: number): Observable<any> {
+    return this.updateService.deleteSpecificUpdate(id);
+  }
+
+  updatePermission(data: any, id: number): Observable<any> {
+    return this.updateService.updatePermission(data, id);
   }
 }

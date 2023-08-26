@@ -51,4 +51,5 @@ export class imageUrls {
   allChat : string = './../assets/allChat.png';
   updateChats : string = './../assets/updateChats.png';
   editUsers : string = './../assets/edit-users.png';
+  permission : string = './../assets/permission.png';
 }

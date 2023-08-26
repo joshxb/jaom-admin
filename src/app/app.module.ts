@@ -21,6 +21,8 @@ import { ModalComponent } from './main/modal/modal.component';
 import { ValidationService } from './configuration/assets/validation.service';
 import { ChatsComponent } from './main/user-management/chats/chats.component';
 import { RoomsComponent } from './main/user-management/rooms/rooms.component';
+import { UpdatesComponent } from './main/user-management/updates/updates.component';
+import { TextService } from './configuration/assets/text.service';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,7 @@ import { RoomsComponent } from './main/user-management/rooms/rooms.component';
     ModalComponent,
     ChatsComponent,
     RoomsComponent,
+    UpdatesComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +52,7 @@ import { RoomsComponent } from './main/user-management/rooms/rooms.component';
   ],
   exports: [NgModel],
 
-  providers: [AuthGuard, DatePipe, ValidationService],
+  providers: [AuthGuard, DatePipe, ValidationService, TextService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

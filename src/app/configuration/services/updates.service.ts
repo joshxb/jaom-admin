@@ -14,7 +14,7 @@ export class UpdatesService {
   private baseUrl = this.base.baseUrl;
   private suffixUrl = this.base.suffixUrl;
 
-  private apiUpdateUrl = `${this.baseUrl}/${this.suffixUrl}/updates/count`;
+  private apiUpdateUrl = `${this.baseUrl}/${this.suffixUrl}/updates`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
@@ -23,9 +23,40 @@ export class UpdatesService {
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    
-    return this.http.get<any>(
-      this.apiUpdateUrl,
+
+    return this.http.get<any>(`${this.apiUpdateUrl}/count`, { headers });
+  }
+
+  getAllUpdates(page: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.get<any>(`${this.apiUpdateUrl}?page=${page}&role=admin`, { headers });
+  }
+
+  deleteSpecificUpdate(id: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.delete<any>(
+      `${this.apiUpdateUrl}/${id}/current_user?role=admin`,
+      { headers }
+    );
+  }
+
+  updatePermission(data: any, id: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.put<any>(
+      `${this.apiUpdateUrl}/${id}/permission?role=admin`,
+      data,
       { headers }
     );
   }
