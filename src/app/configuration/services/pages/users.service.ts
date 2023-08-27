@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
-import { ImageService } from '../image.service';
+import { ImageService } from './image.service';
 
 @Injectable({
   providedIn: 'root',

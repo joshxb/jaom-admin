@@ -23,6 +23,7 @@ import { ChatsComponent } from './main/user-management/chats/chats.component';
 import { RoomsComponent } from './main/user-management/rooms/rooms.component';
 import { UpdatesComponent } from './main/user-management/updates/updates.component';
 import { TextService } from './configuration/assets/text.service';
+import { TodoComponent } from './main/user-management/todo/todo.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { TextService } from './configuration/assets/text.service';
     ChatsComponent,
     RoomsComponent,
     UpdatesComponent,
+    TodoComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Base, Redirects } from '../configuration.component';
-import { AuthService } from './auth.service';
+import { Base, Redirects } from '../../configuration.component';
+import { AuthService } from '../auth.service';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment.deployment';
-import { AdminService } from './services/admin.service';
+import { AdminService } from './services/pages/admin.service';
 
 @Component({
   selector: 'app-configuration',

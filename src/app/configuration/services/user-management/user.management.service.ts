@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UsersService } from './users.service';
-import { ChatsService } from './chats.service';
-import { RoomService } from '../room.service';
-import { UpdatesService } from '../updates.service';
+import { UsersService } from '../pages/users.service';
+import { ChatsService } from '../pages/chats.service';
+import { RoomService } from '../pages/room.service';
+import { UpdatesService } from '../pages/updates.service';
+import { TodoService } from '../pages/todo.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,8 @@ export class UsersManagementService {
     private usersService: UsersService,
     private chatsService: ChatsService,
     private roomService: RoomService,
-    private updateService: UpdatesService
+    private updateService: UpdatesService,
+    private todoService: TodoService
   ) {}
 
   getAllUserData(page: number): Observable<any> {
@@ -70,5 +72,13 @@ export class UsersManagementService {
 
   updatePermission(data: any, id: number): Observable<any> {
     return this.updateService.updatePermission(data, id);
+  }
+
+  getAllTodoData(page: number): Observable<any> {
+    return this.todoService.getAllTodoData(page);
+  }
+
+  deleteSpecificTodo(id: number): Observable<any> {
+    return this.todoService.deleteSpecificTodo(id);
   }
 }

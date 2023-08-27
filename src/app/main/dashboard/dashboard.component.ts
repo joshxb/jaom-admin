@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasJS, CanvasJSChart } from '@canvasjs/angular-charts';
 import { imageUrls } from 'src/app/app.component';
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
-import { AdminService } from 'src/app/configuration/services/admin.service';
+import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
 
 @Component({

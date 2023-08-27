@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { imageUrls } from 'src/app/app.component';
-import { AdminService } from 'src/app/configuration/services/admin.service';
+import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 
 @Component({
   selector: 'app-left-bar',

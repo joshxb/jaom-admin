@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
-import { DonationService } from '../donation.service';
-import { ConversationService } from '../conversation.service';
-import { RoomService } from '../room.service';
-import { UpdatesService } from '../updates.service';
+import { DonationService } from '../pages/donation.service';
+import { ConversationService } from '../pages/conversation.service';
+import { RoomService } from '../pages/room.service';
+import { UpdatesService } from '../pages/updates.service';
 
 @Injectable({
   providedIn: 'root',

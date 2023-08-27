@@ -7,6 +7,7 @@ import { UsersComponent } from './main/user-management/users/users.component';
 import { ChatsComponent } from './main/user-management/chats/chats.component';
 import { RoomsComponent } from './main/user-management/rooms/rooms.component';
 import { UpdatesComponent } from './main/user-management/updates/updates.component';
+import { TodoComponent } from './main/user-management/todo/todo.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,11 @@ const routes: Routes = [
   {
     path: 'user-management/updates',
     component: UpdatesComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'user-management/todos',
+    component: TodoComponent,
     canActivate: [AuthGuard],
   },
 ];

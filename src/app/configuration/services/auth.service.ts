@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiUrls, Base, Redirects } from '../configuration.component';
 import { CookieService } from 'ngx-cookie-service';
-import { AdminService } from './admin.service';
+import { AdminService } from './pages/admin.service';
 
 @Injectable({
   providedIn: 'root',

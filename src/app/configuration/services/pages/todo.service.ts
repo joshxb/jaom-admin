@@ -4,38 +4,36 @@ import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
-import { ImageService } from '../image.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ChatsService {
+export class TodoService {
   base = new Base();
   auth = new AuthService(this.http, this.cookieService);
   private baseUrl = this.base.baseUrl;
   private suffixUrl = this.base.suffixUrl;
-  private apiChatUrl = `${this.baseUrl}/${this.suffixUrl}/conversations/all`;
-  private apiMessageUrl = `${this.baseUrl}/${this.suffixUrl}/messages`;
+  private apiTodoUrl = `${this.baseUrl}/${this.suffixUrl}/todos`;
+  private apiTodoV2Url = `${this.baseUrl}/${this.suffixUrl}/v2/todos`;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
-    private imageService: ImageService
   ) {}
 
-  getAllChatsData(page: number): Observable<any> {
+  getAllTodoData(page: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(this.apiChatUrl + `?page=${page}&role=admin`, { headers });
+    return this.http.get<any>(this.apiTodoV2Url + `?page=${page}&role=admin`, { headers });
   }
 
-  deleteSpecificMessage(id: number): Observable<any> {
+  deleteSpecificTodo(id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.delete<any>(this.apiMessageUrl + `/${id}?role=admin`, { headers });
+    return this.http.delete<any>(this.apiTodoUrl + `/${id}?role=admin`, { headers });
   }
 }

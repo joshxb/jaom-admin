@@ -2,7 +2,7 @@ import { AuthService } from './../../configuration/services/auth.service';
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
-import { AdminService } from 'src/app/configuration/services/admin.service';
+import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 
 @Component({
   selector: 'app-top-bar',

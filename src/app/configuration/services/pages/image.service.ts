@@ -4,7 +4,7 @@ import { Base } from 'src/app/configuration/configuration.component';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root',
