@@ -7,18 +7,19 @@ import {
 } from '@angular/animations';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Ng2ImgMaxService } from 'ng2-img-max';
 import { imageUrls } from 'src/app/app.component';
+import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
-import { Ng2ImgMaxService } from 'ng2-img-max';
-import { ValidationService } from 'src/app/configuration/assets/validation.service';
+import { TextService } from 'src/app/configuration/assets/text.service';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css'],
+  selector: 'app-configurations',
+  templateUrl: './configurations.component.html',
+  styleUrls: ['./configurations.component.css'],
   animations: [
     trigger('modalAnimation', [
       state(
@@ -38,13 +39,15 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
     ]),
   ],
 })
-export class UsersComponent implements OnInit {
+export class ConfigurationsComponent implements OnInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
   usersData!: any;
   selectedUser: any;
   filteredUsers: any[] = [];
+  initialNicknameBoolean: boolean = false;
+  nicknameBoolean: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -54,23 +57,25 @@ export class UsersComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private elRef: ElementRef,
-    private sanitizer: DomSanitizer,
     private dialog: MatDialog,
-    private ng2ImgMax: Ng2ImgMaxService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private textService: TextService
   ) {}
 
   applySearchFilter() {
     if (!this.searchTerm) {
       this.filteredUsers = this.usersData?.data;
     } else {
-      this.filteredUsers = this.usersData?.data.filter((user: { [s: string]: unknown; } | ArrayLike<unknown>) =>
-        Object.values(user).some(value => {
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(this.searchTerm.toLowerCase());
-          }
-          return false;
-        })
+      this.filteredUsers = this.usersData?.data.filter(
+        (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
+          Object.values(user).some((value) => {
+            if (typeof value === 'string') {
+              return value
+                .toLowerCase()
+                .includes(this.searchTerm.toLowerCase());
+            }
+            return false;
+          })
       );
     }
   }
@@ -150,36 +155,10 @@ export class UsersComponent implements OnInit {
 
         const fieldsToUpdate = [
           {
-            selector: '.profile-image',
-            property: 'src',
-            value: data?.image_blob
-              ? 'data:image/jpeg;base64,' + data?.image_blob
-              : this.imageUrls.user_default,
-          },
-          {
-            selector: '#defaultFirstName',
-            property: 'value',
-            value: data?.firstname,
-          },
-          {
-            selector: '#defaultLastName',
-            property: 'value',
-            value: data?.lastname,
-          },
-          { selector: '#defaultAge', property: 'value', value: data?.age },
-          { selector: '#defaultEmail', property: 'value', value: data?.email },
-          { selector: '#defaultPhone', property: 'value', value: data?.phone },
-          {
-            selector: '#defaultLocation',
-            property: 'value',
-            value: data?.location,
-          },
-          {
             selector: '#defaultStatus',
             property: 'value',
             value: data?.status,
           },
-          { selector: '#defaultRole', property: 'value', value: data?.type },
           {
             selector: '#defaultVisiblity',
             property: 'value',
@@ -211,8 +190,26 @@ export class UsersComponent implements OnInit {
           '#hiddenFullNickName'
         );
 
-        hiddenFullNickName.value = data?.nickname;
+        const checkBoxNickname =
+          this.elRef.nativeElement.querySelector('#checkBoxNickname');
 
+        const inputNickName =
+          this.elRef.nativeElement.querySelector('#inputNickName');
+
+        this.setNicknameBoolean(
+          this.textService.getNicknameEnableAndDisable(data?.nickname),
+          'change'
+        );
+
+        this.setNicknameBoolean(
+          this.textService.getNicknameEnableAndDisable(data?.nickname),
+          'primary'
+        );
+
+        checkBoxNickname.checked = this.getNicknameBoolean();
+        inputNickName.disabled = !this.getNicknameBoolean();
+
+        hiddenFullNickName.value = data?.nickname;
         modalOverlay.style.display = 'flex';
       });
   }
@@ -230,7 +227,6 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  // Custom function to extract real nickname
   extractRealNickname(nickname: string, separator: string): string {
     const parts = nickname.split(separator);
     return parts[0];
@@ -258,7 +254,6 @@ export class UsersComponent implements OnInit {
         this.selectedImageFile = file;
       } else {
         invalidImage.style.display = 'block';
-        // this.openDialog("Invalid Image Format", "success");
       }
     } else {
       this.selectedImageSrc = this.imageUrls.user_default;
@@ -299,71 +294,55 @@ export class UsersComponent implements OnInit {
     const data: { [key: string]: string } = {};
 
     const fields = [
-      { id: 'inputFirstName', key: 'firstname', type: 'value' },
-      { id: 'inputLastName', key: 'lastname', type: 'value' },
       { id: 'inputNickName', key: 'nickname', type: 'value' },
-      { id: 'inputAge', key: 'age', type: 'value' },
-      { id: 'inputEmail', key: 'email', type: 'value' },
-      { id: 'inputPhone', key: 'phone', type: 'value' },
-      { id: 'inputLocation', key: 'location', type: 'value' },
+      { id: 'selectStatus', key: 'status', type: 'value' },
+      { id: 'selectVisibility', key: 'visibility', type: 'value' },
     ];
 
     let changes = false;
-
-    if (this.selectedImageFile) {
-      changes = true;
-    }
 
     fields.forEach((field) => {
       const inputField = this.elRef.nativeElement.querySelector(`#${field.id}`);
       const fieldValue = inputField.value.trim();
 
       if (fieldValue !== '') {
-        if (field.key == 'email') {
-          if (!this.validationService.isValidEmail(fieldValue)) {
-            const noChangesTxt =
-              this.elRef.nativeElement.querySelector('.no-changes-txt');
-            noChangesTxt.textContent = 'Invalid Email Address';
-            noChangesTxt.style.display = 'block';
-            return;
-          }
-        }
-        if (field.key == 'phone') {
-          if (!this.validationService.isValidPhoneNumber(fieldValue)) {
-            const noChangesTxt =
-              this.elRef.nativeElement.querySelector('.no-changes-txt');
-            noChangesTxt.textContent = 'Invalid Phone Number';
-            noChangesTxt.style.display = 'block';
-            return;
-          }
-        }
-        if (field.key == 'age') {
-          if (!this.validationService.isValidAge(fieldValue)) {
-            const noChangesTxt =
-              this.elRef.nativeElement.querySelector('.no-changes-txt');
-            noChangesTxt.textContent =
-              'Age must have at least between 18 and 100';
-            noChangesTxt.style.display = 'block';
-            return;
-          }
-        }
-
-        changes = true;
-
         if (field.key == 'nickname') {
           const hiddenFullNickName = this.elRef.nativeElement.querySelector(
             '#hiddenFullNickName'
           ).value;
 
           const separators = '~!@#$%^&*()-=_+[]{}|;:,.<>?';
-          data[field.key] = this.validationService.replaceNicknameFirstPart(
-            hiddenFullNickName,
-            separators,
-            fieldValue
+
+          data[field.key] = this.textService.setNickName(
+            1,
+            this.validationService.replaceNicknameFirstPart(
+              hiddenFullNickName,
+              separators,
+              fieldValue
+            ),
+            this.getNicknameBoolean()
           );
         } else {
           data[field.key] =
             field.type === 'value' ? fieldValue : inputField.value;
+        }
+
+        changes = true;
+      } else {
+        if (field.key == 'nickname') {
+          if (this.checkNicknameBooleanChange()) {
+            const hiddenFullNickName = this.elRef.nativeElement.querySelector(
+              '#hiddenFullNickName'
+            ).value;
+
+            data[field.key] = this.textService.setNickName(
+              1,
+              hiddenFullNickName,
+              this.getNicknameBoolean()
+            );
+
+            changes = true;
+          }
         }
       }
     });
@@ -373,48 +352,48 @@ export class UsersComponent implements OnInit {
         .updateOtherUserData(this.selectedUser, data)
         .subscribe(
           (res) => {
-            if (this.selectedImageFile) {
-              this.ng2ImgMax
-                .compressImage(this.selectedImageFile, 0.05)
-                .subscribe(
-                  (result) => {
-                    const dialogMessage =
-                      this.elRef.nativeElement.querySelector(
-                        '.update-dialog-message'
-                      );
-                    dialogMessage.style.display = 'block';
+            const dialogMessage = this.elRef.nativeElement.querySelector(
+              '.update-dialog-message'
+            );
+            dialogMessage.style.display = 'block';
 
-                    this.processImage(result);
-                  },
-                  (error) => {
-                    // this.openDialog(
-                    //   'Something went wrong during the image upload process.',
-                    //   'danger'
-                    // );
-                  }
-                );
-            } else {
-              const dialogMessage = this.elRef.nativeElement.querySelector(
-                '.update-dialog-message'
-              );
-              dialogMessage.style.display = 'block';
-
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            }
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
           },
-          (error) => {
-            // this.openDialog(
-            //   'An error occurred while updating user data.',
-            //   'danger'
-            // );
-          }
+          (error) => {}
         );
     } else {
       const noChangesTxt =
         this.elRef.nativeElement.querySelector('.no-changes-txt');
       noChangesTxt.style.display = 'block';
     }
+  }
+
+  toggleNicknameEnabledDisabled() {
+    const toggleNicknameBolean = !this.getNicknameBoolean();
+    this.setNicknameBoolean(toggleNicknameBolean, 'change');
+
+    const inputNickName =
+      this.elRef.nativeElement.querySelector('#inputNickName');
+
+    inputNickName.value = '';
+    inputNickName.disabled = !this.getNicknameBoolean();
+  }
+
+  setNicknameBoolean(boolean: boolean, selection: string) {
+    if (selection == 'change') {
+      this.nicknameBoolean = boolean;
+    } else if (selection == 'primary') {
+      this.initialNicknameBoolean = boolean;
+    }
+  }
+
+  getNicknameBoolean(): boolean {
+    return this.nicknameBoolean;
+  }
+
+  checkNicknameBooleanChange(): boolean {
+    return this.initialNicknameBoolean != this.getNicknameBoolean();
   }
 }

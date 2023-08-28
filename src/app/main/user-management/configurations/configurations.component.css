@@ -225,3 +225,9 @@ table tbody tr:hover {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.nickname-indicator {
+  font-size: 10px;
+  position: relative;
+  top: -15px;
+}

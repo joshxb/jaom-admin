@@ -71,11 +71,6 @@
                 <td>{{ update?.created_at | date : "MMMM d, y" }}</td>
                 <td>{{ update?.created_at | date : "h:mm a" }}</td>
                 <td class="action-cont">
-                  <!-- <img
-                    (click)="deleteSpecificUpdate(update?.id)"
-                    [src]="imageUrls.permission"
-                    alt=""
-                  /> -->
                   <img
                     (click)="deleteSpecificUpdate(update?.id)"
                     [src]="imageUrls.delete"

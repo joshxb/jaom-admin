@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JAOM Admin - User Management / Users</title>
+    <title>JAOM Admin - User Management / Configurations</title>
   </head>
   <body>
     <div class="wrapper">
@@ -32,35 +32,31 @@
           <table class="table table-bordered users-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone #</th>
-                <th>Date Joined</th>
+                <th>User ID</th>
+                <th>Nickname</th>
+                <th>Visibility</th>
+                <th>Status</th>
+                <th>Updated At</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let user of filteredUsers">
-                <td>{{ user?.id }}</td>
-                <td>{{ user?.firstname }}</td>
-                <td>{{ user?.lastname }}</td>
-                <td>{{ user?.email }}</td>
-                <td>{{ user?.phone }}</td>
-                <td>
-                  {{ user?.updated_at | date : "longDate" }}
+              <tr *ngFor="let data of filteredUsers">
+                <td>{{ data?.id }}</td>
+                <td>{{ extractRealNickname(data?.nickname, '~!@#$%^&*()-=_+[]{}|;:,.<>?') }}</td>
+                <td>{{ data?.visibility }}</td>
+                <td
+                  [class.text-success]="data?.status === 'active'"
+                  [class.text-danger]="data?.status !== 'active'"
+                >
+                  {{ data.status }}
                 </td>
+                <td>{{ data?.created_at | date : "longDate" }}</td>
                 <td class="action-cont">
                   <img
                     [src]="imageUrls.editUsers"
                     alt=""
-                    (click)="openEditModal(user?.id)"
-                  />
-                  <img
-                    (click)="deleteSpecificUser(user?.id)"
-                    [src]="imageUrls.delete"
-                    alt=""
+                    (click)="openEditModal(data?.id)"
                   />
                 </td>
               </tr>
@@ -104,7 +100,7 @@
             </ul>
             <p class="text-muted showing-pagination">
               Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
-              {{ usersData?.total }} users
+              {{ usersData?.total }} configurations
             </p>
           </div>
           <div class="dialog-messages delete-dialog-message">
@@ -124,58 +120,18 @@
           >
             X
           </button>
-          <!-- Your modal content here -->
-          <h2>Edit User</h2>
-          <div class="profile-image-cont">
-            <img class="profile-image" [src]="selectedImageSrc" alt="" />
-            <input
-              type="file"
-              accept="image/jpeg, image/png"
-              (change)="onImageChange($event)"
-            />
-            <p class="text-danger invalid-image">Invalid image format!</p>
-          </div>
-          <form class="form">
-            <div class="form-group row">
-              <label for="defaultFirstName" class="col-sm-3 col-form-label"
-                >First Name</label
-              >
-              <div class="col-sm-9 d-flex align-items-center">
-                <input
-                  id="defaultFirstName"
-                  type="text"
-                  class="form-control mr-3"
-                  value=""
-                  disabled
-                />
-                <input
-                  id="inputFirstName"
-                  type="text"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
-              </div>
+          <h2>Edit User Configuration</h2>
+          <form class="form pt-1">
+            <div>
+              <ng-container>
+                <label class="switch" >
+                  <input id="checkBoxNickname" type="checkbox"/>
+                  <span class="slider" (click)="toggleNicknameEnabledDisabled()"></span>
+                </label>
+              </ng-container>
+              <br><small class="nickname-indicator">*enable / disable user-nickname</small>
             </div>
-            <div class="form-group row">
-              <label for="defaultLastName" class="col-sm-3 col-form-label"
-                >Last Name</label
-              >
-              <div class="col-sm-9 d-flex align-items-center">
-                <input
-                  id="defaultLastName"
-                  type="text"
-                  class="form-control mr-3"
-                  value=""
-                  disabled
-                />
-                <input
-                  id="inputLastName"
-                  type="text"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
-              </div>
-            </div>
+
             <div class="form-group row">
               <label for="defaultNickName" class="col-sm-3 col-form-label"
                 >Nick Name</label
@@ -200,87 +156,46 @@
                   type="text"
                   class="form-control"
                   placeholder="Input new value"
+                  disabled
                 />
               </div>
-            </div>
+            </div><br>
             <div class="form-group row">
-              <label for="defaultAge" class="col-sm-3 col-form-label"
-                >Age</label
+              <label for="defaultStatus" class="col-sm-3 col-form-label"
+                >Status</label
               >
               <div class="col-sm-9 d-flex align-items-center">
                 <input
-                  id="defaultAge"
+                  id="defaultStatus"
                   type="text"
                   class="form-control mr-3"
                   value=""
                   disabled
                 />
-                <input
-                  id="inputAge"
-                  type="number"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
+                <select id="selectStatus" type="text" class="form-control">
+                  <option value="">select status</option>
+                  <option value="active">active</option>
+                  <option value="inactive">inactive</option>
+                </select>
               </div>
             </div>
             <div class="form-group row">
-              <label for="defaultEmail" class="col-sm-3 col-form-label"
-                >Email</label
+              <label for="defaultVisiblity" class="col-sm-3 col-form-label"
+                >Visibility</label
               >
               <div class="col-sm-9 d-flex align-items-center">
                 <input
-                  id="defaultEmail"
+                  id="defaultVisiblity"
                   type="text"
                   class="form-control mr-3"
                   value=""
                   disabled
                 />
-                <input
-                  id="inputEmail"
-                  type="email"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="defaultPhone" class="col-sm-3 col-form-label"
-                >Phone</label
-              >
-              <div class="col-sm-9 d-flex align-items-center">
-                <input
-                  id="defaultPhone"
-                  type="text"
-                  class="form-control mr-3"
-                  value=""
-                  disabled
-                />
-                <input
-                  id="inputPhone"
-                  type="text"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="defaultLocation" class="col-sm-3 col-form-label"
-                >Location</label
-              >
-              <div class="col-sm-9 d-flex align-items-center">
-                <input
-                  id="defaultLocation"
-                  type="text"
-                  class="form-control mr-3"
-                  value=""
-                  disabled
-                />
-                <input
-                  id="inputLocation"
-                  type="text"
-                  class="form-control"
-                  placeholder="Input new value"
-                />
+                <select id="selectVisibility" type="text" class="form-control">
+                  <option value="">select visibility</option>
+                  <option value="visible">visible</option>
+                  <option value="hidden">hidden</option>
+                </select>
               </div>
             </div>
             <div class="form-group row">

@@ -24,4 +24,22 @@ export class TextService {
 
     return styles;
   }
+
+  setNickName(index: number, nickname: any, newData: any) {
+    const nicknameParts = nickname.split('~!@#$%^&*()-=_+[]{}|;:,.<>?');
+
+    if (index == 0 || index == 1) {
+      nicknameParts[index] = newData;
+      return nicknameParts.join('~!@#$%^&*()-=_+[]{}|;:,.<>?');
+    }
+  }
+
+  getNickname(nickname: string): string {
+    return nickname.split('~!@#$%^&*()-=_+[]{}|;:,.<>?')[0];
+  }
+
+  getNicknameEnableAndDisable(nickname: string): boolean {
+    const value = nickname.split('~!@#$%^&*()-=_+[]{}|;:,.<>?')[1];
+    return JSON.parse(value);
+  }
 }
