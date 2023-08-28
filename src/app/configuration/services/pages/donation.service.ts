@@ -35,4 +35,27 @@ export class DonationService {
       { headers }
     );
   }
+
+  getAllPaginatedDonationTransactions(page: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.get<any>(
+      this.apiDonationUrl + `/all?page=${page}&role=admin`,
+      { headers }
+    );
+  }
+
+  deleteDonationTransaction(id: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.delete<any>(this.apiDonationUrl + `/${id}?role=admin`, {
+      headers,
+    });
+  }
 }

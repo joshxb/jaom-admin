@@ -25,6 +25,7 @@ import { UpdatesComponent } from './main/user-management/updates/updates.compone
 import { TextService } from './configuration/assets/text.service';
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
+import { DonationsComponent } from './main/transactions/donations/donations.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { ConfigurationsComponent } from './main/user-management/configurations/c
     UpdatesComponent,
     TodoComponent,
     ConfigurationsComponent,
+    DonationsComponent,
   ],
   imports: [
     BrowserModule,

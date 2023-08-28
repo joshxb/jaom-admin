@@ -9,11 +9,12 @@ import { RoomsComponent } from './main/user-management/rooms/rooms.component';
 import { UpdatesComponent } from './main/user-management/updates/updates.component';
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
+import { DonationsComponent } from './main/transactions/donations/donations.component';
 
 const routes: Routes = [
   {
     path: 'process-login',
-    component: ProcessLoginComponent
+    component: ProcessLoginComponent,
   },
   {
     path: '',
@@ -53,6 +54,11 @@ const routes: Routes = [
   {
     path: 'user-management/configurations',
     component: ConfigurationsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'transactions/donations',
+    component: DonationsComponent,
     canActivate: [AuthGuard],
   },
 ];
