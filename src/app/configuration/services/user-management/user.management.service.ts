@@ -5,6 +5,7 @@ import { ChatsService } from '../pages/chats.service';
 import { RoomService } from '../pages/room.service';
 import { UpdatesService } from '../pages/updates.service';
 import { TodoService } from '../pages/todo.service';
+import { AdminService } from '../pages/admin.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,8 @@ export class UsersManagementService {
     private chatsService: ChatsService,
     private roomService: RoomService,
     private updateService: UpdatesService,
-    private todoService: TodoService
+    private todoService: TodoService,
+    private adminService: AdminService
   ) {}
 
   getAllUserData(page: number): Observable<any> {
@@ -80,5 +82,13 @@ export class UsersManagementService {
 
   deleteSpecificTodo(id: number): Observable<any> {
     return this.todoService.deleteSpecificTodo(id);
+  }
+
+  getUserHistoryData(page: number): Observable<any> {
+    return this.adminService.getUserHistoryData(page);
+  }
+
+  deleteUserHistory(id: number): Observable<any> {
+    return this.adminService.deleteUserHistory(id);
   }
 }

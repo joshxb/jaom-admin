@@ -7,7 +7,6 @@ import {
 } from '@angular/animations';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
@@ -54,7 +53,6 @@ export class UsersComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private elRef: ElementRef,
-    private sanitizer: DomSanitizer,
     private dialog: MatDialog,
     private ng2ImgMax: Ng2ImgMaxService,
     private validationService: ValidationService
@@ -64,13 +62,18 @@ export class UsersComponent implements OnInit {
     if (!this.searchTerm) {
       this.filteredUsers = this.usersData?.data;
     } else {
-      this.filteredUsers = this.usersData?.data.filter((user: { [s: string]: unknown; } | ArrayLike<unknown>) =>
-        Object.values(user).some(value => {
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(this.searchTerm.toLowerCase());
-          }
-          return false;
-        })
+      this.filteredUsers = this.usersData?.data.filter(
+        (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
+          Object.values(user).some((value) => {
+            if (typeof value === 'string') {
+              return value
+                .toLowerCase()
+                .includes(this.searchTerm.toLowerCase());
+            } else if (typeof value === 'number') {
+              return value == Number(this.searchTerm.toLowerCase());
+            }
+            return false;
+          })
       );
     }
   }
@@ -386,12 +389,7 @@ export class UsersComponent implements OnInit {
 
                     this.processImage(result);
                   },
-                  (error) => {
-                    // this.openDialog(
-                    //   'Something went wrong during the image upload process.',
-                    //   'danger'
-                    // );
-                  }
+                  (error) => {}
                 );
             } else {
               const dialogMessage = this.elRef.nativeElement.querySelector(
@@ -404,12 +402,7 @@ export class UsersComponent implements OnInit {
               }, 2000);
             }
           },
-          (error) => {
-            // this.openDialog(
-            //   'An error occurred while updating user data.',
-            //   'danger'
-            // );
-          }
+          (error) => {}
         );
     } else {
       const noChangesTxt =

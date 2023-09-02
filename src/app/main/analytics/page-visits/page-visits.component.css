@@ -1,0 +1,184 @@
+.custom-div {
+  background-color: #ffffff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adjust the values as needed */
+  padding: 20px 20px 0 20px;
+  margin: 10px;
+  flex: 1;
+  border-radius: 5px;
+}
+.custom-div > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.custom-div > p {
+  text-align: center;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+.custom-div > div > h3 {
+  font-size: 20px;
+  font-weight: bold;
+  position: relative;
+  top: 2px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-users-active-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.total-users-active {
+  width: 100%; /* Ensure the indicator spans the full width */
+}
+.active-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px; /* Height of the active indicator */
+  background-color: #55d853;
+  border-radius: 50%;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease; /* Smooth transition effect */
+}
+.total-users-active-wrapper.active .active-indicator {
+  opacity: 1; /* Show the active indicator when the wrapper has the 'active' class */
+}
+
+#visitHeader {
+  position: relative;
+  top: 7px;
+}
+
+.options-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.options {
+  display:flex;
+  justify-content: end !important;
+  gap: 20px !important;
+  width: 40%;
+}
+
+.options .options-control {
+  width: 100%;
+}
+
+.options label {
+  position: relative;
+  top: 5px;
+  font-weight: bold;
+}
+
+.content-container {
+  height: 80%;
+  overflow-y: auto;
+}
+
+.visits-information {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 20px 0 20px 0;
+}
+
+.visit-sub-list {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.visit-sub-list > p {
+  position: relative;
+  top: 5px;
+  font-weight:bold ;
+  color: rgba(0, 0, 0, 0.862);
+}
+
+.page-visits-count {
+  background: #D9D9D9;
+  text-align: center;
+  padding: 0px 20px;
+  border-radius: 4px;
+}
+
+.page-visits-count p {
+  position: relative;
+  top: 10px;
+}
+
+
+.table tbody tr:nth-child(odd) {
+  background: rgba(217, 217, 217, 0.486);
+}
+
+.table-date {
+  font-size: 10px !important;
+}
+
+.content-container {
+  height: 80%;
+  overflow-y: auto;
+}
+.action-cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.action-cont img {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-cont img:hover {
+  opacity: 0.8;
+}
+
+table tbody tr:hover {
+  opacity: 0.9;
+}
+
+.page-item {
+  cursor: pointer;
+}
+
+.pagination-cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left; /* To align the "Showing" message to the left */
+}
+
+.showing-pagination {
+  font-size: 15px;
+}
+
+.dialog-messages{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  display: none;
+}
+
+.dialog-messages p, .update-dialog-message p {
+  position: relative;
+  top: 7px;
+}

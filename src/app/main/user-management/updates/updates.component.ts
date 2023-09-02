@@ -67,10 +67,10 @@ export class UpdatesComponent implements OnInit {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
+            } else if (typeof value === 'number') {
+              return value == Number(this.searchTerm.toLowerCase());
             }
-            if (typeof value === 'number') {
-              return value === parseInt(this.searchTerm.toLowerCase(), 10);
-            }
+
             return false;
           })
       );

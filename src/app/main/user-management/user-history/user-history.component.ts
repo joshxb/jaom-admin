@@ -6,16 +6,14 @@ import {
   animate,
 } from '@angular/animations';
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
-import { ModalComponent } from '../../modal/modal.component';
 
 @Component({
-  selector: 'app-chats',
-  templateUrl: './chats.component.html',
-  styleUrls: ['./chats.component.css'],
+  selector: 'app-user-history',
+  templateUrl: './user-history.component.html',
+  styleUrls: ['./user-history.component.css'],
   animations: [
     trigger('modalAnimation', [
       state(
@@ -35,13 +33,13 @@ import { ModalComponent } from '../../modal/modal.component';
     ]),
   ],
 })
-export class ChatsComponent implements OnInit {
+export class UserHistoryComponent implements OnInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
-  chatsData!: any;
+  userHistoryData!: any;
   selectedUser: any;
-  filteredChats: any[] = [];
+  filteredUserHistory: any[] = [];
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -50,36 +48,27 @@ export class ChatsComponent implements OnInit {
     private usersManagementService: UsersManagementService,
     private router: Router,
     private route: ActivatedRoute,
-    private elRef: ElementRef,
-    private dialog: MatDialog
+    private elRef: ElementRef
   ) {}
 
   applySearchFilter() {
     if (!this.searchTerm) {
-      this.filteredChats = this.chatsData?.messages;
+      this.filteredUserHistory = this.userHistoryData?.data;
     } else {
-      this.filteredChats = this.chatsData?.messages.filter(
-        (chat: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(chat).some((value) => {
+      this.filteredUserHistory = this.userHistoryData?.data.filter(
+        (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
+          Object.values(user).some((value) => {
             if (typeof value === 'string') {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
+            }else if (typeof value === 'number') {
               return value == Number(this.searchTerm.toLowerCase());
             }
             return false;
           })
       );
     }
-  }
-
-  openDialog(s: any, type: string) {
-    const dialogRef = this.dialog.open(ModalComponent, {
-      data: { content: `${s}`, level: type },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   ngOnInit(): void {
@@ -89,29 +78,31 @@ export class ChatsComponent implements OnInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchchatsData(this.currentPage);
+      this.fetchUserHistoryData(this.currentPage);
     });
   }
 
-  fetchchatsData(page: number) {
-    this.usersManagementService.getAllChatsData(page).subscribe((res) => {
-      this.chatsData = res;
-      this.filteredChats = this.chatsData?.messages;
+  fetchUserHistoryData(page: number) {
+    this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
+      this.userHistoryData = res;
+      this.filteredUserHistory = this.userHistoryData?.data;
     });
   }
 
   getPages(): number[] {
-    const totalPages = this.chatsData?.last_page || 0;
+    const totalPages = this.userHistoryData?.last_page || 0;
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
   getCurrentPageEnd(): number {
-    return Math.ceil(this.chatsData?.total / this.chatsData?.per_page);
+    return Math.ceil(
+      this.userHistoryData?.total / this.userHistoryData?.per_page
+    );
   }
 
   onPageChange(page: number) {
     this.currentPage = page;
-    this.fetchchatsData(page);
+    this.fetchUserHistoryData(page);
 
     this.router.navigate([], {
       relativeTo: this.route,
@@ -125,7 +116,7 @@ export class ChatsComponent implements OnInit {
   }
 
   getPageRange(): number[] {
-    const totalPages = this.chatsData?.last_page || 0;
+    const totalPages = this.userHistoryData?.last_page || 0;
     const displayedPages = Math.min(totalPages, 5);
     const startPage = Math.max(
       this.currentPage - Math.floor(displayedPages / 2),
@@ -138,16 +129,11 @@ export class ChatsComponent implements OnInit {
     );
   }
 
-  deleteSpecificMessage(id: any) {
-    this.usersManagementService.deleteSpecificMessage(id).subscribe((res) => {
+  deleteSpecificUserHistory(id: any) {
+    this.usersManagementService.deleteUserHistory(id).subscribe((res) => {
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
-      const deleteDialogMessageP = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message p'
-      );
-
-      deleteDialogMessageP.textContent = res?.message;
       deleteDialogMessage.style.display = 'block';
 
       setTimeout(() => {

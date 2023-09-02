@@ -24,6 +24,7 @@
     "moment": "^2.29.4",
     "ng2-img-max": "^2.2.9",
     "ngx-cookie-service": "^15.0.0",
+    "ngx-device-detector": "^5.0.1",
     "pusher-js": "^8.3.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

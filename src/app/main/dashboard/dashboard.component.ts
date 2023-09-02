@@ -7,11 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CanvasJS, CanvasJSChart } from '@canvasjs/angular-charts';
+import { CanvasJS } from '@canvasjs/angular-charts';
 import { imageUrls } from 'src/app/app.component';
-import { Base, Redirects } from 'src/app/configuration/configuration.component';
+import { Base } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
+import { DateService } from 'src/app/configuration/assets/date.service';
+import { ChartService } from 'src/app/configuration/assets/chart.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,9 +21,6 @@ import { DashboardService } from 'src/app/configuration/services/dashboard/dashb
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('chart')
-  chart!: CanvasJSChart;
-
   imageUrls = new imageUrls();
 
   constructor(
@@ -30,7 +29,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private dashboardService: DashboardService,
     private adminService: AdminService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dateService: DateService,
+    private chartService: ChartService
   ) {}
   base = new Base();
   private baseUrl = this.base.baseUrl;
@@ -48,7 +49,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   selectedMonthIndex: number = Number(new Date().getMonth());
   selectedYear: number = new Date().getFullYear();
 
-  yearOptions: number[] = this.generateYearOptions();
+  yearOptions: number[] = this.dateService.generateYearOptions();
 
   async ngOnInit(): Promise<void> {
     this.setCurrentMonthAndYear();
@@ -78,29 +79,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.renderChartData();
   }
 
-  getMonths() {
-    const monthNames = [
-      'january',
-      'february',
-      'march',
-      'april',
-      'may',
-      'june',
-      'july',
-      'august',
-      'september',
-      'october',
-      'november',
-      'december',
-    ];
-
-    return monthNames;
-  }
-
   async setCurrentMonthAndYear() {
     const currentDate = new Date();
 
-    this.selectedMonth = this.getMonths()[currentDate.getMonth()];
+    this.selectedMonth = this.dateService.getMonths()[currentDate.getMonth()];
     // Set default parameters or the desired initial values
 
     if (
@@ -175,16 +157,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         });
       });
 
-      this.initializeChart(...chartDataPoints);
-    } else {
+      this.chartService.initializeChart('transactions', ...chartDataPoints);
     }
-  }
-
-  generateYearOptions(): number[] {
-    const currentYear = new Date().getFullYear();
-    const startYear = 2022;
-    const yearRange = currentYear - startYear + 1;
-    return Array.from({ length: yearRange }, (_, index) => startYear + index);
   }
 
   onMonthYearChange() {
@@ -220,39 +194,5 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dashboardService.getUpdatesCounts().subscribe((res) => {
       this.updateCounts = res?.update_count;
     });
-  }
-
-  initializeChart(...dataPoints: any) {
-    var chart;
-
-    if (dataPoints.length > 0) {
-      chart = new CanvasJS.Chart('chartContainer', {
-        title: {
-          text: '',
-        },
-        animationEnabled: true,
-        axisX: {
-          interval: 4,
-          intervalType: 'day',
-          valueFormatString: 'M-DD-YY', // Format for x-axis labels
-        },
-        data: [
-          {
-            type: 'area',
-            dataPoints: [...dataPoints],
-          },
-        ],
-      });
-    } else {
-      chart = new CanvasJS.Chart('chartContainer', {
-        title: {
-          text: 'No Donation Transactions Data',
-          fontSize: 18, // Adjust the font size
-          horizontalAlign: 'center', // Center align the title
-        },
-      });
-    }
-
-    chart.render();
   }
 }

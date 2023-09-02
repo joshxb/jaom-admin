@@ -73,6 +73,8 @@ export class ConfigurationsComponent implements OnInit {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
+            } else if (typeof value === 'number') {
+              return value == Number(this.searchTerm.toLowerCase());
             }
             return false;
           })

@@ -65,10 +65,9 @@ export class TodoComponent implements OnInit {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
-            }
-            if (typeof value === 'number') {
-              return value === parseInt(this.searchTerm.toLowerCase(), 10);
-            }
+          }else if (typeof value === 'number') {
+            return value == Number(this.searchTerm.toLowerCase());
+          }
             return false;
           })
       );

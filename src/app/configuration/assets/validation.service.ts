@@ -1,5 +1,9 @@
-export class ValidationService {
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root',
+})
+export class ValidationService {
   isValidEmail(email: string): boolean {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
@@ -11,7 +15,11 @@ export class ValidationService {
     return phoneNumberPattern.test(phoneNumber);
   }
 
-  replaceNicknameFirstPart(nickname: string, separators: string, replacement: string): string {
+  replaceNicknameFirstPart(
+    nickname: string,
+    separators: string,
+    replacement: string
+  ): string {
     const separatorIndex = nickname.indexOf(separators);
     if (separatorIndex !== -1) {
       const suffix = nickname.substring(separatorIndex);

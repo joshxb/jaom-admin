@@ -10,6 +10,18 @@ import { UpdatesComponent } from './main/user-management/updates/updates.compone
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
 import { DonationsComponent } from './main/transactions/donations/donations.component';
+import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
+import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
+
+const userManagementChildren: Routes = [
+  { path: 'users', component: UsersComponent },
+  { path: 'chats', component: ChatsComponent },
+  { path: 'rooms', component: RoomsComponent },
+  { path: 'updates', component: UpdatesComponent },
+  { path: 'todos', component: TodoComponent },
+  { path: 'configurations', component: ConfigurationsComponent },
+  { path: 'user-history', component: UserHistoryComponent }, // You can adjust the component as needed
+];
 
 const routes: Routes = [
   {
@@ -27,38 +39,18 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'user-management/users',
-    component: UsersComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'user-management/chats',
-    component: ChatsComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'user-management/rooms',
-    component: RoomsComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'user-management/updates',
-    component: UpdatesComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'user-management/todos',
-    component: TodoComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'user-management/configurations',
-    component: ConfigurationsComponent,
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'transactions/donations',
     component: DonationsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'analytics/page-visits',
+    component: PageVisitsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'user-management',
+    children: userManagementChildren,
     canActivate: [AuthGuard],
   },
 ];

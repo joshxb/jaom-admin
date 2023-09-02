@@ -1,3 +1,8 @@
+import { Injectable } from "@angular/core";
+
+@Injectable({
+  providedIn: 'root',
+})
 export class TextService {
   extractStylesAndText(dataText: string): {
     styles: { [key: string]: string };
@@ -41,5 +46,24 @@ export class TextService {
   getNicknameEnableAndDisable(nickname: string): boolean {
     const value = nickname.split('~!@#$%^&*()-=_+[]{}|;:,.<>?')[1];
     return JSON.parse(value);
+  }
+
+  getMonths() {
+    const monthNames = [
+      'january',
+      'february',
+      'march',
+      'april',
+      'may',
+      'june',
+      'july',
+      'august',
+      'september',
+      'october',
+      'november',
+      'december',
+    ];
+
+    return monthNames;
   }
 }

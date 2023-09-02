@@ -26,6 +26,10 @@ import { TextService } from './configuration/assets/text.service';
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
 import { DonationsComponent } from './main/transactions/donations/donations.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
+import { DateService } from './configuration/assets/date.service';
+import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +47,8 @@ import { DonationsComponent } from './main/transactions/donations/donations.comp
     TodoComponent,
     ConfigurationsComponent,
     DonationsComponent,
+    PageVisitsComponent,
+    UserHistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,11 +60,11 @@ import { DonationsComponent } from './main/transactions/donations/donations.comp
     FormsModule,
     ReactiveFormsModule,
     CanvasJSAngularChartsModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   exports: [NgModel],
 
-  providers: [AuthGuard, DatePipe, ValidationService, TextService],
+  providers: [AuthGuard, DatePipe, DeviceDetectorService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

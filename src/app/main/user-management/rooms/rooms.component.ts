@@ -78,10 +78,9 @@ export class RoomsComponent implements OnInit {
         Object.values(chat).some((value) => {
           if (typeof value === 'string') {
             return value.toLowerCase().includes(searchTerm.toLowerCase());
-          }
-          if (typeof value === 'number') {
-            return value === parseInt(searchTerm.toLowerCase(), 10);
-          }
+          } else if (typeof value === 'number') {
+          return value == Number(this.searchTerm.toLowerCase());
+        }
           return false;
         })
       );
