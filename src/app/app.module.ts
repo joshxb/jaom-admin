@@ -30,6 +30,8 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
 import { DateService } from './configuration/assets/date.service';
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
+import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
+import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import { UserHistoryComponent } from './main/user-management/user-history/user-h
     DonationsComponent,
     PageVisitsComponent,
     UserHistoryComponent,
+    DonationsInfoComponent,
+    ContactDetailsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - Modifications / Donation's Info</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>Donation's Information</p>
+          <div>
+            <p style="font-size: 14px">Bank Type</p>
+            <div class="s-panel-item">
+              <input
+                [value]="primaryMethod | uppercase"
+                type="text"
+                class=""
+                style="
+                  padding: 7px;
+                  border-color: transparent;
+                  border-radius: 5px;
+                  font-size: 12px;
+                  width: 150px;
+                  box-sizing: border-box;
+                  background: rgba(217, 217, 217, 0.21);
+                  text-align: center;
+                  color: rgb(128, 128, 128);
+                  text-overflow: ellipsis;
+                "
+                disabled
+              />
+              <select
+                [(ngModel)]="selectedBankType"
+                class="s-panel-inputs"
+                id="newFirstName"
+                placeholder="New value ...."
+                type="text"
+              >
+                <option value="">Select bank type</option>
+                <option *ngFor="let method of paymentMethods" [value]="method">
+                  {{ method | uppercase }}
+                </option>
+              </select>
+              <button
+                class="btnConfig btn-conf-v1"
+                [ngStyle]="{
+                  background: '#108898',
+                  'border-color': 'transparent',
+                  'border-radius': '5px',
+                  color: '#FFFFFF',
+                  padding: '6px 15px',
+                  cursor: 'pointer'
+                }"
+                (click)="updateConfigurations(0)"
+              >
+                Save
+              </button>
+            </div>
+            <p style="font-size: 10px; margin-top: 5px">
+              *Set bank type method to use for donations.
+            </p>
+            <hr />
+          </div>
+          <div>
+            <p style="font-size: 14px">Account Name</p>
+            <div class="s-panel-item">
+              <input
+                [value]="accountName"
+                type="text"
+                class=""
+                style="
+                  padding: 7px;
+                  border-color: transparent;
+                  border-radius: 5px;
+                  font-size: 12px;
+                  width: 150px;
+                  box-sizing: border-box;
+                  background: rgba(217, 217, 217, 0.21);
+                  text-align: center;
+                  color: rgb(128, 128, 128);
+                  text-overflow: ellipsis;
+                "
+                disabled
+              />
+              <input
+              [(ngModel)]="modifiedAccountName"
+                class="s-panel-inputs"
+                id="newFirstName"
+                placeholder="New value ...."
+                type="text"
+              />
+              <button
+              (click)="updateConfigurations(1)"
+                class="btnConfig btn-conf-v1"
+                [ngStyle]="{
+                  background: '#108898',
+                  'border-color': 'transparent',
+                  'border-radius': '5px',
+                  color: '#FFFFFF',
+                  padding: '6px 15px',
+                  cursor: 'pointer'
+                }"
+              >
+                Save
+              </button>
+            </div>
+            <p style="font-size: 10px; margin-top: 5px">
+              *A donation account name that is being used to send donations.
+            </p>
+            <hr />
+          </div>
+          <div>
+            <p style="font-size: 14px">Account Number</p>
+            <div class="s-panel-item">
+              <input
+                [value]="accountNumber"
+                type="text"
+                class=""
+                style="
+                  padding: 7px;
+                  border-color: transparent;
+                  border-radius: 5px;
+                  font-size: 12px;
+                  width: 150px;
+                  box-sizing: border-box;
+                  background: rgba(217, 217, 217, 0.21);
+                  text-align: center;
+                  color: rgb(128, 128, 128);
+                  text-overflow: ellipsis;
+                "
+                disabled
+              />
+              <input
+              [(ngModel)]="modifiedAccountNumber"
+                class="s-panel-inputs"
+                id="newFirstName"
+                placeholder="New value ...."
+                type="text"
+              />
+              <button
+              (click)="updateConfigurations(2)"
+                class="btnConfig btn-conf-v1"
+                [ngStyle]="{
+                  background: '#108898',
+                  'border-color': 'transparent',
+                  'border-radius': '5px',
+                  color: '#FFFFFF',
+                  padding: '6px 15px',
+                  cursor: 'pointer'
+                }"
+              >
+                Save
+              </button>
+            </div>
+            <p style="font-size: 10px; margin-top: 5px">
+              *A donation account number that is being used to send donations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-messages update-dialog-message">
+      <p class="text-success">Donation's Information successfully updated!</p>
+    </div>
+    <div class="dialog-messages info-dialog-message">
+      <p class="text-dark"></p>
+    </div>
+  </body>
+</html>

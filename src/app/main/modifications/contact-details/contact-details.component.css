@@ -25,6 +25,7 @@
 .action-cont img:hover {
   opacity: 0.8;
 }
+
 table tbody tr:hover {
   opacity: 0.9;
 }
@@ -168,3 +169,42 @@ table tbody tr:hover {
   font-size: 15px;
   display: none;
 }
+
+.s-panel-item {
+  margin-top: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 50px;
+}
+
+.s-panel-inputs {
+  padding: 7px;
+  border-color: transparent;
+  border-radius: 5px;
+  font-size: 12px;
+  width: 200px;
+  box-sizing: border-box;
+  background: rgba(16, 136, 152, 0.14);
+  color: rgb(128, 128, 128);
+  text-overflow: ellipsis;
+}
+
+.dialog-messages{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  display: none;
+}
+
+.dialog-messages p, .update-dialog-message p {
+  position: relative;
+  top: 7px;
+}
+

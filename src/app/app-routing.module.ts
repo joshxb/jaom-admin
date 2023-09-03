@@ -12,6 +12,8 @@ import { ConfigurationsComponent } from './main/user-management/configurations/c
 import { DonationsComponent } from './main/transactions/donations/donations.component';
 import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
+import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
+import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -20,7 +22,12 @@ const userManagementChildren: Routes = [
   { path: 'updates', component: UpdatesComponent },
   { path: 'todos', component: TodoComponent },
   { path: 'configurations', component: ConfigurationsComponent },
-  { path: 'user-history', component: UserHistoryComponent }, // You can adjust the component as needed
+  { path: 'user-history', component: UserHistoryComponent },
+];
+
+const modificationsChildren: Routes = [
+  { path: 'donations-info', component: DonationsInfoComponent },
+  { path: 'contact-details', component: ContactDetailsComponent },
 ];
 
 const routes: Routes = [
@@ -51,6 +58,11 @@ const routes: Routes = [
   {
     path: 'user-management',
     children: userManagementChildren,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'modifications',
+    children: modificationsChildren,
     canActivate: [AuthGuard],
   },
 ];

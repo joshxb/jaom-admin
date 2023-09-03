@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - Modifications / Contact Details</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>Contact Details</p>
+          <div>
+            <p style="font-size: 14px">Phone Number</p>
+            <div class="s-panel-item">
+              <input
+                [value]="phoneNumber"
+                type="text"
+                class=""
+                style="
+                  padding: 7px;
+                  border-color: transparent;
+                  border-radius: 5px;
+                  font-size: 12px;
+                  width: 150px;
+                  box-sizing: border-box;
+                  background: rgba(217, 217, 217, 0.21);
+                  text-align: center;
+                  color: rgb(128, 128, 128);
+                  text-overflow: ellipsis;
+                "
+                disabled
+              />
+              <input
+                [(ngModel)]="modifiedPhoneNumber"
+                class="s-panel-inputs"
+                id="newFirstName"
+                placeholder="New value ...."
+                type="text"
+              />
+              <button
+                (click)="updateConfigurations(0)"
+                class="btnConfig btn-conf-v1"
+                [ngStyle]="{
+                  background: '#108898',
+                  'border-color': 'transparent',
+                  'border-radius': '5px',
+                  color: '#FFFFFF',
+                  padding: '6px 15px',
+                  cursor: 'pointer'
+                }"
+              >
+                Save
+              </button>
+            </div>
+            <p style="font-size: 10px; margin-top: 5px">
+              *This phone number is used for feedbacks or concerns from users.
+            </p>
+            <hr />
+          </div>
+          <div>
+            <p style="font-size: 14px">Email Address</p>
+            <div class="s-panel-item">
+              <input
+                [value]="emailAddress"
+                type="text"
+                class=""
+                style="
+                  padding: 7px;
+                  border-color: transparent;
+                  border-radius: 5px;
+                  font-size: 12px;
+                  width: 150px;
+                  box-sizing: border-box;
+                  background: rgba(217, 217, 217, 0.21);
+                  text-align: center;
+                  color: rgb(128, 128, 128);
+                  text-overflow: ellipsis;
+                "
+                disabled
+              />
+              <input
+                [(ngModel)]="modifiedEmailAddress"
+                class="s-panel-inputs"
+                id="newFirstName"
+                placeholder="New value ...."
+                type="text"
+              />
+              <button
+                (click)="updateConfigurations(1)"
+                class="btnConfig btn-conf-v1"
+                [ngStyle]="{
+                  background: '#108898',
+                  'border-color': 'transparent',
+                  'border-radius': '5px',
+                  color: '#FFFFFF',
+                  padding: '6px 15px',
+                  cursor: 'pointer'
+                }"
+              >
+                Save
+              </button>
+            </div>
+            <p style="font-size: 10px; margin-top: 5px">
+              *-*This email address is used for feedbacks or concerns from
+              users.
+            </p>
+            <hr />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-messages update-dialog-message">
+      <p class="text-success">Contact Details successfully updated!</p>
+    </div>
+    <div class="dialog-messages info-dialog-message">
+      <p class="text-dark"></p>
+    </div>
+  </body>
+</html>
