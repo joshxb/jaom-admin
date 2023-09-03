@@ -176,6 +176,7 @@ export class DonationsInfoComponent implements OnInit {
           return;
         }
 
+        contactDetails.account_number = this.modifiedAccountNumber;
         data.donation_info_object = JSON.stringify(contactDetails);
         break;
 
