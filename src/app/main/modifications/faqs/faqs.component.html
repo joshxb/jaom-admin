@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - faqtions / FAQS</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>FAQS</p>
+          <div class="faqs-sub-container">
+            <div class="w-30">
+              <div>
+                <p style="font-size: 14px">Question</p>
+                <div class="s-panel-item">
+                  <input
+                  [(ngModel)]="addNewQuestion"
+                    class="s-panel-inputs"
+                    id="newFirstName"
+                    placeholder="Provide question here ....."
+                    type="text"
+                  />
+                </div>
+                <hr />
+              </div>
+              <div>
+                <p style="font-size: 14px">Definition</p>
+                <div class="s-panel-item">
+                  <textarea
+                  [(ngModel)]="addNewDefinition"
+                    class="s-panel-inputs"
+                    id="newFirstName"
+                    placeholder="Define the answer to the question here ......"
+                    style="resize: none"
+                    rows="5"
+                  ></textarea>
+                </div>
+                <button
+                (click)="addFaq()"
+                  class="btnConfig btn-conf-v1"
+                  [ngStyle]="{
+                    background: '#108898',
+                    'border-color': 'transparent',
+                    'border-radius': '5px',
+                    color: '#FFFFFF',
+                    padding: '6px 15px',
+                    cursor: 'pointer',
+                    'font-size': '12px',
+                    'font-weight': 'bold',
+                    'margin-top': '10px'
+                  }"
+                >
+                  Add FAQ
+                </button>
+                <p style="font-size: 10px; margin-top: 5px">
+                  *This will be added to the FAQS related to the purpose of the
+                  website.
+                </p>
+                <hr />
+              </div>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr *ngFor="let faq of faqsData">
+                  <td class="my-custom-td">
+                    <input
+                      type="checkbox"
+                      class="my-custom-checkbox"
+                      disabled
+                    />
+                    <div>
+                      <div class="my-custom-highlighted-text">
+                        {{ faq?.title }}
+                      </div>
+                      <div class="my-custom-location">
+                        {{ faq?.definition }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="custom-date">
+                    <img [src]="imageUrls.info" alt="" />
+                    <div>
+                      {{ faq?.created_at | date : "longDate" }}
+                    </div>
+                  </td>
+                  <td class="action-cont">
+                    <img
+                      (click)="openEditModal(faq?.id)"
+                      [src]="imageUrls.edit"
+                      alt=""
+                    />
+                    <img
+                      (click)="deleteFaq(faq?.id)"
+                      [src]="imageUrls.delete"
+                      alt=""
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dialog-messages delete-dialog-message">
+            <p class="text-danger"></p>
+          </div>
+          <div class="dialog-messages info-dialog-message">
+            <p class="text-dark"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-content">
+          <button
+            (click)="closeEditModal()"
+            type="button"
+            class="close exit-modal"
+            aria-label="Close"
+          >
+            X
+          </button>
+          <h2>Edit FAQ</h2>   
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label"
+                >Question:</label
+              >
+              <div class="col-sm-8">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Input new question......."
+                  [(ngModel)]="newQuestion"
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label"
+                >Definition:</label
+              >
+              <div class="col-sm-8">
+                <textarea
+                  class="form-control"
+                  rows="15"
+                  placeholder="Input new definition........"
+                  style="resize: none"
+                  [(ngModel)]="newDefinition"
+                ></textarea>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-9">
+                <br />
+                <button
+                  (click)="updateFaq()"
+                  class="btn btn-primary submit-btn"
+                  type="button"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+          <p class="text-danger text-center no-changes-txt">
+            No any changes yet!
+          </p>
+        </div>
+        <div class="update-dialog-message">
+          <p class="text-success">Data updated successfully!</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

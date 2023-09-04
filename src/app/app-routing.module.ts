@@ -14,6 +14,7 @@ import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.co
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
 import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
 import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
+import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -28,6 +29,7 @@ const userManagementChildren: Routes = [
 const modificationsChildren: Routes = [
   { path: 'donations-info', component: DonationsInfoComponent },
   { path: 'contact-details', component: ContactDetailsComponent },
+  { path: 'faqs', component: FaqsComponent },
 ];
 
 const routes: Routes = [

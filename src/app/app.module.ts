@@ -32,6 +32,7 @@ import { DateService } from './configuration/assets/date.service';
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
 import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
 import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
+import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { ContactDetailsComponent } from './main/modifications/contact-details/co
     UserHistoryComponent,
     DonationsInfoComponent,
     ContactDetailsComponent,
+    FaqsComponent,
   ],
   imports: [
     BrowserModule,
