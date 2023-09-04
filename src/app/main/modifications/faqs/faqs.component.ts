@@ -57,80 +57,101 @@ export class FaqsComponent implements OnInit {
   updateFaq() {
     const trimmedQuestion = this.newQuestion.trim();
     const trimmedDefinition = this.newDefinition.trim();
-  
+
     if (trimmedQuestion === '' && trimmedDefinition === '') {
       const infoDialogMessage = this.elRef.nativeElement.querySelector(
         '.info-dialog-message p'
       );
-  
+
       infoDialogMessage.textContent = 'No changes made!';
       infoDialogMessage.style.display = 'block';
-  
+
       setTimeout(() => {
         infoDialogMessage.style.display = 'none';
       }, 2000);
-  
+
       return;
     }
-  
+
     const data = {
       title: trimmedQuestion,
       definition: trimmedDefinition,
     };
-  
-    this.modificationService.updateFAQS(this.selectedFaqID, data)
+
+    this.modificationService
+      .updateFAQS(this.selectedFaqID, data)
       .subscribe(() => {
+        const updateDialogMessage = this.elRef.nativeElement.querySelector(
+          '.update-dialog-message'
+        );
+
+        updateDialogMessage.style.display = 'block';
         const updateDialogMessageP = this.elRef.nativeElement.querySelector(
           '.update-dialog-message p'
         );
-  
+
         updateDialogMessageP.textContent = 'FAQ updated successfully!';
-        updateDialogMessageP.style.display = 'block';
-  
+        updateDialogMessage.style.display = 'block';
+
         setTimeout(() => {
           updateDialogMessageP.style.display = 'none';
           window.location.reload();
         }, 2000);
       });
   }
-  
+
   addFaq() {
     const question = this.addNewQuestion.trim();
     const definition = this.addNewDefinition.trim();
-    const infoDialogMessage = this.elRef.nativeElement.querySelector('.info-dialog-message');
-    const infoDialogMessageP = this.elRef.nativeElement.querySelector('.info-dialog-message p');
-  
+    const infoDialogMessageP = this.elRef.nativeElement.querySelector(
+      '.info-dialog-message p'
+    );
+
     if (question === '' && definition === '') {
-      this.displayMessage(infoDialogMessageP, 'No any changes!');
+      this.displayInfoMessage(infoDialogMessageP, 'No any changes!');
     } else if (question === '') {
-      this.displayMessage(infoDialogMessageP, 'Question should not be empty!');
+      this.displayInfoMessage(infoDialogMessageP, 'Question should not be empty!');
     } else if (definition === '') {
-      this.displayMessage(infoDialogMessageP, 'Definition should not be empty!');
+      this.displayInfoMessage(
+        infoDialogMessageP,
+        'Definition should not be empty!'
+      );
     } else {
       const data = {
         title: question,
         definition: definition,
       };
-  
+
       this.modificationService.addFAQS(data).subscribe((res) => {
-        this.displayMessage(infoDialogMessageP, 'New Faq added successfully!');
+        const infoDialogMessage = this.elRef.nativeElement.querySelector(
+          '.success-dialog-message'
+        );
+        const infoDialogMessageP = this.elRef.nativeElement.querySelector(
+          '.success-dialog-message p'
+        );
+  
+        infoDialogMessage.style.display = 'block';
+
+        infoDialogMessageP.textContent = 'New Faq added successfully!';
+
         setTimeout(() => {
           window.location.reload();
         }, 2000);
       });
     }
   }
-  
-  private displayMessage(element: HTMLElement, message: string) {
+
+  private displayInfoMessage(element: HTMLElement, message: string) {
     element.textContent = message;
-    const infoDialogMessage = this.elRef.nativeElement.querySelector('.info-dialog-message');
+    const infoDialogMessage = this.elRef.nativeElement.querySelector(
+      '.info-dialog-message'
+    );
     infoDialogMessage.style.display = 'block';
-  
+
     setTimeout(() => {
       infoDialogMessage.style.display = 'none';
     }, 2000);
   }
-  
 
   deleteFaq(id: any) {
     this.modificationService.deleteFAQS(id).subscribe((res) => {
