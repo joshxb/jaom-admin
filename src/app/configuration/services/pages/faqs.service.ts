@@ -37,7 +37,6 @@ export class FaqsService {
     return this.http.get<any>(endpoint, { headers: headers });
   }
 
-  
   addFAQS(data: any): Observable<any> {
     const endpoint = `${this.apiFaqsURL}`;
     const headers = new HttpHeaders().set(

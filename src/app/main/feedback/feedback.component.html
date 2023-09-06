@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - Feedbacks / Concerns</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>Feedbacks / Concerns</p>
+          <div class="d-flex justify-content-end" style="margin: 20px">
+            <div class="input-group" style="width: 20%">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="applySearchFilter()"
+                placeholder="Search by ID, Sender ID, Receiver ID, Data, ...."
+                class="form-control"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <i class="fa fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr *ngFor="let feedback of filteredFeedbacks; let i = index">
+                <td><input type="checkbox" disabled /></td>
+                <td>User_ID = {{ feedback?.user_id }}</td>
+                <td style="overflow-x: auto; width: 50%">
+                  <p>{{ feedback?.description }}</p>
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: row;
+                      align-items: start;
+                      gap: 10px;
+                    "
+                  >
+                    <button
+                      (click)="
+                        addResponse(
+                          feedback?.id,
+                          feedback?.response_object,
+                          textareaValues[i]
+                        )
+                      "
+                      class="btnConfig btn-conf-v1"
+                      [ngStyle]="{
+                            background: '#108898',
+                            'border-color': 'transparent',
+                            'border-radius': '5px',
+                            color: '#FFFFFF',
+                            padding: '3px 9px',
+                            cursor: 'pointer',
+                            'font-size': '12px',
+                            'font-weight': 'bold',
+                        }"
+                    >
+                      Reply
+                    </button>
+                    <div class="s-panel-item">
+                      <textarea
+                        [(ngModel)]="textareaValues[i]"
+                        class="s-panel-inputs"
+                        id="newFirstName_{{ i }}"
+                        placeholder="Create a response message ......"
+                        style="resize: none"
+                        rows="5"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <br />
+                  <div id="accordion">
+                    <div>
+                      <div id="heading{{ i }}">
+                        <h5 class="mb-0">
+                          <button
+                            class="btn btn-link collapsed"
+                            data-toggle="collapse"
+                            [attr.data-target]="'#collapseTwo' + i"
+                            aria-expanded="false"
+                            [attr.aria-controls]="'collapseTwo' + i"
+                          >
+                            Show responses
+                          </button>
+                        </h5>
+                      </div>
+                      <div
+                        [id]="'collapseTwo' + i"
+                        class="collapse"
+                        [attr.aria-labelledby]="'heading' + i"
+                        data-parent="#accordion"
+                      >
+                        <div
+                          class="card-body"
+                          style="height: auto; overflow-y: auto"
+                        >
+                          <ng-container
+                            *ngIf="
+                              (feedback?.response_object | jsonDecode).length >
+                                0;
+                              else noResponses
+                            "
+                          >
+                            <div
+                              *ngFor="
+                                let response of feedback.response_object
+                                  | jsonDecode
+                              "
+                              style="padding: 10px 20px;text-align: justify;"
+                              readonly
+                              ><b>Response:</b> <span class="text-muted"> {{ response }}</span></div
+                            >
+                          </ng-container>
+                          <ng-template #noResponses>
+                            <p class="text-center">No response messages</p>
+                          </ng-template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ feedback?.date }}</td>
+                <td class="action-cont">
+                  <img
+                    (click)="deleteFeedback(feedback?.id)"
+                    [src]="imageUrls.delete"
+                    alt=""
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination-cont">
+            <ul class="pagination">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="onPageChange(1)"><<</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="onPageChange(currentPage - 1)"
+                  >Previous</a
+                >
+              </li>
+              <li
+                class="page-item"
+                *ngFor="let page of getPageRange()"
+                [class.active]="currentPage === page"
+              >
+                <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === feedbacksData?.last_page"
+              >
+                <a class="page-link" (click)="onPageChange(currentPage + 1)"
+                  >Next</a
+                >
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === feedbacksData?.last_page"
+              >
+                <a
+                  class="page-link"
+                  (click)="onPageChange(feedbacksData?.last_page)"
+                  >>></a
+                >
+              </li>
+            </ul>
+            <p class="text-muted showing-pagination">
+              Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
+              {{ feedbacksData?.total }} messages
+            </p>
+          </div>
+          <div class="dialog-messages delete-dialog-message">
+            <p class="text-danger">Feedback deleted successfully</p>
+          </div>
+          <div class="dialog-messages add-response-dialog-message">
+            <p class="text-success">Successfully added response message to feedback</p>
+          </div>
+          <div class="dialog-messages empty-dialog-message">
+            <p class="text-info">Response message should not be empty</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

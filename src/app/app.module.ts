@@ -18,21 +18,20 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { ProcessLoginComponent } from './process-login/process-login.component';
 import { UsersComponent } from './main/user-management/users/users.component';
 import { ModalComponent } from './main/modal/modal.component';
-import { ValidationService } from './configuration/assets/validation.service';
 import { ChatsComponent } from './main/user-management/chats/chats.component';
 import { RoomsComponent } from './main/user-management/rooms/rooms.component';
 import { UpdatesComponent } from './main/user-management/updates/updates.component';
-import { TextService } from './configuration/assets/text.service';
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
 import { DonationsComponent } from './main/transactions/donations/donations.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
-import { DateService } from './configuration/assets/date.service';
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
 import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
 import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
 import { FaqsComponent } from './main/modifications/faqs/faqs.component';
+import { FeedbackComponent } from './main/feedback/feedback.component';
+import { JsonDecodePipe } from './pipes/json-decode.pipe';
 
 @NgModule({
   declarations: [
@@ -55,6 +54,8 @@ import { FaqsComponent } from './main/modifications/faqs/faqs.component';
     DonationsInfoComponent,
     ContactDetailsComponent,
     FaqsComponent,
+    FeedbackComponent,
+    JsonDecodePipe,
   ],
   imports: [
     BrowserModule,

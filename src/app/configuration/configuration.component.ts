@@ -48,7 +48,7 @@ export class PusherCredentials {
   cred = '01a8b159fe93da3fed94';
   cluster = 'ap1';
   channel = 'chat';
-  event = 'message';
+event = 'message';
 }
 
 export enum Redirects {

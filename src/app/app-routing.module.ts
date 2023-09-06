@@ -15,6 +15,7 @@ import { UserHistoryComponent } from './main/user-management/user-history/user-h
 import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
 import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
 import { FaqsComponent } from './main/modifications/faqs/faqs.component';
+import { FeedbackComponent } from './main/feedback/feedback.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -65,6 +66,11 @@ const routes: Routes = [
   {
     path: 'modifications',
     children: modificationsChildren,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'feedbacks',
+    component: FeedbackComponent,
     canActivate: [AuthGuard],
   },
 ];
