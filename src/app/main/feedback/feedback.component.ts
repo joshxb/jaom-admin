@@ -156,7 +156,6 @@ export class FeedbackComponent implements OnInit {
   }
 
   addResponse(id: number, responseObject: any, response: string) {
-    console.log(responseObject);
     try {
       const decodedResponse = JSON.parse(responseObject.trim());
       if (Array.isArray(decodedResponse)) {

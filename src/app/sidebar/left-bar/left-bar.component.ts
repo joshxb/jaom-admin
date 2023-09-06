@@ -39,7 +39,6 @@ export class LeftBarComponent implements OnInit{
   // Example method to iterate through cached data using a for loop
   iterateThroughData() {
     for (const item of this.data) {
-      console.log(item); // Process each item in the data array
     }
   }
 }
