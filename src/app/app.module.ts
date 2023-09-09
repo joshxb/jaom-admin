@@ -32,6 +32,7 @@ import { ContactDetailsComponent } from './main/modifications/contact-details/co
 import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 import { FeedbackComponent } from './main/feedback/feedback.component';
 import { JsonDecodePipe } from './pipes/json-decode.pipe';
+import { SecurityComponent } from './main/security/security.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { JsonDecodePipe } from './pipes/json-decode.pipe';
     FaqsComponent,
     FeedbackComponent,
     JsonDecodePipe,
+    SecurityComponent,
   ],
   imports: [
     BrowserModule,

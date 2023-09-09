@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { imageUrls } from 'src/app/app.component';
+import { AuthService } from 'src/app/configuration/services/auth.service';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 
 @Component({
@@ -11,7 +12,8 @@ import { AdminService } from 'src/app/configuration/services/pages/admin.service
 export class LeftBarComponent implements OnInit{
   public data : any;
   constructor(
-    private adminService : AdminService
+    private adminService : AdminService,
+    private authService: AuthService
   ) {}
 
   imageUrls = new imageUrls();
@@ -40,5 +42,9 @@ export class LeftBarComponent implements OnInit{
   iterateThroughData() {
     for (const item of this.data) {
     }
+  }
+
+  logOut() {
+    this.authService.logout();
   }
 }

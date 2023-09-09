@@ -16,6 +16,7 @@ import { DonationsInfoComponent } from './main/modifications/donations-info/dona
 import { ContactDetailsComponent } from './main/modifications/contact-details/contact-details.component';
 import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 import { FeedbackComponent } from './main/feedback/feedback.component';
+import { SecurityComponent } from './main/security/security.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -71,6 +72,11 @@ const routes: Routes = [
   {
     path: 'feedbacks',
     component: FeedbackComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'security-control',
+    component: SecurityComponent,
     canActivate: [AuthGuard],
   },
 ];

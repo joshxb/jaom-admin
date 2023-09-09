@@ -115,10 +115,12 @@
                                 let response of feedback.response_object
                                   | jsonDecode
                               "
-                              style="padding: 10px 20px;text-align: justify;"
+                              style="padding: 10px 20px; text-align: justify"
                               readonly
-                              ><b>Response:</b> <span class="text-muted"> {{ response }}</span></div
                             >
+                              <b>Response:</b>
+                              <span class="text-muted"> {{ response }}</span>
+                            </div>
                           </ng-container>
                           <ng-template #noResponses>
                             <p class="text-center">No response messages</p>
@@ -184,7 +186,9 @@
             <p class="text-danger">Feedback deleted successfully</p>
           </div>
           <div class="dialog-messages add-response-dialog-message">
-            <p class="text-success">Successfully added response message to feedback</p>
+            <p class="text-success">
+              Successfully added response message to feedback
+            </p>
           </div>
           <div class="dialog-messages empty-dialog-message">
             <p class="text-info">Response message should not be empty</p>

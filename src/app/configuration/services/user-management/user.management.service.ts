@@ -49,7 +49,7 @@ export class UsersManagementService {
   }
 
   getRoomList(page: number): Observable<any> {
-    return this.roomService.getRoomList(page);
+    return this.roomService.getRoomList(page, 'local');
   }
 
   getRoomChatList(page: number): Observable<any> {

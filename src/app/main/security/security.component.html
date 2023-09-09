@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - Security / Control</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <app-left-bar id="sidebar"></app-left-bar>
+
+      <div class="content">
+        <app-top-bar id="top-bar"></app-top-bar>
+        <div class="content-container">
+          <p>Security / Control</p>
+          <div class="d-flex justify-content-end" style="margin: 20px">
+            <div class="input-group" style="width: 20%">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="applySearchFilter()"
+                placeholder="Search by Name...."
+                class="form-control"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <i class="fa fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 100%">
+            <div
+              style="border-right: 2px solid rgba(0, 0, 0, 0.258); width: 50%"
+            >
+              <div
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <div
+                  class="custom-control custom-checkbox"
+                  style="position: relative; top: -20px"
+                >
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="customCheck1"
+                    [(ngModel)]="autoAddRoom"
+                    (click)="updateConfigurations(0)"
+                  />
+                  <label
+                    class="custom-control-label"
+                    for="customCheck1"
+                  ></label>
+                </div>
+                <div>
+                  <p style="font-weight: bold; color: black">Auto Add Room:</p>
+                  <small
+                    class="text-muted"
+                    style="position: relative; top: -20px"
+                    >*Add default room to newly users</small
+                  >
+                </div>
+              </div>
+              <div class="s-panel-item">
+                <input
+                  class="s-panel-inputs"
+                  placeholder="Type name here ......"
+                  style="resize: none"
+                  rows="5"
+                  [(ngModel)]="roomName"
+                />
+                <form (ngSubmit)="uploadImage()" #imageForm="ngForm">
+                  <div class="form-group">
+                    <input
+                      type="file"
+                      class="form-control-file"
+                      id="fileInput"
+                      (change)="onFileSelected($event)"
+                      accept="image/*"
+                    />
+                  </div>
+                  <img
+                    [src]="uploadedImageUrl"
+                    alt=""
+                    style="width: 50px; height: 50px"
+                  />
+                </form>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  align-items: start;
+                  gap: 10px;
+                "
+              >
+                <button
+                  (click)="addDefaultRoom()"
+                  class="btnConfig btn-conf-v1"
+                  [ngStyle]="{
+                    background: '#108898',
+                    'border-color': 'transparent',
+                    'border-radius': '5px',
+                    color: '#FFFFFF',
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                    'font-size': '14px',
+                    'font-weight': 'bold',
+                    'margin-top': '20px'
+                  }"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+            <div
+              style="
+                padding: 0 10px;
+                height: 300px;
+                overflow-y: auto;
+                width: 50%;
+              "
+            >
+              <table
+                style="width: 100%"
+                *ngIf="filteredRoomListData.length > 0"
+              >
+                <tbody>
+                  <tr *ngFor="let list of filteredRoomListData; let i = index">
+                    <td style="padding: 0 20px">
+                      <div style="display: flex; flex-direction: row; gap: 5px">
+                        <img
+                          [src]="'data:image/jpeg;base64,' + list?.group_image"
+                          alt=""
+                          style="width: 40px; height: 40px; border-radius: 50%"
+                        />
+                        <div>
+                          <h4 style="font-size: 18px; font-weight: bold">
+                            {{ list?.name }}
+                          </h4>
+                          <small
+                            style="position: relative; top: -10px"
+                            class="text-muted"
+                            >Default Room</small
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <small>
+                        <b>Created at:</b><br />
+                        {{ list?.created_at | date : "longDate" }}
+                      </small>
+                    </td>
+                    <td class="action-cont">
+                      <img
+                        (click)="deleteDefaultRoom(list?.id)"
+                        [src]="imageUrls.delete"
+                        alt=""
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div
+                class="pagination-cont"
+                *ngIf="filteredRoomListData.length > 0"
+              >
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" (click)="onPageChange(1)"><<</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" (click)="onPageChange(currentPage - 1)"
+                      >Previous</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    *ngFor="let page of getPageRange()"
+                    [class.active]="currentPage === page"
+                  >
+                    <a class="page-link" (click)="onPageChange(page)">{{
+                      page
+                    }}</a>
+                  </li>
+                  <li
+                    class="page-item"
+                    [class.disabled]="currentPage === roomListData?.last_page"
+                  >
+                    <a class="page-link" (click)="onPageChange(currentPage + 1)"
+                      >Next</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    [class.disabled]="currentPage === roomListData?.last_page"
+                  >
+                    <a
+                      class="page-link"
+                      (click)="onPageChange(roomListData?.last_page)"
+                      >>></a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div
+                *ngIf="filteredRoomListData.length === 0"
+                style="width: 100%; text-align: center"
+              >
+                <p>No any default room</p>
+              </div>
+            </div>
+          </div>
+          <div class="content-container c-2">
+            <div>
+              <p style="font-weight: bold; color: black">Login Credentials</p>
+              <small class="text-muted" style="position: relative; top: -20px"
+                >**Choose credentials that users use to login with the
+                password</small
+              >
+              <div>
+                <div class="s-panel-item">
+                  <input
+                    [value]="primaryLogInMethod | uppercase"
+                    type="text"
+                    class=""
+                    style="
+                      padding: 7px;
+                      border-color: transparent;
+                      border-radius: 5px;
+                      font-size: 12px;
+                      width: 150px;
+                      box-sizing: border-box;
+                      background: rgba(217, 217, 217, 0.21);
+                      text-align: center;
+                      color: rgb(128, 128, 128);
+                      text-overflow: ellipsis;
+                    "
+                    disabled
+                  />
+                  <select
+                    [(ngModel)]="newLogInMethod"
+                    class="s-panel-inputs"
+                    id="newFirstName"
+                    type="text"
+                  >
+                    <option value="">Select new ...</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="both">Both</option>
+                  </select>
+                  <button
+                    (click)="updateConfigurations(1)"
+                    class="btnConfig btn-conf-v1"
+                    [ngStyle]="{
+                      background: '#108898',
+                      'border-color': 'transparent',
+                      'border-radius': '5px',
+                      color: '#FFFFFF',
+                      padding: '6px 15px',
+                      cursor: 'pointer'
+                    }"
+                  >
+                    Save
+                  </button>
+                </div>
+                <hr />
+              </div>
+            </div>
+            <br />
+            <div>
+              <p style="font-weight: bold; color: black">
+                Account Deactivation
+              </p>
+              <small class="text-muted" style="position: relative; top: -20px"
+                >***User’s account (not admin account) automatically deactivated
+                when not longer use in a specific time.</small
+              >
+              <div>
+                <div class="s-panel-item">
+                  <input
+                    [value]="primaryDeactivationPeriodMethod + ' year(s)'"
+                    type="text"
+                    class=""
+                    style="
+                      padding: 7px;
+                      border-color: transparent;
+                      border-radius: 5px;
+                      font-size: 12px;
+                      width: 150px;
+                      box-sizing: border-box;
+                      background: rgba(217, 217, 217, 0.21);
+                      text-align: center;
+                      color: rgb(128, 128, 128);
+                      text-overflow: ellipsis;
+                    "
+                    disabled
+                  />
+                  <select
+                    [(ngModel)]="newDeactivationPeriod"
+                    class="s-panel-inputs"
+                    id="newFirstName"
+                    placeholder="New value ...."
+                    type="text"
+                  >
+                    <option value="">Choose deactivation period ...</option>
+                    <option value="1">1 year</option>
+                    <option value="2">2 years</option>
+                    <option value="3">3 years</option>
+                    <option value=">3">above 3 years</option>
+                  </select>
+                  <button
+                    (click)="updateConfigurations(2)"
+                    class="btnConfig btn-conf-v1"
+                    [ngStyle]="{
+                      background: '#108898',
+                      'border-color': 'transparent',
+                      'border-radius': '5px',
+                      color: '#FFFFFF',
+                      padding: '6px 15px',
+                      cursor: 'pointer'
+                    }"
+                  >
+                    Save
+                  </button>
+                </div>
+                <hr />
+              </div>
+            </div>
+          </div>
+          <div class="dialog-messages add-dialog-message">
+            <p class="text-success">Default room added successfully</p>
+          </div>
+          <div class="dialog-messages delete-dialog-message">
+            <p class="text-danger">Default room deleted successfully</p>
+          </div>
+          <div class="dialog-messages update-dialog-message">
+            <p class="text-success">Default room updated successfully</p>
+          </div>
+          <div class="dialog-messages error-dialog-message">
+            <p class="text-danger"></p>
+          </div>
+          <div class="dialog-messages info-dialog-message">
+            <p class="text-dark"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
