@@ -129,7 +129,7 @@
                 <th>Sender ID</th>
                 <th>Sender Name</th>
                 <th>Room ID</th>
-                <th>Room Name</th>
+                <th>Chat</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Action</th>
@@ -141,7 +141,7 @@
                 <td>{{ data?.user_id}}</td>
                 <td>{{ data?.sender_name }}</td>
                 <td>{{ data?.group_id}}</td>
-                <td>{{ data?.group_name}}</td>
+                <td>{{ data?.content}}</td>
                 <td>{{ data?.created_at | date : "MMMM d, y" }}</td>
                 <td>{{ data?.created_at | date : "h:mm a" }}</td>
                 <td class="action-cont">
