@@ -1,3 +1,4 @@
+import { NotificationService } from './../../configuration/services/pages/notification.service';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,6 +13,7 @@ import {
   trigger,
 } from '@angular/animations';
 import { ConcernService } from 'src/app/configuration/services/concerns/concern.service';
+import { NotificationEnum } from 'src/app/configuration/enums/notifications.enum';
 
 @Component({
   selector: 'app-feedback',
@@ -49,12 +51,12 @@ export class FeedbackComponent implements OnInit {
   itemsPerPage = 1;
 
   constructor(
-    private usersManagementService: UsersManagementService,
     private router: Router,
     private route: ActivatedRoute,
     private elRef: ElementRef,
     private dialog: MatDialog,
-    private concernService: ConcernService
+    private concernService: ConcernService,
+    private notificationService: NotificationService
   ) {}
 
   applySearchFilter() {
@@ -155,7 +157,13 @@ export class FeedbackComponent implements OnInit {
     });
   }
 
-  addResponse(id: number, responseObject: any, response: string) {
+  addResponse(
+    other_id: number,
+    id: number,
+    description: string,
+    responseObject: any,
+    response: string
+  ) {
     try {
       const decodedResponse = JSON.parse(responseObject.trim());
       if (Array.isArray(decodedResponse)) {
@@ -167,13 +175,28 @@ export class FeedbackComponent implements OnInit {
           };
 
           this.concernService.addResponseFeedback(id, data).subscribe((res) => {
-            this.elRef.nativeElement.querySelector(
-              '.add-response-dialog-message'
-            ).style.display = 'block';
+            let parsedData: number[] = [];
+            parsedData.push(other_id);
 
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
+            const data = {
+              userIds: parsedData,
+              title: `${NotificationEnum.ResponseConcernNotification}: ${description}`,
+              name: ``,
+              content: `Response: ${response.trim()}`,
+              type: 'newMemberChatNotification',
+            };
+
+            this.notificationService
+              .addNewNotification(data)
+              .subscribe((response) => {
+                this.elRef.nativeElement.querySelector(
+                  '.add-response-dialog-message'
+                ).style.display = 'block';
+
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              });
           });
         } else {
           const emptyDialog = this.elRef.nativeElement.querySelector(

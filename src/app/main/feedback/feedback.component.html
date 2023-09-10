@@ -47,7 +47,9 @@
                     <button
                       (click)="
                         addResponse(
+                          feedback?.user_id,
                           feedback?.id,
+                          feedback?.description,
                           feedback?.response_object,
                           textareaValues[i]
                         )
@@ -72,7 +74,7 @@
                         class="s-panel-inputs"
                         id="newFirstName_{{ i }}"
                         placeholder="Create a response message ......"
-                        style="resize: none"
+                        style="resize: none; width: 100%"
                         rows="5"
                       ></textarea>
                     </div>
@@ -113,12 +115,12 @@
                             <div
                               *ngFor="
                                 let response of feedback.response_object
-                                  | jsonDecode
+                                  | jsonDecode; let i = index
                               "
                               style="padding: 10px 20px; text-align: justify"
                               readonly
                             >
-                              <b>Response:</b>
+                              <b>Response#{{i+1}}:</b>
                               <span class="text-muted"> {{ response }}</span>
                             </div>
                           </ng-container>
@@ -130,7 +132,10 @@
                     </div>
                   </div>
                 </td>
-                <td>{{ feedback?.date }}</td>
+                <td>
+                  <b>Created at:</b>
+                  {{ feedback?.created_at | date : "MM/dd/yyyy - h:mm a" }}
+                </td>
                 <td class="action-cont">
                   <img
                     (click)="deleteFeedback(feedback?.id)"

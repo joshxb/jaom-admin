@@ -171,6 +171,7 @@ table tbody tr:hover {
   justify-content: left;
   align-items: center;
   gap: 50px;
+  width: 100%;
 }
 
 .s-panel-inputs {
