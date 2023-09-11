@@ -17,6 +17,7 @@ import { ContactDetailsComponent } from './main/modifications/contact-details/co
 import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 import { FeedbackComponent } from './main/feedback/feedback.component';
 import { SecurityComponent } from './main/security/security.component';
+import { SettingsComponent } from './main/settings/settings.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -77,6 +78,11 @@ const routes: Routes = [
   {
     path: 'security-control',
     component: SecurityComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
     canActivate: [AuthGuard],
   },
 ];

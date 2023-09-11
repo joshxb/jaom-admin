@@ -17,25 +17,7 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
   imageUrls = new imageUrls();

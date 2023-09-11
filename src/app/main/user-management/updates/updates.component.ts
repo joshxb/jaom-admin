@@ -16,25 +16,7 @@ import { TextService } from 'src/app/configuration/assets/text.service';
 @Component({
   selector: 'app-updates',
   templateUrl: './updates.component.html',
-  styleUrls: ['./updates.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./updates.component.css']
 })
 export class UpdatesComponent implements OnInit {
   imageUrls = new imageUrls();

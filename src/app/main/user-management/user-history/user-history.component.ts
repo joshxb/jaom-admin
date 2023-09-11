@@ -13,25 +13,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 @Component({
   selector: 'app-user-history',
   templateUrl: './user-history.component.html',
-  styleUrls: ['./user-history.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./user-history.component.css']
 })
 export class UserHistoryComponent implements OnInit {
   imageUrls = new imageUrls();

@@ -23,25 +23,7 @@ import { AnalyticsService } from 'src/app/configuration/services/analytics/analy
 @Component({
   selector: 'app-page-visits',
   templateUrl: './page-visits.component.html',
-  styleUrls: ['./page-visits.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./page-visits.component.css']
 })
 export class PageVisitsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();

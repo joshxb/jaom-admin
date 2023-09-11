@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -13,11 +6,12 @@ import { ModificationsService } from 'src/app/configuration/services/modificatio
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 
 @Component({
-  selector: 'app-donations-info',
-  templateUrl: './donations-info.component.html',
-  styleUrls: ['./donations-info.component.css']
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css']
 })
-export class DonationsInfoComponent implements OnInit {
+export class SettingsComponent implements OnInit {
+
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -34,8 +28,14 @@ export class DonationsInfoComponent implements OnInit {
   accountName: any = null;
   accountNumber: any = null;
   selectedBankType: string = '';
+  selectedTheme: string = '';
   modifiedAccountName: string = '';
   modifiedAccountNumber: string = '';
+  modifiedAccountAge: any = null;
+  modifiedAccountEmail: any = null;
+  modifiedAccountPhone: any = null;
+  modifiedlocation: any = null;
+  modifiedAccountNewPass: any = null;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -107,8 +107,8 @@ export class DonationsInfoComponent implements OnInit {
 
     switch (index) {
       case 0:
-        if (!this.selectedBankType) {
-          handleEmptyValue('selectedBankType', 'Bank type should be selected!');
+        if (!this.selectedTheme) {
+          handleEmptyValue('Bank type should be selected!');
           return;
         }
 
@@ -124,7 +124,6 @@ export class DonationsInfoComponent implements OnInit {
       case 1:
         if (!this.modifiedAccountName) {
           handleEmptyValue(
-            'modifiedAccountName',
             'Account name should not be empty!'
           );
           return;
@@ -132,7 +131,6 @@ export class DonationsInfoComponent implements OnInit {
 
         if (this.modifiedAccountName.trim().length <= 5) {
           handleEmptyValue(
-            'modifiedAccountName',
             'Must have at least 6 characters!'
           );
           return;
@@ -145,7 +143,6 @@ export class DonationsInfoComponent implements OnInit {
       case 2:
         if (!this.modifiedAccountNumber) {
           handleEmptyValue(
-            'modifiedAccountNumber',
             'Account number should not be empty!'
           );
           return;
@@ -260,3 +257,4 @@ export class DonationsInfoComponent implements OnInit {
     });
   }
 }
+

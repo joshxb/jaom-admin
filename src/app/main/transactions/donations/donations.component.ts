@@ -15,25 +15,7 @@ import { TransactionsService } from 'src/app/configuration/services/transactions
 @Component({
   selector: 'app-donations',
   templateUrl: './donations.component.html',
-  styleUrls: ['./donations.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./donations.component.css']
 })
 export class DonationsComponent implements OnInit {
   imageUrls = new imageUrls();

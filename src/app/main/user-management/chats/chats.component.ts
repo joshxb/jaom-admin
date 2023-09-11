@@ -15,25 +15,7 @@ import { ModalComponent } from '../../modal/modal.component';
 @Component({
   selector: 'app-chats',
   templateUrl: './chats.component.html',
-  styleUrls: ['./chats.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./chats.component.css']
 })
 export class ChatsComponent implements OnInit {
   imageUrls = new imageUrls();

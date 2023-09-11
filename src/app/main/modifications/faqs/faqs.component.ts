@@ -12,25 +12,7 @@ import { ModificationsService } from 'src/app/configuration/services/modificatio
 @Component({
   selector: 'app-faqs',
   templateUrl: './faqs.component.html',
-  styleUrls: ['./faqs.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./faqs.component.css']
 })
 export class FaqsComponent implements OnInit {
   imageUrls = new imageUrls();
@@ -129,7 +111,7 @@ export class FaqsComponent implements OnInit {
         const infoDialogMessageP = this.elRef.nativeElement.querySelector(
           '.success-dialog-message p'
         );
-  
+
         infoDialogMessage.style.display = 'block';
 
         infoDialogMessageP.textContent = 'New Faq added successfully!';

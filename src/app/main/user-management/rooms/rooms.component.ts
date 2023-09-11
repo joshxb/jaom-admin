@@ -15,25 +15,7 @@ import { ModalComponent } from '../../modal/modal.component';
 @Component({
   selector: 'app-rooms',
   templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./rooms.component.css']
 })
 export class RoomsComponent implements OnInit {
   imageUrls = new imageUrls();

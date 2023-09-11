@@ -15,25 +15,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 @Component({
   selector: 'app-contact-details',
   templateUrl: './contact-details.component.html',
-  styleUrls: ['./contact-details.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./contact-details.component.css']
 })
 export class ContactDetailsComponent implements OnInit {
   imageUrls = new imageUrls();

@@ -18,25 +18,7 @@ import { NotificationEnum } from 'src/app/configuration/enums/notifications.enum
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.css'],
-  animations: [
-    trigger('modalAnimation', [
-      state(
-        'active',
-        style({
-          transform: 'translateY(0)',
-          opacity: 1,
-        })
-      ),
-      transition('void => active', [
-        style({
-          transform: 'translateY(-20px)',
-          opacity: 0,
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
-  ],
+  styleUrls: ['./feedback.component.css']
 })
 export class FeedbackComponent implements OnInit {
   imageUrls = new imageUrls();
