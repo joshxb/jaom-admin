@@ -33,6 +33,7 @@ export class AdminService {
     );
     return this.http.put<any>(this.apiUserUrl + `s/${user}`, formData, { headers });
   }
+  
   getUserCounts(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',

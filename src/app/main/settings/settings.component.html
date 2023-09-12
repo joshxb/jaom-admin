@@ -296,7 +296,7 @@
               <p style="font-size: 14px">Password</p>
               <div class="s-panel-item">
                 <input
-                  [value]="'09785679569'"
+                  [value]="'**********'"
                   type="text"
                   class=""
                   style="
@@ -311,6 +311,7 @@
                     color: rgb(128, 128, 128);
                     text-overflow: ellipsis;
                   "
+                  placeholder="password is encrypted"
                   disabled
                 />
                 <div>
@@ -323,7 +324,7 @@
                   /><br />
                   <input
                     style="margin-top: 10px"
-                    [(ngModel)]="modifiedAccountNewPass"
+                    [(ngModel)]="modifiedAccountConfirmPass"
                     class="s-panel-inputs"
                     id="confirmAccountPass"
                     placeholder="Confirm password ...."

@@ -19,16 +19,20 @@
         <img [src]="imageUrls.dash" alt="" /> &nbsp;&nbsp;Dashboard
       </a>
     </li>
-    <li>
+    <li style="cursor: pointer">
       <a
-        href="#dashSubmenu"
+        (click)="toggleDropdown(0)"
         data-toggle="collapse"
-        aria-expanded="false"
-        class="dropdown-toggle"
+        [class.dropdown-toggle]="!isUserManagementExpanded"
+        [attr.aria-expanded]="isUserManagementExpanded"
         ><img style="width: 28px" [src]="imageUrls.user_management" alt="" />
         &nbsp;&nbsp;User Management</a
       >
-      <ul class="collapse list-unstyled" id="dashSubmenu">
+      <ul
+        class="collapse list-unstyled"
+        id="dashSubmenu"
+        [class.show]="isUserManagementExpanded"
+      >
         <li><a [routerLink]="['/user-management', 'users']">Users</a></li>
         <li><a [routerLink]="['/user-management', 'chats']">Chats</a></li>
         <li><a [routerLink]="['/user-management', 'rooms']">Rooms</a></li>
@@ -46,39 +50,47 @@
         </li>
       </ul>
     </li>
-    <li>
+    <li style="cursor: pointer">
       <a
-        href="#transSubmenu"
+        (click)="toggleDropdown(1)"
         data-toggle="collapse"
-        aria-expanded="false"
-        class="dropdown-toggle"
+        [attr.aria-expanded]="isTransactionsExpanded"
+        [class.dropdown-toggle]="!isTransactionsExpanded"
         ><img [src]="imageUrls.trans" alt="" /> &nbsp;&nbsp;Transactions</a
       >
-      <ul class="collapse list-unstyled" id="transSubmenu">
+      <ul
+        [class.show]="isTransactionsExpanded"
+        class="collapse list-unstyled"
+        id="transSubmenu"
+      >
         <li><a [routerLink]="['/transactions', 'donations']">Donations</a></li>
       </ul>
     </li>
-    <li>
+    <li style="cursor: pointer">
       <a
-        href="#analyticsSubmenu"
+        (click)="toggleDropdown(2)"
         data-toggle="collapse"
-        aria-expanded="false"
-        class="dropdown-toggle"
+        [attr.aria-expanded]="isAnalyticsExpanded"
+        [class.dropdown-toggle]="!isAnalyticsExpanded"
         ><img [src]="imageUrls.analytics" alt="" /> &nbsp;&nbsp;Analytics</a
       >
-      <ul class="collapse list-unstyled" id="analyticsSubmenu">
+      <ul
+        [class.show]="isAnalyticsExpanded"
+        class="collapse list-unstyled"
+        id="analyticsSubmenu"
+      >
         <li><a [routerLink]="['/analytics', 'page-visits']">Page Visits</a></li>
       </ul>
     </li>
-    <li>
+    <li style="cursor: pointer">
       <a
-        href="#modifySubmenu"
+      (click)="toggleDropdown(3)"
         data-toggle="collapse"
-        aria-expanded="false"
-        class="dropdown-toggle"
+        [attr.aria-expanded]="isModificationsExpanded"
+        [class.dropdown-toggle]="!isModificationsExpanded"
         ><img [src]="imageUrls.edit" alt="" /> &nbsp;&nbsp;Modifications</a
       >
-      <ul class="collapse list-unstyled" id="modifySubmenu">
+      <ul [class.show]="isModificationsExpanded" class="collapse list-unstyled" id="modifySubmenu">
         <li>
           <a [routerLink]="['/modifications', 'donations-info']"
             >Donation's Info</a

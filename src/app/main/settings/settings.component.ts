@@ -23,6 +23,7 @@ export class SettingsComponent implements OnInit {
   modifiedAccountPhone: any = null;
   modifiedlocation: any = null;
   modifiedAccountNewPass: any = null;
+  modifiedAccountConfirmPass: any = null;
 
   constructor(
     private elRef: ElementRef,
@@ -136,7 +137,34 @@ export class SettingsComponent implements OnInit {
         this.updateCachedAdminData('location', this.modifiedlocation);
         name = 'Location';
         break;
+      case 6:
+        if (!this.modifiedAccountNewPass) {
+          handleEmptyValue('New password is required!');
+          return;
+        }
 
+        if (this.modifiedAccountNewPass.length < 5) {
+          handleEmptyValue('Password must have at least 6 characters!');
+          return;
+        }
+
+        if (!this.modifiedAccountConfirmPass) {
+          handleEmptyValue('Password confirmation is required!');
+          return;
+        }
+
+        if (!this.validationService.isPasswordsMatch(
+            this.modifiedAccountNewPass,
+            this.modifiedAccountConfirmPass
+          )
+        ) {
+          handleEmptyValue('Password does not match!');
+          return;
+        }
+        data['password'] = this.modifiedAccountNewPass;
+        this.updateCachedAdminData('password', this.modifiedAccountNewPass);
+        name = 'password';
+        break;
       default:
         return;
     }

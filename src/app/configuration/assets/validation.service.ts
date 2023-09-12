@@ -31,4 +31,8 @@ export class ValidationService {
   isValidAge(age: number): boolean {
     return age >= 18 && age <= 100;
   }
+
+  isPasswordsMatch(password: string, confirmPassword: string): boolean {
+    return password.trim() === confirmPassword.trim();
+  }
 }

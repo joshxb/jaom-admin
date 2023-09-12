@@ -7,3 +7,11 @@
   margin-right: 5px;
 }
 
+.collapse {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.show {
+  opacity: 1;
+}
