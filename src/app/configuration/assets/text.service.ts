@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +46,18 @@ export class TextService {
   getNicknameEnableAndDisable(nickname: string): boolean {
     const value = nickname.split('~!@#$%^&*()-=_+[]{}|;:,.<>?')[1];
     return JSON.parse(value);
+  }
+
+  calculateAge(selectedDate: string): number {
+    const birthDate = new Date(selectedDate);
+    const currentDate = new Date();
+
+    const ageInMilliseconds = currentDate.getTime() - birthDate.getTime();
+    const ageInYears = Math.floor(
+      ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000)
+    ); // 365.25 days in a year
+
+    return ageInYears;
   }
 
   getMonths() {

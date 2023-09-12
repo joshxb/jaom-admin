@@ -26,6 +26,13 @@ export class AdminService {
     return this.http.get<any>(this.apiUserUrl, { headers });
   }
 
+  updateOtherUserData(user : number, formData : any) {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+    return this.http.put<any>(this.apiUserUrl + `s/${user}`, formData, { headers });
+  }
   getUserCounts(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',

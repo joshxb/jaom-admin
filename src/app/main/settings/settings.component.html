@@ -20,7 +20,7 @@
             </p>
             <div class="s-panel-item">
               <input
-                value="Light"
+                [value]="getCachedAdminData('theme').toUpperCase()"
                 type="text"
                 class=""
                 style="
@@ -71,7 +71,9 @@
               <p style="font-size: 14px">Name</p>
               <div class="s-panel-item">
                 <input
-                  [value]="accountName"
+                  value="{{ getCachedAdminData('firstname') }} {{
+                    getCachedAdminData('lastname')
+                  }}"
                   type="text"
                   class=""
                   style="
@@ -88,13 +90,22 @@
                   "
                   disabled
                 />
-                <input
-                  [(ngModel)]="modifiedAccountName"
-                  class="s-panel-inputs"
-                  id="newFirstName"
-                  placeholder="New value ...."
-                  type="text"
-                />
+                <div>
+                  <input
+                    [(ngModel)]="modifiedAccountFirstName"
+                    class="s-panel-inputs"
+                    placeholder="New firstname ...."
+                    type="text"
+                  /><br />
+                  <input
+                    [(ngModel)]="modifiedAccountLastName"
+                    class="s-panel-inputs"
+                    placeholder="New lastname ...."
+                    type="text"
+                    style="margin-top: 10px"
+                  />
+                </div>
+
                 <button
                   (click)="updateConfigurations(1)"
                   class="btnConfig btn-conf-v1"
@@ -113,7 +124,7 @@
               <p style="font-size: 14px">Age</p>
               <div class="s-panel-item">
                 <input
-                  [value]="'21 years old'"
+                  value="{{getCachedAdminData('age')}} years old"
                   type="text"
                   class=""
                   style="
@@ -134,11 +145,11 @@
                   [(ngModel)]="modifiedAccountAge"
                   class="s-panel-inputs"
                   id="newAge"
-                  placeholder="New value ...."
-                  type="text"
+                  placeholder="Select a date ..."
+                  type="date"
                 />
                 <button
-                  (click)="updateConfigurations(1)"
+                  (click)="updateConfigurations(2)"
                   class="btnConfig btn-conf-v1"
                   [ngStyle]="{
                     background: '#108898',
@@ -152,11 +163,11 @@
                   Save
                 </button>
               </div>
-              <hr>
+              <hr />
               <p style="font-size: 14px">Email Address</p>
               <div class="s-panel-item">
                 <input
-                  [value]="'algadipej962@gmail.com'"
+                  [value]="getCachedAdminData('email')"
                   type="text"
                   class=""
                   style="
@@ -181,7 +192,7 @@
                   type="text"
                 />
                 <button
-                  (click)="updateConfigurations(1)"
+                  (click)="updateConfigurations(3)"
                   class="btnConfig btn-conf-v1"
                   [ngStyle]="{
                     background: '#108898',
@@ -195,11 +206,11 @@
                   Save
                 </button>
               </div>
-              <hr>
+              <hr />
               <p style="font-size: 14px">Phone Number</p>
               <div class="s-panel-item">
                 <input
-                  [value]="'09785679569'"
+                  [value]="getCachedAdminData('phone')"
                   type="text"
                   class=""
                   style="
@@ -224,7 +235,7 @@
                   type="text"
                 />
                 <button
-                  (click)="updateConfigurations(1)"
+                  (click)="updateConfigurations(4)"
                   class="btnConfig btn-conf-v1"
                   [ngStyle]="{
                     background: '#108898',
@@ -238,11 +249,11 @@
                   Save
                 </button>
               </div>
-              <hr>
+              <hr />
               <p style="font-size: 14px">Location</p>
               <div class="s-panel-item">
                 <input
-                  [value]="'Cebu City'"
+                  [value]="getCachedAdminData('location')"
                   type="text"
                   class=""
                   style="
@@ -267,7 +278,7 @@
                   type="text"
                 />
                 <button
-                  (click)="updateConfigurations(1)"
+                  (click)="updateConfigurations(5)"
                   class="btnConfig btn-conf-v1"
                   [ngStyle]="{
                     background: '#108898',
@@ -281,7 +292,7 @@
                   Save
                 </button>
               </div>
-              <hr>
+              <hr />
               <p style="font-size: 14px">Password</p>
               <div class="s-panel-item">
                 <input
@@ -302,24 +313,25 @@
                   "
                   disabled
                 />
-                <div >
+                <div>
                   <input
-                  [(ngModel)]="modifiedAccountNewPass"
-                  class="s-panel-inputs"
-                  id="newAccountPass"
-                  placeholder="New password ...."
-                  type="text"
-                /><br>
-                <input style="margin-top: 10px;"
-                [(ngModel)]="modifiedAccountNewPass"
-                class="s-panel-inputs"
-                id="confirmAccountPass"
-                placeholder="Confirm password ...."
-                type="text"
-              />
+                    [(ngModel)]="modifiedAccountNewPass"
+                    class="s-panel-inputs"
+                    id="newAccountPass"
+                    placeholder="New password ...."
+                    type="text"
+                  /><br />
+                  <input
+                    style="margin-top: 10px"
+                    [(ngModel)]="modifiedAccountNewPass"
+                    class="s-panel-inputs"
+                    id="confirmAccountPass"
+                    placeholder="Confirm password ...."
+                    type="text"
+                  />
                 </div>
                 <button
-                  (click)="updateConfigurations(1)"
+                  (click)="updateConfigurations(6)"
                   class="btnConfig btn-conf-v1"
                   [ngStyle]="{
                     background: '#108898',
@@ -333,7 +345,7 @@
                   Save
                 </button>
               </div>
-              <hr>
+              <hr />
             </div>
           </div>
         </div>

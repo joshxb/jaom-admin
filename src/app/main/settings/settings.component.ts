@@ -1,36 +1,23 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { TextService } from 'src/app/configuration/assets/text.service';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
-import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
+import { SettingsService } from 'src/app/configuration/services/settings/settings.service';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
-
   imageUrls = new imageUrls();
-
-  searchTerm: string = '';
-  userHistoryData!: any;
   selectedUser: any;
-  filteredUserHistory: any[] = [];
 
-  currentPage = 1;
-  itemsPerPage = 1;
-
-  paymentMethods!: any;
-  primaryMethod: any = null;
-  modificationsData: any = null;
-  accountName: any = null;
-  accountNumber: any = null;
-  selectedBankType: string = '';
   selectedTheme: string = '';
-  modifiedAccountName: string = '';
-  modifiedAccountNumber: string = '';
+  modifiedAccountFirstName: string = '';
+  modifiedAccountLastName: string = '';
   modifiedAccountAge: any = null;
   modifiedAccountEmail: any = null;
   modifiedAccountPhone: any = null;
@@ -38,61 +25,15 @@ export class SettingsComponent implements OnInit {
   modifiedAccountNewPass: any = null;
 
   constructor(
-    private usersManagementService: UsersManagementService,
-    private router: Router,
-    private route: ActivatedRoute,
     private elRef: ElementRef,
     private modificationsService: ModificationsService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private settingsService: SettingsService,
+    private cacheService: CacheService,
+    private textService: TextService
   ) {}
 
-  applySearchFilter() {
-    if (!this.searchTerm) {
-      this.filteredUserHistory = this.userHistoryData?.data;
-    } else {
-      this.filteredUserHistory = this.userHistoryData?.data.filter(
-        (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(user).some((value) => {
-            if (typeof value === 'string') {
-              return value
-                .toLowerCase()
-                .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
-              return value == Number(this.searchTerm.toLowerCase());
-            }
-            return false;
-          })
-      );
-    }
-  }
-
-  getParseConfigurations(value: any, option: string) {
-    const { data } = value;
-    const donationInfoObject = JSON.parse(data.donation_info_object);
-    const bankType = donationInfoObject?.bank_type;
-
-    if (option === 'methods') {
-      return Object.keys(bankType).map((key) => key.toLowerCase());
-    } else if (option === 'primary' || option === 'secondary') {
-      const foundKey = Object.keys(bankType).find(
-        (key) => bankType[key].toLowerCase() === option
-      );
-      return foundKey || null;
-    } else {
-      return donationInfoObject[option] || null;
-    }
-
-    return null;
-  }
-
   updateConfigurations(index: number) {
-    if (!this.modificationsData) {
-      return;
-    }
-
-    const data = { ...this.modificationsData };
-    const contactDetails = JSON.parse(data.donation_info_object);
-
     const handleEmptyValue = (errorMessage: string) => {
       const element = this.elRef.nativeElement.querySelector(
         '.info-dialog-message'
@@ -105,156 +46,141 @@ export class SettingsComponent implements OnInit {
       }, 2000);
     };
 
+    const data: { [key: string]: string } = {};
+    let name = '';
     switch (index) {
       case 0:
         if (!this.selectedTheme) {
-          handleEmptyValue('Bank type should be selected!');
+          handleEmptyValue('Theme background should be selected!');
           return;
         }
-
-        for (const key in contactDetails.bank_type) {
-          if (contactDetails.bank_type.hasOwnProperty(key)) {
-            contactDetails.bank_type[key] =
-              key === this.selectedBankType ? 'primary' : 'secondary';
-          }
-        }
-        data.donation_info_object = JSON.stringify(contactDetails);
         break;
-
       case 1:
-        if (!this.modifiedAccountName) {
-          handleEmptyValue(
-            'Account name should not be empty!'
-          );
+        if (!this.modifiedAccountFirstName && !this.modifiedAccountLastName) {
+          handleEmptyValue('There should be any changes!');
           return;
         }
 
-        if (this.modifiedAccountName.trim().length <= 5) {
-          handleEmptyValue(
-            'Must have at least 6 characters!'
+        if (this.modifiedAccountFirstName) {
+          data['firstname'] = this.modifiedAccountFirstName;
+          this.updateCachedAdminData(
+            'firstname',
+            this.modifiedAccountFirstName
           );
-          return;
+        }
+        if (this.modifiedAccountLastName) {
+          data['lastname'] = this.modifiedAccountLastName;
+          this.updateCachedAdminData('lastname', this.modifiedAccountLastName);
         }
 
-        contactDetails.account_name = this.modifiedAccountName;
-        data.donation_info_object = JSON.stringify(contactDetails);
+        name = 'Account name';
         break;
-
       case 2:
-        if (!this.modifiedAccountNumber) {
-          handleEmptyValue(
-            'Account number should not be empty!'
-          );
+        if (!this.modifiedAccountAge) {
+          handleEmptyValue('Age should not be empty!');
+          return;
+        }
+        if (
+          !this.validationService.isValidAge(
+            this.textService.calculateAge(this.modifiedAccountAge)
+          )
+        ) {
+          handleEmptyValue('Invalid age required!');
+          return;
+        }
+        data['age'] = this.textService
+          .calculateAge(this.modifiedAccountAge)
+          .toString();
+        this.updateCachedAdminData(
+          'age',
+          this.textService.calculateAge(this.modifiedAccountAge)
+        );
+        name = 'Age';
+        break;
+      case 3:
+        if (!this.modifiedAccountEmail) {
+          handleEmptyValue('Email should not be empty!');
+          return;
+        }
+
+        if (!this.validationService.isValidEmail(this.modifiedAccountEmail)) {
+          handleEmptyValue('Invalid email address!');
+          return;
+        }
+        data['email'] = this.modifiedAccountEmail;
+        this.updateCachedAdminData('email', this.modifiedAccountEmail);
+        name = 'Email Address';
+        break;
+      case 4:
+        if (!this.modifiedAccountPhone) {
+          handleEmptyValue('Phone number should not be empty!');
           return;
         }
 
         if (
-          !this.validationService.isValidPhoneNumber(this.modifiedAccountNumber)
+          !this.validationService.isValidPhoneNumber(this.modifiedAccountPhone)
         ) {
           handleEmptyValue('Invalid phone number!');
           return;
         }
-
-        contactDetails.account_number = this.modifiedAccountNumber;
-        data.donation_info_object = JSON.stringify(contactDetails);
+        data['phone'] = this.modifiedAccountPhone;
+        this.updateCachedAdminData('phone', this.modifiedAccountPhone);
+        name = 'Phone Number';
+        break;
+      case 5:
+        if (!this.modifiedlocation) {
+          handleEmptyValue('Location should not be empty!');
+          return;
+        }
+        data['location'] = this.modifiedlocation;
+        this.updateCachedAdminData('location', this.modifiedlocation);
+        name = 'Location';
         break;
 
       default:
         return;
     }
 
-    this.modificationsService.updateConfigurations(data).subscribe((res) => {
+    if (index === 0) {
+      this.updateCachedAdminData(
+        'theme',
+        this.selectedTheme.toLowerCase().trim()
+      );
       this.elRef.nativeElement.querySelector(
-        '.update-dialog-message'
-      ).style.display = 'block';
+        '.update-dialog-message p'
+      ).textContent = 'Theme change successfully!';
 
       setTimeout(() => {
         window.location.reload();
       }, 1000);
-    });
+
+      return;
+    }
+
+    this.settingsService
+      .updateOtherUserData(this.cacheService.getCachedAdminData('id'), data)
+      .subscribe((res) => {
+        this.elRef.nativeElement.querySelector(
+          '.update-dialog-message'
+        ).style.display = 'block';
+
+        this.elRef.nativeElement.querySelector(
+          '.update-dialog-message p'
+        ).textContent = `${name} has been updated successfully!`;
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
   }
 
-  ngOnInit(): void {
-    this.modificationsService.getConfigurations().subscribe((res) => {
-      this.modificationsData = res?.data;
-      this.paymentMethods = this.getParseConfigurations(res, 'methods');
-      this.primaryMethod = this.getParseConfigurations(res, 'primary');
-      this.accountName = JSON.parse(
-        this.modificationsData?.donation_info_object
-      )?.account_name;
-      this.accountNumber = JSON.parse(
-        this.modificationsData?.donation_info_object
-      )?.account_number;
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      if (params['page']) {
-        this.currentPage = +params['page'];
-      } else {
-        this.currentPage = 1;
-      }
-      this.fetchUserHistoryData(this.currentPage);
-    });
+  getCachedAdminData(name: string) {
+    return this.cacheService.getCachedAdminData(name);
   }
 
-  fetchUserHistoryData(page: number) {
-    this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
-      this.userHistoryData = res;
-      this.filteredUserHistory = this.userHistoryData?.data;
-    });
+  updateCachedAdminData(name: string, newValue: any) {
+    this.cacheService.updateCachedAdminData(name, newValue);
   }
 
-  getPages(): number[] {
-    const totalPages = this.userHistoryData?.last_page || 0;
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
-
-  getCurrentPageEnd(): number {
-    return Math.ceil(
-      this.userHistoryData?.total / this.userHistoryData?.per_page
-    );
-  }
-
-  onPageChange(page: number) {
-    this.currentPage = page;
-    this.fetchUserHistoryData(page);
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { page: this.currentPage },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
-  }
-
-  getPageRange(): number[] {
-    const totalPages = this.userHistoryData?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
-  }
-
-  deleteSpecificUserHistory(id: any) {
-    this.usersManagementService.deleteUserHistory(id).subscribe((res) => {
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
+  ngOnInit(): void {}
 }
-
