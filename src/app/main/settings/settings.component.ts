@@ -93,7 +93,7 @@ export class SettingsComponent implements OnInit {
     const data = { ...this.modificationsData };
     const contactDetails = JSON.parse(data.donation_info_object);
 
-    const handleEmptyValue = (key: string, errorMessage: string) => {
+    const handleEmptyValue = (errorMessage: string) => {
       const element = this.elRef.nativeElement.querySelector(
         '.info-dialog-message'
       );
@@ -151,7 +151,7 @@ export class SettingsComponent implements OnInit {
         if (
           !this.validationService.isValidPhoneNumber(this.modifiedAccountNumber)
         ) {
-          handleEmptyValue('modifiedAccountNumber', 'Invalid phone number!');
+          handleEmptyValue('Invalid phone number!');
           return;
         }
 
