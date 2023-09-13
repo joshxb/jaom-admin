@@ -38,8 +38,9 @@ export class SecurityControlService {
 
   updateSpecificGroupChat(
     groupChatId: number,
-    groupChatName: string
+    groupChatName: string,
+    image: any
   ): Observable<any> {
-    return this.roomService.updateSpecificGroupChat(groupChatId, groupChatName);
+    return this.roomService.updateSpecificGroupChat(groupChatId, groupChatName, image);
   }
 }

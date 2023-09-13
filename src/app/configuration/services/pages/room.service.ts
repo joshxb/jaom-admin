@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
+import { Ng2ImgMaxService } from 'ng2-img-max';
+import { ImageService } from '../../assets/image.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +18,13 @@ export class RoomService {
 
   private apiRoomUrl = `${this.baseUrl}/${this.suffixUrl}/group_chats`;
   private apiRoomChatsUrl = `${this.baseUrl}/${this.suffixUrl}/group_messages`;
+  private apiRoomImageUpdateUrl = `${this.baseUrl}/${this.suffixUrl}/group-image/update`;
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private imageService: ImageService
+  ) {}
 
   addGroupChat(
     groupChatName: string,
@@ -91,23 +98,52 @@ export class RoomService {
       `Bearer ${this.auth.getToken()}`
     );
 
-    return this.http.delete<any>(
-      `${this.apiRoomUrl}/${id}?role=admin`,
-      { headers }
-    );
+    return this.http.delete<any>(`${this.apiRoomUrl}/${id}?role=admin`, {
+      headers,
+    });
   }
 
   updateSpecificGroupChat(
     groupChatId: number,
-    groupChatName: string
+    groupChatName: string,
+    image: any
   ): Observable<any> {
-    const endpoint = `${this.apiRoomUrl}/${groupChatId}?role=admin`;
+    const endpoint = `${this.apiRoomUrl}/v2/${groupChatId}`;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.auth.getToken()
     );
-    const body = { name: groupChatName }; 
+
+    if (image) {
+      this.updateGroupChatImage(groupChatId, image).subscribe((res) => {});
+    }
+
+    const body = { name: groupChatName };
     return this.http.put<any>(endpoint, body, { headers: headers });
   }
 
+  updateGroupChatImage(id: number, file: any): Observable<any> {
+    const endpoint = `${this.apiRoomImageUpdateUrl}?groupId=${id}`;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.auth.getToken()
+    );
+
+    return this.imageService.compressImage(file).pipe(
+      switchMap((compressedImage: File) => {
+        const compressedFile = new File(
+          [compressedImage],
+          compressedImage.name,
+          {
+            type: compressedImage.type,
+          }
+        );
+
+        const formData: FormData = new FormData();
+        formData.append('image', compressedFile);
+
+        return this.http.post<any>(endpoint, formData, { headers: headers });
+      })
+    );
+  }
 }

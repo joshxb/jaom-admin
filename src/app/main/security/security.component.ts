@@ -396,26 +396,38 @@ export class SecurityComponent implements OnInit {
     modalOverlay.style.display = selection === 'open' ? 'flex' : 'none';
   }
 
-  updateSpecificGroupChat(
-    groupChatId: number,
-    groupChatName: string
-  ) {
-    
-    this.securityControlService.updateSpecificGroupChat(groupChatId, groupChatName).subscribe((res) => {  
-      const updateDialogMessage = this.elRef.nativeElement.querySelector(
-        '.update-dialog-message'
-      );
+  updateSpecificGroupChat(groupChatId: number, groupChatName: string) {
+    const updateDialogMessage = this.elRef.nativeElement.querySelector(
+      '.update-dialog-message'
+    );
+    const updateDialogMessageP = this.elRef.nativeElement.querySelector(
+      '.update-dialog-message p'
+    );
 
-      const updateDialogMessageP = this.elRef.nativeElement.querySelector(
-        '.update-dialog-message p'
-      );
-
-      updateDialogMessageP.textContent = 'Default Group-chat has been updated successfully!';
+    if (!groupChatName && !this.selectedImage) {
+      updateDialogMessageP.textContent = 'No changes yet!';
+      updateDialogMessageP.classList.remove('text-success');
+      updateDialogMessageP.classList.add('text-dark');
       updateDialogMessage.style.display = 'block';
 
       setTimeout(() => {
-        window.location.reload();
+        updateDialogMessage.style.display = 'none';
       }, 2000);
-    });
+      return;
+    }
+
+    this.securityControlService
+      .updateSpecificGroupChat(groupChatId, groupChatName, this.selectedImage)
+      .subscribe((res) => {
+        updateDialogMessageP.textContent =
+          'Default Group-chat has been updated successfully!';
+        updateDialogMessageP.classList.add('text-success');
+        updateDialogMessageP.classList.remove('text-dark');
+        updateDialogMessage.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      });
   }
 }
