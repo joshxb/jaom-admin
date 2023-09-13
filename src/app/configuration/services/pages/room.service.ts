@@ -96,4 +96,18 @@ export class RoomService {
       { headers }
     );
   }
+
+  updateSpecificGroupChat(
+    groupChatId: number,
+    groupChatName: string
+  ): Observable<any> {
+    const endpoint = `${this.apiRoomUrl}/${groupChatId}?role=admin`;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.auth.getToken()
+    );
+    const body = { name: groupChatName }; 
+    return this.http.put<any>(endpoint, body, { headers: headers });
+  }
+
 }

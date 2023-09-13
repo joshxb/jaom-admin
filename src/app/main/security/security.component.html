@@ -80,7 +80,7 @@
                       type="file"
                       class="form-control-file"
                       id="fileInput"
-                      (change)="onFileSelected($event)"
+                      (change)="onFileSelected($event, 1)"
                       accept="image/*"
                     />
                   </div>
@@ -158,6 +158,11 @@
                       </small>
                     </td>
                     <td class="action-cont">
+                      <img
+                        (click)="editModal('open', list?.name, list?.id)"
+                        [src]="imageUrls.edit"
+                        alt=""
+                      />
                       <img
                         (click)="deleteDefaultRoom(list?.id)"
                         [src]="imageUrls.delete"
@@ -334,23 +339,91 @@
               </div>
             </div>
           </div>
-          <div class="dialog-messages add-dialog-message">
-            <p class="text-success">Default room added successfully</p>
-          </div>
-          <div class="dialog-messages delete-dialog-message">
-            <p class="text-danger">Default room deleted successfully</p>
-          </div>
-          <div class="dialog-messages update-dialog-message">
-            <p class="text-success">Default room updated successfully</p>
-          </div>
-          <div class="dialog-messages error-dialog-message">
-            <p class="text-danger"></p>
-          </div>
-          <div class="dialog-messages info-dialog-message">
-            <p class="text-dark"></p>
+          <div class="modal-overlay">
+            <div class="modal-container">
+              <div class="modal-content">
+                <button
+                  (click)="editModal('close')"
+                  type="button"
+                  class="close exit-modal"
+                  aria-label="Close"
+                >
+                  X
+                </button>
+                <!-- Your modal content here -->
+                <h2>Edit Default Room</h2>
+                  <div class="form-group row">
+                    <label
+                      for="defaultFirstName"
+                      class="col-sm-3 col-form-label"
+                      >Room Name</label
+                    >
+                    <div class="col-sm-9 d-flex align-items-center">    
+                      <input
+                        type="text"
+                        class="form-control mr-3"
+                        [value]="selectedRoomName"
+                        disabled
+                      />
+                      <input
+                      [(ngModel)]="modifiedRoomName"
+                        id="inputFirstName"
+                        type="text"
+                        class="form-control"
+                        placeholder="Input new value"
+                      />
+                    </div>
+                  </div>
+                <form (ngSubmit)="uploadImage()" #imageForm="ngForm">
+                  <div class="form-group d-inline-flex align-items-center gap-2">
+                    <img
+                      [src]="uploadedImageUrl2"
+                      alt=""
+                      style="width: 50px; height: 50px"
+                    />&nbsp;&nbsp;
+                    <input
+                      type="file"
+                      class="form-control-file"
+                      id="fileInput"
+                      (change)="onFileSelected($event, 2)"
+                      accept="image/*"
+                    />
+                  </div>
+                </form>
+                <div class="form-group row">
+                  <div class="col-sm-9">
+                    <br />
+                    <button (click)="updateSpecificGroupChat(selectedRoomId, modifiedRoomName)" class="btn btn-primary submit-btn" type="button">
+                      Update
+                    </button>
+                  </div>
+                </div>
+                <p class="text-danger text-center no-changes-txt">
+                  No any changes yet!
+                </p>
+              </div>
+              <div class="update-dialog-message">
+                <p class="text-success">Data updated successfully!</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="dialog-messages add-dialog-message">
+      <p class="text-success">Default room added successfully</p>
+    </div>
+    <div class="dialog-messages delete-dialog-message">
+      <p class="text-danger">Default room deleted successfully</p>
+    </div>
+    <div class="dialog-messages update-dialog-message">
+      <p class="text-success">Default room updated successfully</p>
+    </div>
+    <div class="dialog-messages error-dialog-message">
+      <p class="text-danger"></p>
+    </div>
+    <div class="dialog-messages info-dialog-message">
+      <p class="text-dark"></p>
     </div>
   </body>
 </html>

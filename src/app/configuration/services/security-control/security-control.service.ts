@@ -35,4 +35,11 @@ export class SecurityControlService {
   updateConfigurations(data: any): Observable<any> {
     return this.modicationsService.updateConfigurations(data);
   }
+
+  updateSpecificGroupChat(
+    groupChatId: number,
+    groupChatName: string
+  ): Observable<any> {
+    return this.roomService.updateSpecificGroupChat(groupChatId, groupChatName);
+  }
 }

@@ -129,7 +129,7 @@ table tbody tr:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   max-width: 80%;
   width: 800px;
-  height: 90%;
+  height: 45%;
   padding: 50px;
   overflow-y: auto;
   transform: translateY(-20px);

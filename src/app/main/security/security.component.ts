@@ -17,18 +17,22 @@ import { ImageService } from 'src/app/configuration/assets/image.service';
 @Component({
   selector: 'app-security',
   templateUrl: './security.component.html',
-  styleUrls: ['./security.component.css']
+  styleUrls: ['./security.component.css'],
 })
 export class SecurityComponent implements OnInit {
   imageUrls = new imageUrls();
 
   uploadedImageUrl: string | ArrayBuffer | null =
     this.imageUrls.default_upload_img;
-  selectedImage!: File;
+  selectedImage!: any;
+
+  uploadedImageUrl2: string | ArrayBuffer | null =
+    this.imageUrls.default_upload_img;
 
   searchTerm: string = '';
   roomListData!: any;
   selectedUser: any;
+  selectedRoomId!: number;
   filteredRoomListData: any[] = [];
   textareaValues: string[] = [];
 
@@ -42,6 +46,8 @@ export class SecurityComponent implements OnInit {
   primaryDeactivationPeriodMethod!: any;
   newLogInMethod: string = '';
   newDeactivationPeriod: string = '';
+  selectedRoomName: string = '';
+  modifiedRoomName: string = '';
 
   constructor(
     private router: Router,
@@ -52,13 +58,17 @@ export class SecurityComponent implements OnInit {
     private imageService: ImageService
   ) {}
 
-  onFileSelected(event: any) {
+  onFileSelected(event: any, index: number) {
     const file: File = event.target.files[0];
     this.selectedImage = file;
 
     const reader = new FileReader();
     reader.onload = () => {
-      this.uploadedImageUrl = reader.result;
+      if (index === 1) {
+        this.uploadedImageUrl = reader.result;
+      } else {
+        this.uploadedImageUrl2 = reader.result;
+      }
     };
     reader.readAsDataURL(this.selectedImage);
   }
@@ -358,8 +368,50 @@ export class SecurityComponent implements OnInit {
       if (index == 2) {
         this.elRef.nativeElement.querySelector(
           '.update-dialog-message p'
-        ).textContent = 'Modified changes to deactivation period successfully updated';
+        ).textContent =
+          'Modified changes to deactivation period successfully updated';
       }
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    });
+  }
+
+  editModal(
+    selection: string,
+    name: string | null = null,
+    id: number | null = null
+  ) {
+    if (id !== null) {
+      this.selectedRoomId = id;
+    }
+    this.selectedRoomName = name || '';
+    this.selectedImage = null;
+    this.uploadedImageUrl = this.imageUrls.default_upload_img;
+    this.uploadedImageUrl2 = this.imageUrls.default_upload_img;
+
+    const modalOverlay =
+      this.elRef.nativeElement.querySelector('.modal-overlay');
+    modalOverlay.style.display = selection === 'open' ? 'flex' : 'none';
+  }
+
+  updateSpecificGroupChat(
+    groupChatId: number,
+    groupChatName: string
+  ) {
+    
+    this.securityControlService.updateSpecificGroupChat(groupChatId, groupChatName).subscribe((res) => {  
+      const updateDialogMessage = this.elRef.nativeElement.querySelector(
+        '.update-dialog-message'
+      );
+
+      const updateDialogMessageP = this.elRef.nativeElement.querySelector(
+        '.update-dialog-message p'
+      );
+
+      updateDialogMessageP.textContent = 'Default Group-chat has been updated successfully!';
+      updateDialogMessage.style.display = 'block';
 
       setTimeout(() => {
         window.location.reload();
