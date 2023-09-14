@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { AuthService } from 'src/app/configuration/services/auth.service';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
@@ -8,6 +9,7 @@ import { AdminService } from 'src/app/configuration/services/pages/admin.service
   templateUrl: './left-bar.component.html',
   styleUrls: ['./left-bar.component.css', './../../../styles.css'],
 })
+
 export class LeftBarComponent implements OnInit {
   public data: any;
   isUserManagementExpanded: boolean = false;
@@ -15,15 +17,18 @@ export class LeftBarComponent implements OnInit {
   isAnalyticsExpanded: boolean = false;
   isModificationsExpanded: boolean = false;
 
+  activeIndex: number = 1;
+
   constructor(
     private adminService: AdminService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   imageUrls = new imageUrls();
 
   toggleDropdown(index: number) {
-    const properties = [
+    const properties: (keyof LeftBarComponentProps)[] = [
       'isUserManagementExpanded',
       'isTransactionsExpanded',
       'isAnalyticsExpanded',
@@ -31,16 +36,21 @@ export class LeftBarComponent implements OnInit {
     ];
 
     if (index >= 0 && index < properties.length) {
-      const propertyName = properties[index] as keyof LeftBarComponent;
+      const propertyName = properties[index];
       this[propertyName] = !this[propertyName];
       localStorage.setItem(
-        propertyName as string,
+        propertyName,
         JSON.stringify(this[propertyName])
       );
     }
   }
 
   ngOnInit() {
+    const storedIndex = localStorage.getItem('activeIndex');
+    if (storedIndex !== null) {
+      this.activeIndex = JSON.parse(storedIndex);
+    }
+
     const expandedItems = {
       isUserManagementExpanded: false,
       isTransactionsExpanded: false,
@@ -82,4 +92,19 @@ export class LeftBarComponent implements OnInit {
   logOut() {
     this.authService.logout();
   }
+
+  checkActive(index: number, page: string|null = null) {
+    this.activeIndex = index;
+    localStorage.setItem('activeIndex', JSON.stringify(index));
+    if (page !== null){
+      this.router.navigate([`/${page}`]);
+    }
+  }
+}
+
+interface LeftBarComponentProps {
+  isUserManagementExpanded: boolean;
+  isTransactionsExpanded: boolean;
+  isAnalyticsExpanded: boolean;
+  isModificationsExpanded: boolean;
 }

@@ -405,7 +405,7 @@ export class SecurityComponent implements OnInit {
     );
 
     if (!groupChatName && !this.selectedImage) {
-      updateDialogMessageP.textContent = 'No changes yet!';
+      updateDialogMessageP.textContent = 'No any changes yet!';
       updateDialogMessageP.classList.remove('text-success');
       updateDialogMessageP.classList.add('text-dark');
       updateDialogMessage.style.display = 'block';

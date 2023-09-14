@@ -192,3 +192,7 @@ table tbody tr:hover {
   color: rgb(128, 128, 128);
   text-overflow: ellipsis;
 }
+
+.admin-access-btn:hover {
+  opacity: 0.8;
+}

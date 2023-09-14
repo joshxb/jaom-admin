@@ -34,6 +34,8 @@ import { FeedbackComponent } from './main/feedback/feedback.component';
 import { JsonDecodePipe } from './pipes/json-decode.pipe';
 import { SecurityComponent } from './main/security/security.component';
 import { SettingsComponent } from './main/settings/settings.component';
+import { NewAdminComponent } from './main/new-admin/new-admin.component';
+import { AdminAccessComponent } from './main/admin-access/admin-access.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +62,8 @@ import { SettingsComponent } from './main/settings/settings.component';
     JsonDecodePipe,
     SecurityComponent,
     SettingsComponent,
+    NewAdminComponent,
+    AdminAccessComponent,
   ],
   imports: [
     BrowserModule,

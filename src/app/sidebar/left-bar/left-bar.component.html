@@ -14,12 +14,13 @@
   </div>
   <ul class="list-unstyled components">
     <p id="admin-txt">Administrator</p>
-    <li class="active">
-      <a [routerLink]="['/dashboard']">
-        <img [src]="imageUrls.dash" alt="" /> &nbsp;&nbsp;Dashboard
-      </a>
+    <li style="cursor: pointer;"
+      class="{{ activeIndex === 1 ? 'active' : null }}"
+      (click)="checkActive(1, 'dashboard')"
+    >
+      <a> <img [src]="imageUrls.dash" alt="" /> &nbsp;&nbsp;Dashboard </a>
     </li>
-    <li style="cursor: pointer">
+    <li style="cursor: pointer" (click)="checkActive(2)">
       <a
         (click)="toggleDropdown(0)"
         data-toggle="collapse"
@@ -33,24 +34,51 @@
         id="dashSubmenu"
         [class.show]="isUserManagementExpanded"
       >
-        <li><a [routerLink]="['/user-management', 'users']">Users</a></li>
-        <li><a [routerLink]="['/user-management', 'chats']">Chats</a></li>
-        <li><a [routerLink]="['/user-management', 'rooms']">Rooms</a></li>
-        <li><a [routerLink]="['/user-management', 'updates']">Updates</a></li>
-        <li><a [routerLink]="['/user-management', 'todos']">To-do List</a></li>
-        <li>
-          <a [routerLink]="['/user-management', 'user-history']"
-            >User History</a
-          >
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/users')"
+        >
+          <a>Users</a>
         </li>
-        <li>
-          <a [routerLink]="['/user-management', 'configurations']"
-            >Configurations</a
-          >
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/chats')"
+        >
+          <a>Chats</a>
+        </li>
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/rooms')"
+        >
+          <a>Rooms</a>
+        </li>
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/updates')"
+        >
+          <a>Updates</a>
+        </li>
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/todos')"
+        >
+          <a>To-do List</a>
+        </li>
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/user-history')"
+        >
+          <a>User History</a>
+        </li>
+        <li
+          class="{{ activeIndex === 2 ? 'active' : null }}"
+          (click)="checkActive(2, 'user-management/configurations')"
+        >
+          <a>Configurations</a>
         </li>
       </ul>
     </li>
-    <li style="cursor: pointer">
+    <li style="cursor: pointer" (click)="checkActive(3)">
       <a
         (click)="toggleDropdown(1)"
         data-toggle="collapse"
@@ -63,10 +91,15 @@
         class="collapse list-unstyled"
         id="transSubmenu"
       >
-        <li><a [routerLink]="['/transactions', 'donations']">Donations</a></li>
+        <li
+          class="{{ activeIndex === 3 ? 'active' : null }}"
+          (click)="checkActive(3, 'transactions/donations')"
+        >
+          <a>Donations</a>
+        </li>
       </ul>
     </li>
-    <li style="cursor: pointer">
+    <li style="cursor: pointer" (click)="checkActive(4)">
       <a
         (click)="toggleDropdown(2)"
         data-toggle="collapse"
@@ -79,46 +112,72 @@
         class="collapse list-unstyled"
         id="analyticsSubmenu"
       >
-        <li><a [routerLink]="['/analytics', 'page-visits']">Page Visits</a></li>
+        <li
+          class="{{ activeIndex === 4 ? 'active' : null }}"
+          (click)="checkActive(4, 'analytics/page-visits')"
+        >
+          <a>Page Visits</a>
+        </li>
       </ul>
     </li>
-    <li style="cursor: pointer">
+    <li style="cursor: pointer" (click)="checkActive(5)">
       <a
-      (click)="toggleDropdown(3)"
+        (click)="toggleDropdown(3)"
         data-toggle="collapse"
         [attr.aria-expanded]="isModificationsExpanded"
         [class.dropdown-toggle]="!isModificationsExpanded"
         ><img [src]="imageUrls.edit" alt="" /> &nbsp;&nbsp;Modifications</a
       >
-      <ul [class.show]="isModificationsExpanded" class="collapse list-unstyled" id="modifySubmenu">
-        <li>
-          <a [routerLink]="['/modifications', 'donations-info']"
-            >Donation's Info</a
-          >
+      <ul
+        [class.show]="isModificationsExpanded"
+        class="collapse list-unstyled"
+        id="modifySubmenu"
+      >
+        <li
+          class="{{ activeIndex === 5 ? 'active' : null }}"
+          (click)="checkActive(5, 'modifications/donations-info')"
+        >
+          <a>Donation's Info</a>
         </li>
-        <li>
-          <a [routerLink]="['/modifications', 'contact-details']"
-            >Contact Details</a
-          >
+        <li
+          class="{{ activeIndex === 5 ? 'active' : null }}"
+          (click)="checkActive(5, 'modifications/contact-details')"
+        >
+          <a>Contact Details</a>
         </li>
-        <li><a [routerLink]="['/modifications', 'faqs']">FAQs</a></li>
+        <li
+          class="{{ activeIndex === 5 ? 'active' : null }}"
+          (click)="checkActive(5, 'modifications/faqs')"
+        >
+          <a>FAQs</a>
+        </li>
       </ul>
     </li>
-    <li>
-      <a [routerLink]="['/feedbacks']">
+    <li
+      class="{{ activeIndex === 6 ? 'active' : null }}"
+      (click)="checkActive(6, 'feedbacks')"
+      style="cursor: pointer;"
+    >
+      <a>
         <img [src]="imageUrls.faqs" alt="" />&nbsp;&nbsp;Feedbacks / Concerns
       </a>
     </li>
-    <li>
-      <a [routerLink]="['/security-control']">
+    <li
+      class="{{ activeIndex === 7 ? 'active' : null }}"
+      (click)="checkActive(7, 'security-control')"
+      style="cursor: pointer;"
+    >
+      <a>
         <img [src]="imageUrls.security" alt="" />&nbsp;&nbsp;Security and
         Control
       </a>
     </li>
-    <li>
-      <a [routerLink]="['/settings']">
-        <img [src]="imageUrls.settings" alt="" />&nbsp;&nbsp;Settings
-      </a>
+    <li
+      class="{{ activeIndex === 8 ? 'active' : null }}"
+      (click)="checkActive(8, 'settings')"
+      style="cursor: pointer;"
+    >
+      <a> <img [src]="imageUrls.settings" alt="" />&nbsp;&nbsp;Settings</a>
     </li>
   </ul>
   <ul class="list-unstyled CTAs">

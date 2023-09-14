@@ -1,0 +1,173 @@
+.container {
+    max-width: 40%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.search-input {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px 30px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+button.search-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+button.search-button i {
+    color: #555;
+}
+
+button.search-button:hover i {
+    color: #007bff;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.user-list {
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.user-card {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-card:hover {
+    background-color: #f0f0f0;
+}
+
+.user-card img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-card p {
+    margin: 0;
+    color: #333;
+}
+
+.add-administrator-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.add-administrator-link:hover {
+    opacity: 0.7;
+}
+
+.loading-spinner {
+    border: 4px solid #ccc;
+    /* Muted color */
+    border-top: 4px solid #333;
+    /* A darker color for the spinner */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    /* Rotate the spinner */
+    margin: 0 auto;
+    /* Center the spinner horizontally */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-data {
+    text-align: center;
+    display: none;
+}
+
+.dialog-messages {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.dialog-messages p,
+.update-dialog-message p {
+    position: relative;
+    top: 7px;
+}

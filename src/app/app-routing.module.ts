@@ -18,6 +18,8 @@ import { FaqsComponent } from './main/modifications/faqs/faqs.component';
 import { FeedbackComponent } from './main/feedback/feedback.component';
 import { SecurityComponent } from './main/security/security.component';
 import { SettingsComponent } from './main/settings/settings.component';
+import { NewAdminComponent } from './main/new-admin/new-admin.component';
+import { AdminAccessComponent } from './main/admin-access/admin-access.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -83,6 +85,16 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'new-admin',
+    component: NewAdminComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'configure-access',
+    component: AdminAccessComponent,
     canActivate: [AuthGuard],
   },
 ];

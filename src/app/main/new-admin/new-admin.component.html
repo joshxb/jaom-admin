@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JAOM Admin - New Admin</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <app-left-bar id="sidebar"></app-left-bar>
+
+        <div class="content">
+            <app-top-bar id="top-bar"></app-top-bar>
+            <div class="container">
+                <h1>Add New Administrator</h1>
+                <div>
+                    <div class="search-input">
+                        <input [(ngModel)]="search" (input)="searchKey()" type="text" id="search" name="search"
+                            placeholder="Search for accounts..." />
+                        <button type="button" class="search-button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="loading-spinner" *ngIf="showLoading"></div>
+                <div class="user-list">
+                    <li class="user-card" *ngFor="let account of data">
+                        <div class="user-header">
+                            <img *ngIf="account?.image_blob !== null; else otherImage"
+                                [src]="'data:image/jpeg;base64,' + account?.image_blob" />
+                            <ng-template #otherImage>
+                                <img [src]="imageUrls.user_default">
+                            </ng-template>
+                            <p>{{ account?.firstname }} {{ account?.lastname }}</p>
+                        </div>
+                        <a *ngIf="account?.type === 'local'; else otherType" class="add-administrator-link"
+                            (click)="addAdmin(account?.id)">
+                            Add Administrator
+                        </a>
+                        <ng-template #otherType>
+                            <a class="add-administrator-link"> Already an Administrator </a>
+                        </ng-template>
+                    </li>
+                </div>
+                <div *ngIf="showEmptyData" class="empty-data">
+                    <p>No accounts found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-messages add-dialog-message">
+        <p class="text-success">Successfully added new administrator</p>
+    </div>
+</body>
+
+</html>

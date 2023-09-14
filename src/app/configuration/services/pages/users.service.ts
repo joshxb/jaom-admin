@@ -15,6 +15,7 @@ export class UsersService {
   private baseUrl = this.base.baseUrl;
   private suffixUrl = this.base.suffixUrl;
   private apiUserUrl = `${this.baseUrl}/${this.suffixUrl}/users`;
+  private apiSearchUsersUrl = `${this.baseUrl}/${this.suffixUrl}/search-users?search=:name&range=:index`;
 
   constructor(
     private http: HttpClient,
@@ -56,5 +57,16 @@ export class UsersService {
 
   updateOtherUserImageData(imageData: any, userId: number): Observable<any> {
     return this.imageService.updateOtherUserImageData(imageData, userId);
+  }
+
+  searchUser(name: any, index: number): Observable<any> {
+    const endpoint = this.apiSearchUsersUrl
+      .replace(':name', name.toString())
+      .replace(':index', index.toString());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.auth.getToken()
+    ); // Replace with your authentication mechanism
+    return this.http.get<any>(endpoint, { headers: headers });
   }
 }
