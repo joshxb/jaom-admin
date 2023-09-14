@@ -15,15 +15,6 @@
             <app-top-bar id="top-bar"></app-top-bar>
             <div class="container">
                 <h1>Manage Administrative Access</h1>
-                <div>
-                    <div class="search-input">
-                        <input [(ngModel)]="search" (input)="searchKey()" type="text" id="search" name="search"
-                            placeholder="Search for accounts..." />
-                        <button type="button" class="search-button">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </div>
                 <div class="loading-spinner" *ngIf="showLoading"></div>
                 <div class="user-list">
                     <li class="user-card" *ngFor="let account of data">
@@ -31,17 +22,11 @@
                             <img *ngIf="account?.image_blob !== null; else otherImage"
                                 [src]="'data:image/jpeg;base64,' + account?.image_blob" />
                             <ng-template #otherImage>
-                                <img [src]="imageUrls.user_default">
+                                <img [src]="imageUrls.user_default" />
                             </ng-template>
                             <p>{{ account?.firstname }} {{ account?.lastname }}</p>
                         </div>
-                        <a *ngIf="account?.type === 'local'; else otherType" class="add-administrator-link"
-                            (click)="addAdmin(account?.id)">
-                            Add Administrator
-                        </a>
-                        <ng-template #otherType>
-                            <a class="add-administrator-link"> Already an Administrator </a>
-                        </ng-template>
+                        <a class="add-administrator-link" (click)="removeAdminAccess(account?.id)">Remove Access</a>
                     </li>
                 </div>
                 <div *ngIf="showEmptyData" class="empty-data">

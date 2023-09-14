@@ -11,59 +11,42 @@ import { UsersService } from 'src/app/configuration/services/pages/users.service
 export class AdminAccessComponent implements OnInit {
   imageUrls = new imageUrls();
   search: string = '';
-  showLoading: boolean = false;
+  showLoading: boolean = true;
   showEmptyData: boolean = true;
-  currentPage = 1;
   data: any = [];
 
-  private searchTerms = new Subject<string>();
-
-  constructor(private userService: UsersService, private elRef: ElementRef) { }
+  constructor(private userService: UsersService, private elRef: ElementRef) {}
 
   ngOnInit(): void {
-    this.searchTerms
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        switchMap((term) => this.userService.searchUser(term, this.currentPage))
-      )
-      .subscribe((res) => {
-        this.showLoading = false;
-        const { data } = res;
-        this.data = data;
-        this.showEmptyData = data.length > 0 ? false : true;
-
-        const emptyData = this.elRef.nativeElement.querySelector('.empty-data');
-        if (data.length > 0) {
-          emptyData.style.display = 'none';
-        } else {
-          emptyData.style.display = 'block';
-        }
-      });
-  }
-
-  searchKey(): void {
-    this.showLoading = true;
-    if (this.search != '') {
-      this.searchTerms.next(this.search);
-    } else {
+    this.userService.adminAccessUsers().subscribe((res) => {
       this.showLoading = false;
-    }
+      const { data } = res;
+      this.data = data;
+      this.showEmptyData = data.length > 0 ? false : true;
+
+      const emptyData = this.elRef.nativeElement.querySelector('.empty-data');
+      if (data.length > 0) {
+        emptyData.style.display = 'none';
+      } else {
+        emptyData.style.display = 'block';
+      }
+    });
   }
 
-  addAdmin(id: number) {
+  removeAdminAccess(id: number) {
     this.userService
-      .updateOtherUserData(id, { type: 'admin' })
+      .updateOtherUserData(id, { type: 'local' })
       .subscribe((res) => {
         this.elRef.nativeElement.querySelector(
-          '.add-dialog-message'
+          '.remove-dialog-message'
         ).style.display = 'block';
         setTimeout(() => {
           this.elRef.nativeElement.querySelector(
-            '.add-dialog-message'
+            '.remove-dialog-message'
           ).style.display = 'none';
           this.search = '';
           this.data = [];
+          location.reload();
         }, 2000);
       });
   }

@@ -69,4 +69,12 @@ export class UsersService {
     ); // Replace with your authentication mechanism
     return this.http.get<any>(endpoint, { headers: headers });
   }
+
+  adminAccessUsers(): Observable<any> { 
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+    return this.http.get<any>(`${this.apiUserUrl}/administrative-access`, { headers });
+  }
 }
