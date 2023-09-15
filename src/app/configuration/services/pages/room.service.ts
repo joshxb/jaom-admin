@@ -123,7 +123,7 @@ export class RoomService {
   }
 
   updateGroupChatImage(id: number, file: any): Observable<any> {
-    const endpoint = `${this.apiRoomImageUpdateUrl}?groupId=${id}`;
+    const endpoint = `${this.apiRoomImageUpdateUrl}?groupId=${id}&role=admin`;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.auth.getToken()
