@@ -10,8 +10,8 @@ import { AdminService } from './services/pages/admin.service';
 export class Configuration implements OnInit {
 
   constructor(
-    private adminService : AdminService
-  ) {}
+    private adminService: AdminService
+  ) { }
 
   ngOnInit(): void {
 
@@ -37,9 +37,9 @@ export enum ApiUrls {
 }
 
 export class Base {
-  baseUrl =  localStorage.getItem('baseUrl') ?
-  localStorage.getItem('baseUrl') :
-  environment.baseUrl;//initialize during deployment
+  baseUrl = localStorage.getItem('baseUrl') ?
+    localStorage.getItem('baseUrl') :
+    environment.baseUrl;//initialize during deployment
 
   suffixUrl = 'api';
 }
@@ -48,7 +48,7 @@ export class PusherCredentials {
   cred = '01a8b159fe93da3fed94';
   cluster = 'ap1';
   channel = 'chat';
-event = 'message';
+  event = 'message';
 }
 
 export enum Redirects {

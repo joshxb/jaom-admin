@@ -102,4 +102,16 @@ export class NotificationService {
       headers,
     });
   }
+
+    getAllNotification(page: number): Observable<any> {
+      const headers = new HttpHeaders().set(
+        'Authorization',
+        `Bearer ${this.auth.getToken()}`
+      );
+      const endpoint = this.baseNotification;
+
+      return this.http.get(endpoint + `?page=${page}`, {
+        headers,
+      });
+    }
 }

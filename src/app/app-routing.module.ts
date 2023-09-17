@@ -20,6 +20,7 @@ import { SecurityComponent } from './main/security/security.component';
 import { SettingsComponent } from './main/settings/settings.component';
 import { NewAdminComponent } from './main/new-admin/new-admin.component';
 import { AdminAccessComponent } from './main/admin-access/admin-access.component';
+import { OffersComponent } from './main/user-management/offers/offers.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -27,6 +28,7 @@ const userManagementChildren: Routes = [
   { path: 'rooms', component: RoomsComponent },
   { path: 'updates', component: UpdatesComponent },
   { path: 'todos', component: TodoComponent },
+  { path: 'prayer-offers', component: OffersComponent },
   { path: 'configurations', component: ConfigurationsComponent },
   { path: 'user-history', component: UserHistoryComponent },
 ];

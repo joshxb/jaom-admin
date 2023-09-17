@@ -36,6 +36,7 @@ import { SecurityComponent } from './main/security/security.component';
 import { SettingsComponent } from './main/settings/settings.component';
 import { NewAdminComponent } from './main/new-admin/new-admin.component';
 import { AdminAccessComponent } from './main/admin-access/admin-access.component';
+import { OffersComponent } from './main/user-management/offers/offers.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { AdminAccessComponent } from './main/admin-access/admin-access.component
     SettingsComponent,
     NewAdminComponent,
     AdminAccessComponent,
+    OffersComponent,
   ],
   imports: [
     BrowserModule,
