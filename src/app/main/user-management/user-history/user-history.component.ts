@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
@@ -15,7 +15,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
   templateUrl: './user-history.component.html',
   styleUrls: ['./user-history.component.css']
 })
-export class UserHistoryComponent implements OnInit {
+export class UserHistoryComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -30,8 +30,26 @@ export class UserHistoryComponent implements OnInit {
     private usersManagementService: UsersManagementService,
     private router: Router,
     private route: ActivatedRoute,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {

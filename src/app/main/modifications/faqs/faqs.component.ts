@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
 import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
 
@@ -14,7 +14,7 @@ import { ModificationsService } from 'src/app/configuration/services/modificatio
   templateUrl: './faqs.component.html',
   styleUrls: ['./faqs.component.css']
 })
-export class FaqsComponent implements OnInit {
+export class FaqsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   faqsData: any = null;
@@ -27,12 +27,30 @@ export class FaqsComponent implements OnInit {
 
   constructor(
     private modificationService: ModificationsService,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
     this.modificationService.showAllFAQS().subscribe((res) => {
       this.faqsData = res;
+    });
+  }
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
     });
   }
 

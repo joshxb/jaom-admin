@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { TextService } from 'src/app/configuration/assets/text.service';
@@ -11,7 +11,7 @@ import { SettingsService } from 'src/app/configuration/services/settings/setting
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
   selectedUser: any;
 
@@ -27,12 +27,29 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private elRef: ElementRef,
-    private modificationsService: ModificationsService,
     private validationService: ValidationService,
     private settingsService: SettingsService,
     private cacheService: CacheService,
-    private textService: TextService
+    private textService: TextService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   updateConfigurations(index: number) {
     const handleEmptyValue = (errorMessage: string) => {

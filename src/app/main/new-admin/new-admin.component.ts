@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { imageUrls } from 'src/app/app.component';
 import { UsersService } from 'src/app/configuration/services/pages/users.service';
@@ -8,7 +8,7 @@ import { UsersService } from 'src/app/configuration/services/pages/users.service
   templateUrl: './new-admin.component.html',
   styleUrls: ['./new-admin.component.css'],
 })
-export class NewAdminComponent implements OnInit {
+export class NewAdminComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
   search: string = '';
   showLoading: boolean = false;
@@ -18,7 +18,28 @@ export class NewAdminComponent implements OnInit {
 
   private searchTerms = new Subject<string>();
 
-  constructor(private userService: UsersService, private elRef: ElementRef) {}
+  constructor(
+    private userService: UsersService,
+    private elRef: ElementRef,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
+    ) {}
+
+    ngAfterViewInit() {
+      const scb = this.elementRef.nativeElement.querySelector(
+        '#sidebarCollapseBtn'
+      );
+      this.renderer.listen(scb, 'click', () => {
+        const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+        if (sidebar) {
+          if (sidebar.classList.contains('active')) {
+            this.renderer.removeClass(sidebar, 'active');
+          } else {
+            this.renderer.addClass(sidebar, 'active');
+          }
+        }
+      });
+    }
 
   ngOnInit(): void {
     this.searchTerms

@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -19,7 +19,7 @@ import { ImageService } from 'src/app/configuration/assets/image.service';
   templateUrl: './security.component.html',
   styleUrls: ['./security.component.css'],
 })
-export class SecurityComponent implements OnInit {
+export class SecurityComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   uploadedImageUrl: string | ArrayBuffer | null =
@@ -55,8 +55,26 @@ export class SecurityComponent implements OnInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private securityControlService: SecurityControlService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   onFileSelected(event: any, index: number) {
     const file: File = event.target.files[0];

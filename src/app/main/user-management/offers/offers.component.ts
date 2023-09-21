@@ -1,8 +1,7 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
-import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { OfferService } from 'src/app/configuration/services/pages/offer.service';
 
@@ -11,7 +10,7 @@ import { OfferService } from 'src/app/configuration/services/pages/offer.service
   templateUrl: './offers.component.html',
   styleUrls: ['./offers.component.css']
 })
-export class OffersComponent implements OnInit {
+export class OffersComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -23,12 +22,13 @@ export class OffersComponent implements OnInit {
   itemsPerPage = 1;
 
   constructor(
-    private usersManagementService: UsersManagementService,
     private router: Router,
     private route: ActivatedRoute,
     private elRef: ElementRef,
     private dialog: MatDialog,
-    private offerService: OfferService
+    private offerService: OfferService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) { }
 
   applySearchFilter() {
@@ -67,6 +67,22 @@ export class OffersComponent implements OnInit {
         this.currentPage = 1;
       }
       this.fetchoffersData(this.currentPage);
+    });
+  }
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
     });
   }
 

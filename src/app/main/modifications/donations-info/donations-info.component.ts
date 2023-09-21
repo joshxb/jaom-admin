@@ -5,7 +5,13 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
@@ -15,9 +21,9 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 @Component({
   selector: 'app-donations-info',
   templateUrl: './donations-info.component.html',
-  styleUrls: ['./donations-info.component.css']
+  styleUrls: ['./donations-info.component.css'],
 })
-export class DonationsInfoComponent implements OnInit {
+export class DonationsInfoComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -43,8 +49,26 @@ export class DonationsInfoComponent implements OnInit {
     private route: ActivatedRoute,
     private elRef: ElementRef,
     private modificationsService: ModificationsService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {

@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -17,7 +17,7 @@ import { ModalComponent } from '../../modal/modal.component';
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.css']
 })
-export class TodoComponent implements OnInit {
+export class TodoComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -33,8 +33,26 @@ export class TodoComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private elRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {

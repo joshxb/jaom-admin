@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -21,7 +21,7 @@ import { TextService } from 'src/app/configuration/assets/text.service';
   templateUrl: './configurations.component.html',
   styleUrls: ['./configurations.component.css']
 })
-export class ConfigurationsComponent implements OnInit {
+export class ConfigurationsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -41,8 +41,26 @@ export class ConfigurationsComponent implements OnInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private validationService: ValidationService,
-    private textService: TextService
+    private textService: TextService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {

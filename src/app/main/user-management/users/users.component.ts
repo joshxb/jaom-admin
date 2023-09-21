@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -19,7 +19,7 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
 
   searchTerm: string = '';
@@ -37,8 +37,45 @@ export class UsersComponent implements OnInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private ng2ImgMax: Ng2ImgMaxService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
+
+  openDialog(s: any, type: string) {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: { content: `${s}`, level: type },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['page']) {
+        this.currentPage = +params['page'];
+      } else {
+        this.currentPage = 1;
+      }
+      this.fetchUsersData(this.currentPage);
+    });
+  }
+
+  ngAfterViewInit() {
+    const scb = this.elementRef.nativeElement.querySelector(
+      '#sidebarCollapseBtn'
+    );
+    this.renderer.listen(scb, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+        }
+      }
+    });
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {
@@ -58,25 +95,6 @@ export class UsersComponent implements OnInit {
           })
       );
     }
-  }
-
-  openDialog(s: any, type: string) {
-    const dialogRef = this.dialog.open(ModalComponent, {
-      data: { content: `${s}`, level: type },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {});
-  }
-
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      if (params['page']) {
-        this.currentPage = +params['page'];
-      } else {
-        this.currentPage = 1;
-      }
-      this.fetchUsersData(this.currentPage);
-    });
   }
 
   fetchUsersData(page: number) {
