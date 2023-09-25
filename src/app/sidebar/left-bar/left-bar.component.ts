@@ -84,6 +84,7 @@ export class LeftBarComponent implements OnInit {
       // If not in cookie, fetch from the server and store in cookie
       this.adminService.getUserData().subscribe((response) => {
         this.data = response;
+        console.log(response);
         localStorage.setItem(cookieKey, JSON.stringify(response)); // Cache the data in cookie
       });
     }

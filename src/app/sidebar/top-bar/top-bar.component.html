@@ -94,7 +94,12 @@
         <div class="dropdown custom-dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-            <img class="user-profile" [src]="imageUrls.user_default" alt="" />
+            <ng-container *ngIf="data?.image_blob !== null; else otherImage">
+              <img class="user-profile" [src]="'data:image/jpeg;base64,' + data?.image_blob" alt="" />
+            </ng-container>
+            <ng-template #otherImage>
+              <img class="user-profile" [src]="imageUrls.user_default" alt="" />
+            </ng-template>
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
             <a class="dropdown-item top-items" href="/settings">Settings</a>
