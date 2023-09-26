@@ -15,3 +15,7 @@
 .show {
   opacity: 1;
 }
+
+li {
+  cursor: pointer;
+}
