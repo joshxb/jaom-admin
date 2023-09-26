@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { AuthService } from 'src/app/configuration/services/auth.service';
@@ -10,7 +10,7 @@ import { AdminService } from 'src/app/configuration/services/pages/admin.service
   styleUrls: ['./left-bar.component.css', './../../../styles.css'],
 })
 
-export class LeftBarComponent implements OnInit {
+export class LeftBarComponent implements OnInit, AfterViewInit {
   public data: any;
   isUserManagementExpanded: boolean = false;
   isTransactionsExpanded: boolean = false;
@@ -22,7 +22,9 @@ export class LeftBarComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
   ) {}
 
   imageUrls = new imageUrls();
@@ -45,7 +47,43 @@ export class LeftBarComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit(): void {
+    const exitIcon = this.elementRef.nativeElement.querySelector(
+      '.exit-icon'
+    );
+    
+    this.renderer.listen(exitIcon, 'click', () => {
+      const sidebar = this.elementRef.nativeElement.querySelector('nav');
+      if (sidebar) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(false));
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(false));
+        }
+      }
+    });
+
+  }
+
   ngOnInit() {
+    const storedCollapse = localStorage.getItem('activeCollapse');
+    if (storedCollapse !== null) {
+      const parsedCollapse = JSON.parse(storedCollapse);
+      
+      const sidebar = this.elementRef.nativeElement.querySelector('nav');
+      if (parsedCollapse === true) {
+        if (sidebar) {
+            this.renderer.addClass(sidebar, 'active');
+        }
+      } else {
+        if (sidebar) {
+            this.renderer.removeClass(sidebar, 'active');
+        }
+      } 
+    }
+
     const storedIndex = localStorage.getItem('activeIndex');
     if (storedIndex !== null) {
       this.activeIndex = JSON.parse(storedIndex);

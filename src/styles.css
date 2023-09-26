@@ -76,9 +76,11 @@ a:focus {
 #sidebar::-webkit-scrollbar {
   display: none;
 }
+
 #sidebar.active {
   margin-left: -250px;
 }
+
 #sidebar .sidebar-header {
   padding: 10px;
   background: #17a2b8;
@@ -173,6 +175,40 @@ a.download:hover {
   }
   #sidebarCollapse span {
     display: none;
+  }
+}
+
+.exit-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
+  cursor: pointer;
+  color: #fff; /* Change the color of the exit icon */
+  font-size: 20px; /* Adjust the font size of the exit icon */
+  transition: opacity 0.3s ease;
+  display: none;
+}
+
+.exit-icon:hover {
+  opacity: 0.8;
+}
+
+@media screen and (max-width: 800px) {
+
+  .exit-icon {
+    display: block;
+  }
+
+  #sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    transition: all 0.3s ease;
+  }
+
+  #sidebar.active {
+    transform: translateX(100%);
+    position: fixed;
   }
 }
 

@@ -1,5 +1,8 @@
-<nav>
+<nav id="sidebar">
   <div class="sidebar-header">
+    <div class="exit-icon">
+      x
+    </div>
     <ng-container *ngIf="data?.image_blob !== null; else otherImage">
       <img style="width: 40x; height: 40px; border-radius: 50%" [src]="'data:image/jpeg;base64,' + data?.image_blob"
         alt="" />

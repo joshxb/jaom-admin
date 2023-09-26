@@ -49,8 +49,10 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
       if (sidebar) {
         if (sidebar.classList.contains('active')) {
           this.renderer.removeClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(false));
         } else {
           this.renderer.addClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(true));
         }
       }
     });
