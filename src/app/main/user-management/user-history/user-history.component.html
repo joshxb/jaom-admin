@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <app-left-bar></app-left-bar>
+      <app-left-bar style="z-index: 1000;"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -29,38 +29,40 @@
               </div>
             </div>
           </div>
-          <table class="table table-bordered users-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Data</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let userHistory of filteredUserHistory">
-                <td>{{ userHistory?.id }}</td>
-                <td>{{ userHistory?.user_id }}</td>
-                <td>{{ userHistory?.content }}</td>
-                <td>
-                  {{ userHistory?.created_at | date : "MMMM d, y" }}
-                </td>
-                <td>
-                  {{ userHistory?.created_at | date : "h:mm a" }}
-                </td>
-                <td class="action-cont">
-                  <img
-                    (click)="deleteSpecificUserHistory(userHistory?.id)"
-                    [src]="imageUrls.delete"
-                    alt=""
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-bordered users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User ID</th>
+                  <th>Data</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let userHistory of filteredUserHistory">
+                  <td>{{ userHistory?.id }}</td>
+                  <td>{{ userHistory?.user_id }}</td>
+                  <td>{{ userHistory?.content }}</td>
+                  <td>
+                    {{ userHistory?.created_at | date : "MMMM d, y" }}
+                  </td>
+                  <td>
+                    {{ userHistory?.created_at | date : "h:mm a" }}
+                  </td>
+                  <td class="action-cont">
+                    <img
+                      (click)="deleteSpecificUserHistory(userHistory?.id)"
+                      [src]="imageUrls.delete"
+                      alt=""
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div class="pagination-cont">
             <ul class="pagination">
               <li class="page-item" [class.disabled]="currentPage === 1">

@@ -10,6 +10,7 @@
   height: 80%;
   overflow-y: auto;
 }
+
 .action-cont {
   display: flex;
   align-items: center;
@@ -38,7 +39,8 @@ table tbody tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  text-align: left; /* To align the "Showing" message to the left */
+  text-align: left;
+  /* To align the "Showing" message to the left */
 }
 
 .showing-pagination {
@@ -92,11 +94,12 @@ table tbody tr:hover {
   text-align: center;
   padding: 10px 20px;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  /* Add the desired box shadow */
   display: none;
 }
 
-.dialog-messages{
+.dialog-messages {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -105,11 +108,13 @@ table tbody tr:hover {
   text-align: center;
   padding: 10px 20px;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  /* Add the desired box shadow */
   display: none;
 }
 
-.dialog-messages p, .update-dialog-message p {
+.dialog-messages p,
+.update-dialog-message p {
   position: relative;
   top: 7px;
 }
@@ -168,4 +173,8 @@ table tbody tr:hover {
 .no-changes-txt {
   font-size: 15px;
   display: none;
+}
+
+.input-group {
+  width: 20%;
 }

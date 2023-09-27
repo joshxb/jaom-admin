@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <app-left-bar></app-left-bar>
+      <app-left-bar style="z-index: 1000;"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -29,57 +29,72 @@
               </div>
             </div>
           </div>
-          <table class="table table-bordered users-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Title / Subject</th>
-                <th>Content</th>
-                <th>Permission</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let update of filteredUpdates">
-                <td>{{ update?.id }}</td>
-                <td>{{ update?.user_id }}</td>
-                <td
-                  [innerHTML]="extractStylesAndText(update?.subject).innerHTML"
-                ></td>
-                <td
-                  [innerHTML]="extractStylesAndText(update?.content).innerHTML"
-                ></td>
-                <td class="text-center">
-                  <ng-container
-                    *ngIf="update?.permission === 'approved'; else disapproved"
-                  >
-                    <label class="switch" >
-                      <input type="checkbox" checked />
-                      <span class="slider" (click)="updatePermission(update?.id, 0)"></span>
-                    </label>
-                  </ng-container>
-                  <ng-template #disapproved>
-                    <label class="switch">
-                      <input type="checkbox" />
-                      <span class="slider" (click)="updatePermission(update?.id, 1)"></span>
-                    </label>
-                  </ng-template>
-                </td>
-                <td>{{ update?.created_at | date : "MMMM d, y" }}</td>
-                <td>{{ update?.created_at | date : "h:mm a" }}</td>
-                <td class="action-cont">
-                  <img
-                    (click)="deleteSpecificUpdate(update?.id)"
-                    [src]="imageUrls.delete"
-                    alt=""
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-bordered users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User ID</th>
+                  <th>Title / Subject</th>
+                  <th>Content</th>
+                  <th>Permission</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let update of filteredUpdates">
+                  <td>{{ update?.id }}</td>
+                  <td>{{ update?.user_id }}</td>
+                  <td
+                    [innerHTML]="
+                      extractStylesAndText(update?.subject).innerHTML
+                    "
+                  ></td>
+                  <td
+                    [innerHTML]="
+                      extractStylesAndText(update?.content).innerHTML
+                    "
+                  ></td>
+                  <td class="text-center">
+                    <ng-container
+                      *ngIf="
+                        update?.permission === 'approved';
+                        else disapproved
+                      "
+                    >
+                      <label class="switch">
+                        <input type="checkbox" checked />
+                        <span
+                          class="slider"
+                          (click)="updatePermission(update?.id, 0)"
+                        ></span>
+                      </label>
+                    </ng-container>
+                    <ng-template #disapproved>
+                      <label class="switch">
+                        <input type="checkbox" />
+                        <span
+                          class="slider"
+                          (click)="updatePermission(update?.id, 1)"
+                        ></span>
+                      </label>
+                    </ng-template>
+                  </td>
+                  <td>{{ update?.created_at | date : "MMMM d, y" }}</td>
+                  <td>{{ update?.created_at | date : "h:mm a" }}</td>
+                  <td class="action-cont">
+                    <img
+                      (click)="deleteSpecificUpdate(update?.id)"
+                      [src]="imageUrls.delete"
+                      alt=""
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div class="pagination-cont">
             <ul class="pagination">
               <li class="page-item" [class.disabled]="currentPage === 1">

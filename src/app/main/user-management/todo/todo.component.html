@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <app-left-bar></app-left-bar>
+      <app-left-bar style="z-index: 1000;"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -29,36 +29,38 @@
               </div>
             </div>
           </div>
-          <table class="table table-bordered users-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Due</th>
-                <th>Created</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let todo of filteredTodos">
-                <td>{{ todo?.id }}</td>
-                <td>{{ todo?.user_id }}</td>
-                <td>{{ todo?.title }}</td>
-                <td>{{ todo?.description }}</td>
-                <td>{{ todo?.due_date }}</td>
-                <td>{{ todo?.created_at | date : "MMMM d, y" }}</td>
-                <td class="action-cont">
-                  <img
-                    (click)="deleteSpecificTodo(todo?.id)"
-                    [src]="imageUrls.delete"
-                    alt=""
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-bordered users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User ID</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Due</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let todo of filteredTodos">
+                  <td>{{ todo?.id }}</td>
+                  <td>{{ todo?.user_id }}</td>
+                  <td>{{ todo?.title }}</td>
+                  <td>{{ todo?.description }}</td>
+                  <td>{{ todo?.due_date }}</td>
+                  <td>{{ todo?.created_at | date : "MMMM d, y" }}</td>
+                  <td class="action-cont">
+                    <img
+                      (click)="deleteSpecificTodo(todo?.id)"
+                      [src]="imageUrls.delete"
+                      alt=""
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div class="pagination-cont">
             <ul class="pagination">
               <li class="page-item" [class.disabled]="currentPage === 1">

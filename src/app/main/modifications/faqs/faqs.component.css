@@ -39,6 +39,7 @@
   height: 80%;
   overflow-y: auto;
 }
+
 .action-cont {
   display: flex;
   justify-content: center;
@@ -240,4 +241,25 @@ table tbody tr:hover {
   display: flex;
   gap: 20px;
   justify-content: center;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .faqs-sub-container {
+    flex-direction: column;
+  }
+
+  .table tr {
+    display: grid;
+    text-align: left;
+  }
+
+  .action-cont {
+    justify-content: left;
+  }
+
+  .action-cont img {
+    width: 20px;
+  }
+  
 }

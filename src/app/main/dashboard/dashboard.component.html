@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <app-left-bar></app-left-bar>
+      <app-left-bar style="z-index: 1000;"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -127,7 +127,7 @@
               <div class="donations-amount">
                 <p>Php. {{ donationTransactions?.total_amount }} / {{donationTransactions?.total_user_donations }} users</p>
               </div>
-            </div>
+            </div>&nbsp;&nbsp;
             <div class="donation-sub-list">
               <p>Donations per month & year:</p>
               <div class="donations-amount">

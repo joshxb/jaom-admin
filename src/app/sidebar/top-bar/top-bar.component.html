@@ -3,10 +3,16 @@
     <i class="fa fa-align-justify"></i>
   </button>
   <img class="logo" [src]="imageUrls.logo" alt="" />
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-    aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <ng-container *ngIf="data?.image_blob !== null; else otherImage">
+    <img class="navbar-toggler user-profile" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+      aria-expanded="false" aria-label="Toggle navigation" [src]="'data:image/jpeg;base64,' + data?.image_blob"
+      alt="" />
+  </ng-container>
+  <ng-template #otherImage>
+    <img class="navbar-toggler user-profile" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+      aria-expanded="false" aria-label="Toggle navigation" [src]="imageUrls.user_default" alt="" />
+  </ng-template>
+
   <div class="collapse navbar-collapse shadow" id="navbarNav">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
@@ -107,6 +113,13 @@
                 [src]="imageUrls.logout" /></a>
           </div>
         </div>
+      </li>
+      <li>
+        <a class="mobile-text-items" href="/settings">Settings</a>
+      </li>
+      <li>
+        <a class="mobile-text-items" (click)="logOut()">Log Out <img class="logout-icon"
+          [src]="imageUrls.logout" /></a>
       </li>
     </ul>
   </div>

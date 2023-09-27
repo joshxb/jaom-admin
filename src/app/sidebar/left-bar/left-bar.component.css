@@ -1,3 +1,7 @@
+.sidebar {
+  z-index: 1000;
+}
+
 .sidebar-header {
   position: relative;
 }

@@ -10,7 +10,8 @@ body {
   background: #fafafa;
   zoom: 0.95;
 }
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -166,6 +167,11 @@ a.download:hover {
   width: 100%;
   height: 100%;
 }
+
+.pagination-cont {
+  z-index: -1;
+}
+
 @media (maz-width: 768px) {
   #sidebar {
     margin-left: -250px;
@@ -195,7 +201,6 @@ a.download:hover {
 }
 
 @media screen and (max-width: 800px) {
-
   .exit-icon {
     display: block;
   }
@@ -212,3 +217,46 @@ a.download:hover {
   }
 }
 
+@media (max-width: 767px) {
+  .table th {
+    font-size: 12px;
+  }
+
+  .table td {
+    font-size: 11px;
+  }
+
+  .pagination-cont {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .pagination {
+    margin-top: 10px;
+    overflow-x: auto;
+    width: 90%;
+  }
+
+  .pagination a {
+    font-size: 12px;
+  }
+
+  .s-panel-item {
+    flex-direction: column;
+    text-align: left;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .input-group {
+    width: 80% !important;
+  }
+}
+
+@media (max-width: 300px) {
+  .input-group {
+    width: 100% !important;
+  }
+}

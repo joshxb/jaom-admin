@@ -36,18 +36,28 @@ export class TopBarComponent implements OnInit {
   notificationPage: number = 1;
 
   ngOnInit() {
-    this.adminService.getUserData().subscribe(
-      (response) => {
-        if (response?.type === 'admin') {
-          this.data = response;
-        } else {
+    const cookieKey = 'userAdminData'; // Define a cookie key
+    const cachedData = localStorage.getItem(cookieKey);
+    if (cachedData) {
+      try {
+        this.data = JSON.parse(cachedData); // Parse the JSON string into an array
+      } catch (error) {
+        console.error('Error parsing cached data:', error);
+      }
+    } else {
+      this.adminService.getUserData().subscribe(
+        (response) => {
+          if (response?.type === 'admin') {
+            this.data = response;
+          } else {
+            this.redirectToUserPage();
+          }
+        },
+        () => {
           this.redirectToUserPage();
         }
-      },
-      () => {
-        this.redirectToUserPage();
-      }
-    );
+      );
+    }
     this.getAllNotification(this.notificationPage);
   }
 

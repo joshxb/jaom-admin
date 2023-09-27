@@ -25,6 +25,12 @@ nav {
   border-radius: 50%;
 }
 
+.navbar-toggler {
+  width: 60px !important;
+  height: 40px !important;
+  border: none;
+}
+
 .notifications-dropdown {
   width: 300px;
   padding: 10px 20px;
@@ -69,38 +75,103 @@ nav {
 
 /* Custom styles for the notification */
 .custom-notification {
-  background-color: #f8f9fa; /* Background color */
-  border: 1px solid #d6d8db; /* Border color */
-  border-radius: 8px; /* Rounded corners */
-  padding: 15px; /* Padding inside the notification */
+  background-color: #f8f9fa;
+  /* Background color */
+  border: 1px solid #d6d8db;
+  /* Border color */
+  border-radius: 8px;
+  /* Rounded corners */
+  padding: 15px;
+  /* Padding inside the notification */
 }
 
 /* Style the title */
 .notification-title {
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 10px; /* Spacing below the title */
+  margin-bottom: 10px;
+  /* Spacing below the title */
 }
 
 /* Style the description (for specific notifications) */
 .notification-description {
   font-size: 14px;
-  margin-bottom: 10px; /* Spacing below the description */
+  margin-bottom: 10px;
+  /* Spacing below the description */
 
 }
 
 /* Style the link (for specific notifications) */
 .notification-link {
-  text-decoration: none; /* Remove underlines from the link */
-  background-color: transparent; /* Transparent background */
-  color: #007bff; /* Link color */
+  text-decoration: none;
+  /* Remove underlines from the link */
+  background-color: transparent;
+  /* Transparent background */
+  color: #007bff;
+  /* Link color */
   font-weight: bold;
-  margin-top: 5px; /* Spacing above the link */
+  margin-top: 5px;
+  /* Spacing above the link */
   display: inline-block;
 }
 
 /* Style the date */
 .notification-date {
   font-size: 12px;
-  color: #6c757d; /* Gray text color for the date */
+  color: #6c757d;
+  /* Gray text color for the date */
+}
+
+.mobile-text-items {
+  color: #fff;
+  display: none;
+}
+
+@media screen and (max-width: 990px) {
+  .mobile-text-items {
+    display: block;
+  }
+
+  .notifications-dropdown {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+  }
+
+  .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .nav-item {
+    display: flex;
+    justify-content: center;
+    /* Center content horizontally */
+    align-items: center;
+    /* Center content vertically */
+    margin-bottom: 10px;
+    /* Add spacing between nav-items */
+  }
+
+  .profile-logo {
+    display: none;
+  }
+
+  .logout-icon {
+    filter: invert(100%);
+    /* Invert the colors to make it white */
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-text-items {
+    font-size: 13px !important;
+  }
+
+  .new-admin {
+    position: relative;
+    top: 5px;
+  }
 }

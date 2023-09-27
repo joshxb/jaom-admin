@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <app-left-bar></app-left-bar>
+      <app-left-bar style="z-index: 1000;"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -29,10 +29,8 @@
               </div>
             </div>
           </div>
-          <div style="display: flex; flex-direction: row; width: 100%">
-            <div
-              style="border-right: 2px solid rgba(0, 0, 0, 0.258); width: 50%"
-            >
+          <div class="security-header-panel">
+            <div class="auto-add-panel">
               <div
                 style="
                   display: flex;
@@ -91,14 +89,7 @@
                   />
                 </form>
               </div>
-              <div
-                style="
-                  display: flex;
-                  flex-direction: row;
-                  align-items: start;
-                  gap: 10px;
-                "
-              >
+              <div>
                 <button
                   (click)="addDefaultRoom()"
                   class="btnConfig btn-conf-v1"
@@ -118,22 +109,16 @@
                 </button>
               </div>
             </div>
-            <div
-              style="
-                padding: 0 10px;
-                height: 300px;
-                overflow-y: auto;
-                width: 50%;
-              "
-            >
+            <div 
+              class="default-room-list-panel">
               <table
                 style="width: 100%"
                 *ngIf="filteredRoomListData.length > 0"
               >
                 <tbody>
-                  <tr *ngFor="let list of filteredRoomListData; let i = index">
+                  <tr class="default-room-row" *ngFor="let list of filteredRoomListData; let i = index">
                     <td style="padding: 0 20px">
-                      <div style="display: flex; flex-direction: row; gap: 5px">
+                      <div class="default-room-header">
                         <img
                           [src]="'data:image/jpeg;base64,' + list?.group_image"
                           alt=""
