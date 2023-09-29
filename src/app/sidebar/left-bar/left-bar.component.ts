@@ -16,6 +16,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
   isTransactionsExpanded: boolean = false;
   isAnalyticsExpanded: boolean = false;
   isModificationsExpanded: boolean = false;
+  isSpinnerLoading: boolean = false;
 
   activeIndex: number = 1;
 
@@ -25,7 +26,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     private router: Router,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-  ) {}
+  ) { }
 
   imageUrls = new imageUrls();
 
@@ -48,40 +49,23 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const exitIcon = this.elementRef.nativeElement.querySelector(
-      '.exit-icon'
-    );
-    
-    this.renderer.listen(exitIcon, 'click', () => {
-      const sidebar = this.elementRef.nativeElement.querySelector('nav');
-      if (sidebar) {
-        if (sidebar.classList.contains('active')) {
-          this.renderer.removeClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(false));
-        } else {
-          this.renderer.addClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(false));
-        }
-      }
-    });
-
   }
 
   ngOnInit() {
     const storedCollapse = localStorage.getItem('activeCollapse');
     if (storedCollapse !== null) {
       const parsedCollapse = JSON.parse(storedCollapse);
-      
+
       const sidebar = this.elementRef.nativeElement.querySelector('nav');
       if (parsedCollapse === true) {
         if (sidebar) {
-            this.renderer.addClass(sidebar, 'active');
+          this.renderer.addClass(sidebar, 'active');
         }
       } else {
         if (sidebar) {
-            this.renderer.removeClass(sidebar, 'active');
+          this.renderer.removeClass(sidebar, 'active');
         }
-      } 
+      }
     }
 
     const storedIndex = localStorage.getItem('activeIndex');
@@ -132,11 +116,35 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     this.authService.logout();
   }
 
-  checkActive(index: number, page: string|null = null) {
+  checkActive(index: number, page: string | null = null) {
+    this.isSpinnerLoading = true;
     this.activeIndex = index;
     localStorage.setItem('activeIndex', JSON.stringify(index));
-    if (page !== null){
-      this.router.navigate([`/${page}`]);
+    if (page !== null) {
+      this.hidePanel();
+
+      setTimeout(() => {
+        this.isSpinnerLoading = false;
+        this.router.navigate([`/${page}`]);
+      }, 400);
+    }
+  }
+
+  hidePanel() {
+    const sidebar = this.elementRef.nativeElement.querySelector('nav');
+    if (sidebar) {
+      const screenWidth = window.innerWidth;
+      const mobileWidthThreshold = 768;
+
+      if (screenWidth < mobileWidthThreshold) {
+        if (sidebar.classList.contains('active')) {
+          this.renderer.removeClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(false));
+        } else {
+          this.renderer.addClass(sidebar, 'active');
+          localStorage.setItem('activeCollapse', JSON.stringify(true));
+        }
+      }
     }
   }
 }

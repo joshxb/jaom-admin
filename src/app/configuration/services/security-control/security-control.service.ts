@@ -25,7 +25,7 @@ export class SecurityControlService {
   }
 
   deleteSpecificRoom(id: number): Observable<any> {
-    return this.roomService.deleteSpecificRoomChat(id);
+    return this.roomService.deleteRoom(id);
   }
 
   getConfigurations(): Observable<any> {

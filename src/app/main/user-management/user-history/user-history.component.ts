@@ -1,13 +1,7 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 
 @Component({
@@ -22,6 +16,7 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   userHistoryData!: any;
   selectedUser: any;
   filteredUserHistory: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -32,7 +27,8 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -74,6 +70,9 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -85,7 +84,10 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   }
 
   fetchUserHistoryData(page: number) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.userHistoryData = res;
       this.filteredUserHistory = this.userHistoryData?.data;
     });
@@ -132,7 +134,11 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   }
 
   deleteSpecificUserHistory(id: any) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.deleteUserHistory(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );

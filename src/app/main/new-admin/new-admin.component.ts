@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { UsersService } from 'src/app/configuration/services/pages/users.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
   showEmptyData: boolean = true;
   currentPage = 1;
   data: any = [];
+  isSpinnerLoading: boolean = false;
 
   private searchTerms = new Subject<string>();
 
@@ -22,7 +24,8 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
     private userService: UsersService,
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
     ) {}
 
     ngAfterViewInit() {
@@ -42,6 +45,13 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
     }
 
   ngOnInit(): void {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+    }, 1000);
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.searchTerms
       .pipe(
         debounceTime(500),
@@ -73,9 +83,11 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
   }
 
   addAdmin(id: number) {
+    this.isSpinnerLoading = true;
     this.userService
       .updateOtherUserData(id, { type: 'admin' })
       .subscribe((res) => {
+        this.isSpinnerLoading = false;
         this.elRef.nativeElement.querySelector(
           '.add-dialog-message'
         ).style.display = 'block';

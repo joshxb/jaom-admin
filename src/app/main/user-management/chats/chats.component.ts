@@ -1,16 +1,10 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-chats',
@@ -24,6 +18,7 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   chatsData!: any;
   selectedUser: any;
   filteredChats: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -35,7 +30,8 @@ export class ChatsComponent implements OnInit, AfterViewInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -85,6 +81,9 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -96,7 +95,11 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   }
 
   fetchchatsData(page: number) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.getAllChatsData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       this.chatsData = res;
       this.filteredChats = this.chatsData?.messages;
     });
@@ -141,7 +144,11 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   }
 
   deleteSpecificMessage(id: any) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.deleteSpecificMessage(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );

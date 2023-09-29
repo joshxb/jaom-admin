@@ -1,20 +1,12 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Ng2ImgMaxService } from 'ng2-img-max';
 import { imageUrls } from 'src/app/app.component';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { TextService } from 'src/app/configuration/assets/text.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-configurations',
@@ -30,6 +22,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   filteredUsers: any[] = [];
   initialNicknameBoolean: boolean = false;
   nicknameBoolean: boolean = false;
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -43,8 +36,9 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     private validationService: ValidationService,
     private textService: TextService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
-  ) {}
+    private elementRef: ElementRef,
+    private cacheService: CacheService
+  ) { }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(
@@ -89,10 +83,13 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -104,7 +101,10 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   }
 
   fetchUsersData(page: number) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.getAllUserData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.usersData = res[0];
       this.filteredUsers = this.usersData?.data;
     });
@@ -149,6 +149,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   }
 
   openEditModal(user: any) {
+    this.isSpinnerLoading = true;
+
     this.selectedUser = user;
     this.usersManagementService
       .geSpecificUserData(user)
@@ -215,20 +217,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
 
         hiddenFullNickName.value = data?.nickname;
         modalOverlay.style.display = 'flex';
+        this.isSpinnerLoading = false;
       });
-  }
-
-  deleteSpecificUser(user: any) {
-    this.usersManagementService.deleteSpecificUser(user).subscribe((res) => {
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
   }
 
   extractRealNickname(nickname: string, separator: string): string {
@@ -295,6 +285,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   }
 
   updateUserData() {
+    this.isSpinnerLoading = true;
+
     const data: { [key: string]: string } = {};
 
     const fields = [
@@ -356,6 +348,8 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
         .updateOtherUserData(this.selectedUser, data)
         .subscribe(
           (res) => {
+            this.isSpinnerLoading = false;
+
             const dialogMessage = this.elRef.nativeElement.querySelector(
               '.update-dialog-message'
             );
@@ -365,9 +359,10 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
               window.location.reload();
             }, 2000);
           },
-          (error) => {}
+          (error) => { }
         );
     } else {
+      this.isSpinnerLoading = false;
       const noChangesTxt =
         this.elRef.nativeElement.querySelector('.no-changes-txt');
       noChangesTxt.style.display = 'block';
@@ -375,14 +370,19 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   }
 
   toggleNicknameEnabledDisabled() {
-    const toggleNicknameBolean = !this.getNicknameBoolean();
-    this.setNicknameBoolean(toggleNicknameBolean, 'change');
+    this.isSpinnerLoading = true;
 
-    const inputNickName =
-      this.elRef.nativeElement.querySelector('#inputNickName');
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      const toggleNicknameBolean = !this.getNicknameBoolean();
+      this.setNicknameBoolean(toggleNicknameBolean, 'change');
 
-    inputNickName.value = '';
-    inputNickName.disabled = !this.getNicknameBoolean();
+      const inputNickName =
+        this.elRef.nativeElement.querySelector('#inputNickName');
+
+      inputNickName.value = '';
+      inputNickName.disabled = !this.getNicknameBoolean();
+    }, 500);
   }
 
   setNicknameBoolean(boolean: boolean, selection: string) {

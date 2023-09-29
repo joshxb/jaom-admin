@@ -1,12 +1,6 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
 
 @Component({
@@ -24,15 +18,20 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   addNewDefinition: string = '';
   newQuestion: string = '';
   newDefinition: string = '';
+  isSpinnerLoading: boolean = false;
 
   constructor(
     private modificationService: ModificationsService,
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.modificationService.showAllFAQS().subscribe((res) => {
       this.faqsData = res;
     });
@@ -57,10 +56,12 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   updateFaq() {
+    this.isSpinnerLoading = true;
     const trimmedQuestion = this.newQuestion.trim();
     const trimmedDefinition = this.newDefinition.trim();
 
     if (trimmedQuestion === '' && trimmedDefinition === '') {
+      this.isSpinnerLoading = false;
       const infoDialogMessage = this.elRef.nativeElement.querySelector(
         '.info-dialog-message p'
       );
@@ -83,6 +84,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
     this.modificationService
       .updateFAQS(this.selectedFaqID, data)
       .subscribe(() => {
+        this.isSpinnerLoading = false;
         const updateDialogMessage = this.elRef.nativeElement.querySelector(
           '.update-dialog-message'
         );
@@ -103,6 +105,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   addFaq() {
+    this.isSpinnerLoading = true;
     const question = this.addNewQuestion.trim();
     const definition = this.addNewDefinition.trim();
     const infoDialogMessageP = this.elRef.nativeElement.querySelector(
@@ -125,6 +128,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
       };
 
       this.modificationService.addFAQS(data).subscribe((res) => {
+        this.isSpinnerLoading = false;
         const infoDialogMessage = this.elRef.nativeElement.querySelector(
           '.success-dialog-message'
         );
@@ -144,6 +148,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   private displayInfoMessage(element: HTMLElement, message: string) {
+    this.isSpinnerLoading = false;
     element.textContent = message;
     const infoDialogMessage = this.elRef.nativeElement.querySelector(
       '.info-dialog-message'
@@ -156,7 +161,9 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   deleteFaq(id: any) {
+    this.isSpinnerLoading = true;
     this.modificationService.deleteFAQS(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
@@ -174,9 +181,11 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   openEditModal(id: number) {
+    this.isSpinnerLoading = true;
     this.selectedFaqID = id;
 
     this.modificationService.showFAQS(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const modalOverlay =
         this.elRef.nativeElement.querySelector('.modal-overlay');
 
@@ -184,6 +193,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
 
       this.newQuestion = res?.title;
       this.newDefinition = res?.definition;
+
     });
   }
 

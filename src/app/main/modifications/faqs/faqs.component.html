@@ -66,7 +66,7 @@
             </div>
             <table class="table">
               <tbody>
-                <tr *ngFor="let faq of faqsData">
+                <tr class="faqs-tr" *ngFor="let faq of faqsData">
                   <td class="my-custom-td">
                     <input
                       type="checkbox"
@@ -177,5 +177,6 @@
         </div>
       </div>
     </div>
+    <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
   </body>
 </html>

@@ -18,7 +18,7 @@
         <div class="d-flex justify-content-end" style="margin: 20px;">
           <div class="input-group" style="width: 20%;">
             <input type="text" [(ngModel)]="searchTerm" (input)="applySearchFilter()"
-              placeholder="Search by User ID, Name, ...." class="form-control" />
+              placeholder="Search by User ID, Name, ...." class="form-control filter-user-search" />
             <div class="input-group-append">
               <span class="input-group-text">
                 <i class="fa fa-search"></i>
@@ -79,15 +79,16 @@
           </ul>
           <p class="text-muted showing-pagination">
             Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
-            {{ offersData?.total }} messages
+            {{ offersData?.total }} offers
           </p>
         </div>
         <div class="dialog-messages delete-dialog-message">
-          <p class="text-danger">User deleted successfully</p>
+          <p class="text-danger">Offer deleted successfully</p>
         </div>
       </div>
     </div>
   </div>
+  <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
 </body>
 
 </html>

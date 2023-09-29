@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,6 +5,7 @@ import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { TextService } from 'src/app/configuration/assets/text.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-updates',
@@ -25,6 +19,7 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
   updatesData!: any;
   selectedUser: any;
   filteredUpdates: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -37,7 +32,8 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private textService: TextService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -88,18 +84,24 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
       } else {
         this.currentPage = 1;
       }
+      this.isSpinnerLoading = true;
+
       this.fetchupdatesData(this.currentPage);
     });
   }
 
   fetchupdatesData(page: number) {
     this.usersManagementService.getAllUpdates(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.updatesData = res[0];
       this.filteredUpdates = this.updatesData?.data;
     });
@@ -144,7 +146,10 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
   }
 
   deleteSpecificUpdate(id: any) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.deleteSpecificUpdate(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
@@ -169,11 +174,15 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
   }
 
   updatePermission(id: number, index: number) {
+    this.isSpinnerLoading = true;
+
     const permission = index == 0 ? 'disapproved' : 'approved';
 
     const data = { permission: permission };
 
     this.usersManagementService.updatePermission(data, id).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const updateDialogMessage = this.elRef.nativeElement.querySelector(
         '.update-dialog-message'
       );

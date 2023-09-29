@@ -1,13 +1,7 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
@@ -33,6 +27,7 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
   emailAddress: any = null;
   modifiedEmailAddress: string = '';
   modifiedPhoneNumber: string = '';
+  isSpinnerLoading: boolean = false;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -43,6 +38,7 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
     private validationService: ValidationService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -91,7 +87,9 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
   }
 
   updateConfigurations(index: number) {
+    this.isSpinnerLoading = true;
     if (!this.modificationsData) {
+      this.isSpinnerLoading = false;
       return;
     }
 
@@ -117,12 +115,14 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
             'modifiedAccountNumber',
             'Phone number should not be empty!'
           );
+          this.isSpinnerLoading = false;
           return;
         } else {
           if (
             !this.validationService.isValidPhoneNumber(this.modifiedPhoneNumber)
           ) {
             handleEmptyValue('modifiedAccountNumber', 'Invalid phone number!');
+            this.isSpinnerLoading = false;
             return;
           }
         }
@@ -136,9 +136,11 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
             'modifiedAccountNumber',
             'Email Address should not be empty!'
           );
+          this.isSpinnerLoading = false;
           return;
         } else if (!this.validationService.isValidEmail(this.modifiedEmailAddress.trim())) {
           handleEmptyValue('modifiedAccountNumber', 'Invalid email address!');
+          this.isSpinnerLoading = false;
           return;
         };
 
@@ -148,6 +150,8 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
     }
 
     this.modificationsService.updateConfigurations(data).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       this.elRef.nativeElement.querySelector(
         '.update-dialog-message'
       ).style.display = 'block';
@@ -159,6 +163,11 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.isSpinnerLoading = true;
+
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.modificationsService.getConfigurations().subscribe((res) => {
       this.modificationsData = res?.data;
       this.phoneNumber = this.getParseConfigurations(res, 'phone_number');
@@ -177,6 +186,7 @@ export class ContactDetailsComponent implements OnInit, AfterViewInit {
 
   fetchUserHistoryData(page: number) {
     this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.userHistoryData = res;
       this.filteredUserHistory = this.userHistoryData?.data;
     });

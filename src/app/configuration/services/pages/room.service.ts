@@ -98,7 +98,7 @@ export class RoomService {
       `Bearer ${this.auth.getToken()}`
     );
 
-    return this.http.delete<any>(`${this.apiRoomUrl}/${id}?role=admin`, {
+    return this.http.delete<any>(`${this.apiRoomChatsUrl}/v2/${id}?role=admin`, {
       headers,
     });
   }

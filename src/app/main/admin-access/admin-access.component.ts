@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { UsersService } from 'src/app/configuration/services/pages/users.service';
 
 @Component({
@@ -14,12 +14,14 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
   showLoading: boolean = true;
   showEmptyData: boolean = true;
   data: any = [];
+  isSpinnerLoading: boolean = false;
 
   constructor(
     private userService: UsersService,
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
     ) {}
 
     ngAfterViewInit() {
@@ -39,7 +41,12 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
     }
 
   ngOnInit(): void {
+    this.isSpinnerLoading = true;
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.userService.adminAccessUsers().subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.showLoading = false;
       const { data } = res;
       this.data = data;
@@ -55,9 +62,11 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
   }
 
   removeAdminAccess(id: number) {
+    this.isSpinnerLoading = true;
     this.userService
       .updateOtherUserData(id, { type: 'local' })
       .subscribe((res) => {
+        this.isSpinnerLoading = false;
         this.elRef.nativeElement.querySelector(
           '.remove-dialog-message'
         ).style.display = 'block';

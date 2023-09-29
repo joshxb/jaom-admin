@@ -1,6 +1,6 @@
 <nav id="sidebar">
   <div class="sidebar-header">
-    <div class="exit-icon">
+    <div (click)="hidePanel()" class="exit-icon">
       x
     </div>
     <ng-container *ngIf="data?.image_blob !== null; else otherImage">
@@ -97,3 +97,4 @@
     </li>
   </ul>
 </nav>
+<app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>

@@ -1,16 +1,10 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-rooms',
@@ -27,6 +21,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   selectedUser: any;
   filteredRooms: any[] = [];
   filteredRoomChats: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   currentPage2 = 1;
@@ -39,7 +34,8 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -104,6 +100,9 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe(
       (params: { [x: string]: string | number }) => {
         if (params['page']) {
@@ -112,6 +111,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
           this.currentPage = 1;
         }
 
+        this.isSpinnerLoading = true;
         this.fetchRoomList(this.currentPage);
         this.fetchRoomChatList(this.currentPage2);
       }
@@ -120,6 +120,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
 
   fetchRoomList(page: number) {
     this.usersManagementService.getRoomList(page).subscribe((res: any) => {
+      this.isSpinnerLoading = false;
       this.roomListData = res;
       this.filteredRooms = this.roomListData?.data;
     });
@@ -127,6 +128,8 @@ export class RoomsComponent implements OnInit, AfterViewInit {
 
   fetchRoomChatList(page: number) {
     this.usersManagementService.getRoomChatList(page).subscribe((res: any) => {
+      this.isSpinnerLoading = false;
+
       this.roomChatListData = res;
       this.filteredRoomChats = this.roomChatListData?.data?.data;
     });
@@ -187,9 +190,12 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   }
 
   deleteSpecificRoom(id: any) {
+    this.isSpinnerLoading = true;
     this.usersManagementService
       .deleteRoom(id)
       .subscribe((res: { message: any }) => {
+        this.isSpinnerLoading = false;
+
         const deleteDialogMessage = this.elRef.nativeElement.querySelector(
           '.delete-dialog-message'
         );
@@ -207,9 +213,12 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   }
 
   deleteSpecificRoomChat(id: any) {
+    this.isSpinnerLoading = true;
     this.usersManagementService
       .deleteSpecificRoomChat(id)
       .subscribe((res: { message: any }) => {
+        this.isSpinnerLoading = false;
+
         const deleteDialogMessage = this.elRef.nativeElement.querySelector(
           '.delete-dialog-message'
         );

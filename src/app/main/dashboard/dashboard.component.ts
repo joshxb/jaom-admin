@@ -7,13 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CanvasJS } from '@canvasjs/angular-charts';
 import { imageUrls } from 'src/app/app.component';
 import { Base } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
 import { ChartService } from 'src/app/configuration/assets/chart.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,10 +31,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private dateService: DateService,
-    private chartService: ChartService
-  ) {}
+    private chartService: ChartService,
+    private cacheService: CacheService,
+    private elRef: ElementRef
+  ) { }
   base = new Base();
-  private baseUrl = this.base.baseUrl;
   public data: any;
   public donationTransactions: any;
   public userCounts = 0;
@@ -42,6 +43,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public chatCounts = 0;
   public roomCounts = 0;
   public updateCounts = 0;
+  isSpinnerLoading: boolean = false;
 
   private page = 1;
 
@@ -52,8 +54,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   yearOptions: number[] = this.dateService.generateYearOptions();
 
   async ngOnInit(): Promise<void> {
-    this.setCurrentMonthAndYear();
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
 
+    this.setCurrentMonthAndYear();
     this.getUserCounts();
     this.countUsersByStatus();
     this.getChatCounts();
@@ -85,8 +89,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const currentDate = new Date();
 
     this.selectedMonth = this.dateService.getMonths()[currentDate.getMonth()];
-    // Set default parameters or the desired initial values
-
     if (
       !(
         this.route.snapshot.queryParamMap.has('month') &&
@@ -113,6 +115,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   setParams() {
+    this.isSpinnerLoading = true;
+
     const defaultParams = {
       month: this.selectedMonth,
       year: this.selectedYear,
@@ -137,6 +141,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.donationTransactions = res;
 
       this.renderChartData();
+      this.isSpinnerLoading = false;
     } catch (error) {
       console.error('Error fetching donation transactions:', error);
     }
@@ -175,7 +180,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   countUsersByStatus() {
     this.adminService.countUsersByStatus().subscribe((res) => {
-      //active_user_count , inactive_user_count
       this.userStatusCounts = res;
     });
   }

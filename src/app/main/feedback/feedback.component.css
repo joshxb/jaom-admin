@@ -6,6 +6,7 @@
   height: 80%;
   overflow-y: auto;
 }
+
 .action-cont {
   display: flex;
   align-items: center;
@@ -21,6 +22,7 @@
 .action-cont img:hover {
   opacity: 0.8;
 }
+
 table tbody tr:hover {
   opacity: 0.9;
 }
@@ -33,7 +35,8 @@ table tbody tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  text-align: left; /* To align the "Showing" message to the left */
+  text-align: left;
+  /* To align the "Showing" message to the left */
 }
 
 .showing-pagination {
@@ -87,11 +90,12 @@ table tbody tr:hover {
   text-align: center;
   padding: 10px 20px;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  /* Add the desired box shadow */
   display: none;
 }
 
-.dialog-messages{
+.dialog-messages {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -100,11 +104,13 @@ table tbody tr:hover {
   text-align: center;
   padding: 10px 20px;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  /* Add the desired box shadow */
   display: none;
 }
 
-.dialog-messages p, .update-dialog-message p {
+.dialog-messages p,
+.update-dialog-message p {
   position: relative;
   top: 7px;
 }
@@ -184,4 +190,54 @@ table tbody tr:hover {
   background: rgba(16, 136, 152, 0.14);
   color: rgb(128, 128, 128);
   text-overflow: ellipsis;
+}
+
+.feedback-response {
+  overflow-x: auto;
+  width: 50%;
+}
+
+.feedback-response-panel {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  gap: 10px;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 767px) {
+  .faqs-table tr {
+    display: grid;
+    border: 2px solid rgba(0, 0, 0, 0.185);
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+
+  .faqs-table td:first-child {
+    display: none;
+  }
+
+  .faqs-table td:nth-child(2) {
+    font-weight: bold;
+    font-size: 13px;
+  }
+
+  .feedback-response {
+    width: 100% !important;
+  }
+
+  .feedback-response p {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .feedback-response-panel {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .response-list-msg {
+    font-size: 15px;
+  }
 }

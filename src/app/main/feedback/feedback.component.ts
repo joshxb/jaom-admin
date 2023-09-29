@@ -3,17 +3,10 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angula
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
-import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../modal/modal.component';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
 import { ConcernService } from 'src/app/configuration/services/concerns/concern.service';
 import { NotificationEnum } from 'src/app/configuration/enums/notifications.enum';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-feedback',
@@ -28,6 +21,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   selectedUser: any;
   filteredFeedbacks: any[] = [];
   textareaValues: string[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -40,7 +34,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     private concernService: ConcernService,
     private notificationService: NotificationService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -90,6 +85,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -101,7 +99,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   fetchFeedbacksData(page: number) {
+    this.isSpinnerLoading = true;
     this.concernService.getFeedbacks(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.feedbacksData = res;
       this.filteredFeedbacks = this.feedbacksData?.data;
     });
@@ -146,7 +146,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   deleteFeedback(id: any) {
+    this.isSpinnerLoading = true;
     this.concernService.deleteFeedback(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
@@ -166,6 +168,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     responseObject: any,
     response: string
   ) {
+    this.isSpinnerLoading = true;
     try {
       const decodedResponse = JSON.parse(responseObject.trim());
       if (Array.isArray(decodedResponse)) {
@@ -177,6 +180,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           };
 
           this.concernService.addResponseFeedback(id, data).subscribe((res) => {
+            this.isSpinnerLoading = false;
             let parsedData: number[] = [];
             parsedData.push(other_id);
 
@@ -201,6 +205,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
               });
           });
         } else {
+          this.isSpinnerLoading = false;
           const emptyDialog = this.elRef.nativeElement.querySelector(
             '.empty-dialog-message'
           );
@@ -211,9 +216,11 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           }, 2000);
         }
       } else {
+        this.isSpinnerLoading = false;
         console.error('Decoded response is not an array.');
       }
     } catch (error) {
+      this.isSpinnerLoading = false;
       console.error('JSON parsing error:', error);
     }
   }

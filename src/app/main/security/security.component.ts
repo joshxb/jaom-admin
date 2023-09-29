@@ -1,18 +1,18 @@
 import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
-import { ConcernService } from 'src/app/configuration/services/concerns/concern.service';
 import { ModalComponent } from '../modal/modal.component';
 import { SecurityControlService } from 'src/app/configuration/services/security-control/security-control.service';
 import { ImageService } from 'src/app/configuration/assets/image.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-security',
@@ -35,6 +35,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   selectedRoomId!: number;
   filteredRoomListData: any[] = [];
   textareaValues: string[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -57,7 +58,8 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     private securityControlService: SecurityControlService,
     private imageService: ImageService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -147,6 +149,13 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(
+      this.renderer,
+      this.elRef.nativeElement,
+      theme
+    );
+
     this.securityControlService.getConfigurations().subscribe((res) => {
       this.modificationsData = res?.data;
       this.autoAddRoom = this.modificationsData?.auto_add_room === 1;
@@ -216,6 +225,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   }
 
   addDefaultRoom() {
+    this.isSpinnerLoading = true;
     if (!this.roomName.trim()) {
       const errorDialogMessage = this.elRef.nativeElement.querySelector(
         '.error-dialog-message'
@@ -230,7 +240,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         errorDialogMessage.style.display = 'none';
       }, 2000);
-
+      this.isSpinnerLoading = false;
       return;
     } else if (!this.selectedImage) {
       const errorDialogMessage = this.elRef.nativeElement.querySelector(
@@ -246,7 +256,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         errorDialogMessage.style.display = 'none';
       }, 2000);
-
+      this.isSpinnerLoading = false;
       return;
     }
 
@@ -266,6 +276,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
           .addGroupChat(this.roomName.trim(), parsedData, compressedFile)
           .subscribe(
             async (result) => {
+              this.isSpinnerLoading = false;
               const addDialogMessage = this.elRef.nativeElement.querySelector(
                 '.add-dialog-message'
               );
@@ -298,7 +309,9 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   }
 
   deleteDefaultRoom(id: number) {
+    this.isSpinnerLoading = true;
     this.securityControlService.deleteSpecificRoom(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
@@ -312,7 +325,9 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   }
 
   updateConfigurations(index: number) {
+    this.isSpinnerLoading = true;
     if (!this.modificationsData) {
+      this.isSpinnerLoading = false;
       return;
     }
 
@@ -340,6 +355,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       case 1:
         if (!this.newLogInMethod) {
           handleEmptyValue('Login method must be required');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -353,6 +369,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       case 2:
         if (!this.newDeactivationPeriod) {
           handleEmptyValue('Deactivation period must be required');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -365,10 +382,12 @@ export class SecurityComponent implements OnInit, AfterViewInit {
         data.account_deactivation = JSON.stringify(accountDeactivationPeriod);
         break;
       default:
+        this.isSpinnerLoading = false;
         return;
     }
 
     this.securityControlService.updateConfigurations(data).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.elRef.nativeElement.querySelector(
         '.update-dialog-message'
       ).style.display = 'block';
@@ -403,20 +422,25 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     name: string | null = null,
     id: number | null = null
   ) {
-    if (id !== null) {
-      this.selectedRoomId = id;
-    }
-    this.selectedRoomName = name || '';
-    this.selectedImage = null;
-    this.uploadedImageUrl = this.imageUrls.default_upload_img;
-    this.uploadedImageUrl2 = this.imageUrls.default_upload_img;
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      if (id !== null) {
+        this.selectedRoomId = id;
+      }
+      this.selectedRoomName = name || '';
+      this.selectedImage = null;
+      this.uploadedImageUrl = this.imageUrls.default_upload_img;
+      this.uploadedImageUrl2 = this.imageUrls.default_upload_img;
 
-    const modalOverlay =
-      this.elRef.nativeElement.querySelector('.modal-overlay');
-    modalOverlay.style.display = selection === 'open' ? 'flex' : 'none';
+      const modalOverlay =
+        this.elRef.nativeElement.querySelector('.modal-overlay');
+      modalOverlay.style.display = selection === 'open' ? 'flex' : 'none';
+    }, 1000);
   }
 
   updateSpecificGroupChat(groupChatId: number, groupChatName: string) {
+    this.isSpinnerLoading = true;
     const updateDialogMessage = this.elRef.nativeElement.querySelector(
       '.update-dialog-message'
     );
@@ -433,12 +457,14 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         updateDialogMessage.style.display = 'none';
       }, 2000);
+      this.isSpinnerLoading = false;
       return;
     }
 
     this.securityControlService
       .updateSpecificGroupChat(groupChatId, groupChatName, this.selectedImage)
       .subscribe((res) => {
+        this.isSpinnerLoading = false;
         updateDialogMessageP.textContent =
           'Default Group-chat has been updated successfully!';
         updateDialogMessageP.classList.add('text-success');

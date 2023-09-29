@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { ModalComponent } from '../../modal/modal.component';
 import { OfferService } from 'src/app/configuration/services/pages/offer.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-offers',
@@ -17,6 +18,7 @@ export class OffersComponent implements OnInit, AfterViewInit {
   offersData!: any;
   selectedUser: any;
   filteredOffers: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -28,7 +30,8 @@ export class OffersComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private offerService: OfferService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) { }
 
   applySearchFilter() {
@@ -60,6 +63,9 @@ export class OffersComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -89,7 +95,11 @@ export class OffersComponent implements OnInit, AfterViewInit {
   }
 
   fetchoffersData(page: number) {
+    this.isSpinnerLoading = true;
+
     this.offerService.getOffer(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       this.offersData = res;
       this.filteredOffers = this.offersData?.data;
     });
@@ -134,7 +144,11 @@ export class OffersComponent implements OnInit, AfterViewInit {
   }
 
   deleteOffer(id: any) {
+    this.isSpinnerLoading = true;
+
     this.offerService.deleteOffer(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );

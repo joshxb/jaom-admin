@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +6,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 import { ModalComponent } from '../../modal/modal.component';
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-users',
@@ -26,6 +20,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   usersData!: any;
   selectedUser: any;
   filteredUsers: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -39,7 +34,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private ng2ImgMax: Ng2ImgMaxService,
     private validationService: ValidationService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   openDialog(s: any, type: string) {
@@ -51,12 +47,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
       } else {
         this.currentPage = 1;
       }
+      this.isSpinnerLoading = true;
       this.fetchUsersData(this.currentPage);
     });
   }
@@ -101,6 +101,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   fetchUsersData(page: number) {
     this.usersManagementService.getAllUserData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       this.usersData = res[0];
       this.filteredUsers = this.usersData?.data;
     });
@@ -145,6 +147,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   openEditModal(user: any) {
+    this.isSpinnerLoading = true;
+
     this.selectedUser = user;
     this.usersManagementService
       .geSpecificUserData(user)
@@ -219,11 +223,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
         hiddenFullNickName.value = data?.nickname;
 
         modalOverlay.style.display = 'flex';
+        this.isSpinnerLoading = false;
       });
   }
 
   deleteSpecificUser(user: any) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.deleteSpecificUser(user).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
@@ -301,6 +310,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   updateUserData() {
+    this.isSpinnerLoading = true;
+
     const data: { [key: string]: string } = {};
 
     const fields = [
@@ -330,6 +341,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
               this.elRef.nativeElement.querySelector('.no-changes-txt');
             noChangesTxt.textContent = 'Invalid Email Address';
             noChangesTxt.style.display = 'block';
+            this.isSpinnerLoading = false;
             return;
           }
         }
@@ -339,6 +351,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
               this.elRef.nativeElement.querySelector('.no-changes-txt');
             noChangesTxt.textContent = 'Invalid Phone Number';
             noChangesTxt.style.display = 'block';
+            this.isSpinnerLoading = false;
             return;
           }
         }
@@ -349,6 +362,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
             noChangesTxt.textContent =
               'Age must have at least between 18 and 100';
             noChangesTxt.style.display = 'block';
+            this.isSpinnerLoading = false;
             return;
           }
         }
@@ -378,6 +392,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
         .updateOtherUserData(this.selectedUser, data)
         .subscribe(
           (res) => {
+            this.isSpinnerLoading = false;
+
             if (this.selectedImageFile) {
               this.ng2ImgMax
                 .compressImage(this.selectedImageFile, 0.05)

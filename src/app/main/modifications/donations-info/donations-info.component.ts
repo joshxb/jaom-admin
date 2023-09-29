@@ -1,11 +1,4 @@
 import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
-import {
   AfterViewInit,
   Component,
   ElementRef,
@@ -14,6 +7,7 @@ import {
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
@@ -30,6 +24,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
   userHistoryData!: any;
   selectedUser: any;
   filteredUserHistory: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -51,7 +46,8 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
     private modificationsService: ModificationsService,
     private validationService: ValidationService,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -107,12 +103,13 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
     } else {
       return donationInfoObject[option] || null;
     }
-
-    return null;
   }
 
   updateConfigurations(index: number) {
+    this.isSpinnerLoading = true;
+
     if (!this.modificationsData) {
+      this.isSpinnerLoading = false;
       return;
     }
 
@@ -135,6 +132,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
       case 0:
         if (!this.selectedBankType) {
           handleEmptyValue('selectedBankType', 'Bank type should be selected!');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -153,6 +151,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
             'modifiedAccountName',
             'Account name should not be empty!'
           );
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -161,6 +160,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
             'modifiedAccountName',
             'Must have at least 6 characters!'
           );
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -174,6 +174,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
             'modifiedAccountNumber',
             'Account number should not be empty!'
           );
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -181,6 +182,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
           !this.validationService.isValidPhoneNumber(this.modifiedAccountNumber)
         ) {
           handleEmptyValue('modifiedAccountNumber', 'Invalid phone number!');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -189,10 +191,12 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
         break;
 
       default:
+        this.isSpinnerLoading = false;
         return;
     }
 
     this.modificationsService.updateConfigurations(data).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.elRef.nativeElement.querySelector(
         '.update-dialog-message'
       ).style.display = 'block';
@@ -204,6 +208,11 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.isSpinnerLoading = true;
+
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.modificationsService.getConfigurations().subscribe((res) => {
       this.modificationsData = res?.data;
       this.paymentMethods = this.getParseConfigurations(res, 'methods');
@@ -228,6 +237,7 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
 
   fetchUserHistoryData(page: number) {
     this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.userHistoryData = res;
       this.filteredUserHistory = this.userHistoryData?.data;
     });

@@ -20,7 +20,7 @@
                 [(ngModel)]="searchTerm"
                 (input)="applySearchFilter()"
                 placeholder="Search by ID, User ID, Tilte/Subject, Content, ...."
-                class="form-control"
+                class="form-control filter-user-search"
               />
               <div class="input-group-append">
                 <span class="input-group-text">
@@ -145,5 +145,6 @@
         </div>
       </div>
     </div>
+    <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
   </body>
 </html>

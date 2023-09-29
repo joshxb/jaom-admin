@@ -1,16 +1,10 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { ModalComponent } from '../../modal/modal.component';
 import { TransactionsService } from 'src/app/configuration/services/transactions/transactions.service';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
   selector: 'app-donations',
@@ -24,6 +18,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   transactionsData!: any;
   selectedUser: any;
   filteredTransactions: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -35,7 +30,8 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     private elRef: ElementRef,
     private dialog: MatDialog,
     private renderer: Renderer2,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private cacheService: CacheService
   ) {}
 
   ngAfterViewInit() {
@@ -86,6 +82,9 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
         this.currentPage = +params['page'];
@@ -97,7 +96,10 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   }
 
   fetchtransactionsData(page: number) {
+    this.isSpinnerLoading = true;
+
     this.transactionService.getAllPaginatedDonationTransactions(page).subscribe((res) => {
+      this.isSpinnerLoading = false;
       this.transactionsData = res;
       this.filteredTransactions = this.transactionsData?.data;
     });
@@ -142,7 +144,11 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   }
 
   deleteDonationTransaction(id: any) {
+    this.isSpinnerLoading = true;
+
     this.transactionService.deleteDonationTransaction(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
+
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );

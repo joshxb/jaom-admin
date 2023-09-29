@@ -1,9 +1,14 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { TextService } from 'src/app/configuration/assets/text.service';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
-import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
 import { SettingsService } from 'src/app/configuration/services/settings/settings.service';
 
 @Component({
@@ -24,6 +29,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   modifiedlocation: any = null;
   modifiedAccountNewPass: any = null;
   modifiedAccountConfirmPass: any = null;
+  isSpinnerLoading: boolean = false;
 
   constructor(
     private elRef: ElementRef,
@@ -33,7 +39,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     private textService: TextService,
     private renderer: Renderer2,
     private elementRef: ElementRef
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(
@@ -54,6 +60,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   updateConfigurations(index: number) {
+    this.isSpinnerLoading = true;
     const handleEmptyValue = (errorMessage: string) => {
       const element = this.elRef.nativeElement.querySelector(
         '.info-dialog-message'
@@ -72,12 +79,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 0:
         if (!this.selectedTheme) {
           handleEmptyValue('Theme background should be selected!');
+          this.isSpinnerLoading = false;
           return;
         }
         break;
       case 1:
         if (!this.modifiedAccountFirstName && !this.modifiedAccountLastName) {
           handleEmptyValue('There should be any changes!');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -98,6 +107,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 2:
         if (!this.modifiedAccountAge) {
           handleEmptyValue('Age should not be empty!');
+          this.isSpinnerLoading = false;
           return;
         }
         if (
@@ -106,6 +116,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           )
         ) {
           handleEmptyValue('Invalid age required!');
+          this.isSpinnerLoading = false;
           return;
         }
         data['age'] = this.textService
@@ -120,11 +131,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 3:
         if (!this.modifiedAccountEmail) {
           handleEmptyValue('Email should not be empty!');
+          this.isSpinnerLoading = false;
           return;
         }
 
         if (!this.validationService.isValidEmail(this.modifiedAccountEmail)) {
           handleEmptyValue('Invalid email address!');
+          this.isSpinnerLoading = false;
           return;
         }
         data['email'] = this.modifiedAccountEmail;
@@ -134,6 +147,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 4:
         if (!this.modifiedAccountPhone) {
           handleEmptyValue('Phone number should not be empty!');
+          this.isSpinnerLoading = false;
           return;
         }
 
@@ -141,6 +155,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           !this.validationService.isValidPhoneNumber(this.modifiedAccountPhone)
         ) {
           handleEmptyValue('Invalid phone number!');
+          this.isSpinnerLoading = false;
           return;
         }
         data['phone'] = this.modifiedAccountPhone;
@@ -150,6 +165,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 5:
         if (!this.modifiedlocation) {
           handleEmptyValue('Location should not be empty!');
+          this.isSpinnerLoading = false;
           return;
         }
         data['location'] = this.modifiedlocation;
@@ -159,25 +175,30 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       case 6:
         if (!this.modifiedAccountNewPass) {
           handleEmptyValue('New password is required!');
+          this.isSpinnerLoading = false;
           return;
         }
 
         if (this.modifiedAccountNewPass.length < 5) {
           handleEmptyValue('Password must have at least 6 characters!');
+          this.isSpinnerLoading = false;
           return;
         }
 
         if (!this.modifiedAccountConfirmPass) {
           handleEmptyValue('Password confirmation is required!');
+          this.isSpinnerLoading = false;
           return;
         }
 
-        if (!this.validationService.isPasswordsMatch(
+        if (
+          !this.validationService.isPasswordsMatch(
             this.modifiedAccountNewPass,
             this.modifiedAccountConfirmPass
           )
         ) {
           handleEmptyValue('Password does not match!');
+          this.isSpinnerLoading = false;
           return;
         }
         data['password'] = this.modifiedAccountNewPass;
@@ -185,6 +206,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         name = 'password';
         break;
       default:
+        this.isSpinnerLoading = false;
         return;
     }
 
@@ -193,20 +215,27 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         'theme',
         this.selectedTheme.toLowerCase().trim()
       );
-      this.elRef.nativeElement.querySelector(
-        '.update-dialog-message p'
-      ).textContent = 'Theme change successfully!';
+
+      setTimeout(() => {
+        this.isSpinnerLoading = false;
+        this.elRef.nativeElement.querySelector(
+          '.update-dialog-message'
+        ).style.display = 'block';
+        this.elRef.nativeElement.querySelector(
+          '.update-dialog-message'
+        ).textContent = 'Theme change successfully!';
+      }, 1000);
 
       setTimeout(() => {
         window.location.reload();
-      }, 1000);
-
+      }, 2000);
       return;
     }
 
     this.settingsService
       .updateOtherUserData(this.cacheService.getCachedAdminData('id'), data)
       .subscribe((res) => {
+        this.isSpinnerLoading = false;
         this.elRef.nativeElement.querySelector(
           '.update-dialog-message'
         ).style.display = 'block';
@@ -217,7 +246,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 2000);
       });
   }
 
@@ -229,5 +258,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.cacheService.updateCachedAdminData(name, newValue);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const theme = this.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+  }
 }

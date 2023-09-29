@@ -67,7 +67,12 @@ nav {
   padding: 5px 20px;
 }
 
+.notification-pagination {
+  color: #000 !important;
+}
+
 .alert-heading {
+  color: #000 !important;
   font-weight: bold !important;
   position: relative !important;
   top: 10px !important;
@@ -130,6 +135,11 @@ nav {
 @media screen and (max-width: 990px) {
   .mobile-text-items {
     display: block;
+    cursor: pointer;
+  }
+
+  .mobile-text-items:hover {
+    color: #fff;
   }
 
   .notifications-dropdown {
@@ -141,8 +151,9 @@ nav {
   .navbar-nav {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: left;
     align-items: center;
+    gap: 20px;
   }
 
   .nav-item {
@@ -162,6 +173,15 @@ nav {
   .logout-icon {
     filter: invert(100%);
     /* Invert the colors to make it white */
+  }
+
+  .new-admin {
+    position: relative;
+    top: 5px;
+  }
+
+  .user-profile {
+    cursor: pointer;
   }
 }
 

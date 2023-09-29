@@ -21,7 +21,7 @@
                   [(ngModel)]="searchTerm"
                   (input)="applySearchFilter(0)"
                   placeholder="Search by ID, Sender ID, Receiver ID, Data, ...."
-                  class="form-control"
+                  class="form-control filter-user-search"
                 />
                 <div class="input-group-append">
                   <span class="input-group-text">
@@ -126,7 +126,7 @@
                   [(ngModel)]="searchTerm2"
                   (input)="applySearchFilter(1)"
                   placeholder="Search by ID, Sender ID, Receiver ID, Data, ...."
-                  class="form-control"
+                  class="form-control filter-user-search"
                 />
                 <div class="input-group-append">
                   <span class="input-group-text">
@@ -228,5 +228,6 @@
         </div>
       </div>
     </div>
+    <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
   </body>
 </html>

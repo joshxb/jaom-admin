@@ -1,20 +1,13 @@
 import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
-import {
   AfterViewInit,
   Component,
   ElementRef,
   OnInit,
   Renderer2,
-  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ChartService } from 'src/app/configuration/assets/chart.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
 import { Base } from 'src/app/configuration/configuration.component';
@@ -36,8 +29,9 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
     private router: Router,
     private dateService: DateService,
     private analyticsService: AnalyticsService,
-    private chartService: ChartService
-  ) {}
+    private chartService: ChartService,
+    private cacheService: CacheService
+  ) { }
   base = new Base();
   public analytics: any;
 
@@ -45,6 +39,7 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   itemsPerPage = 1;
   searchTerm: string = '';
   filteredData: any[] = [];
+  isSpinnerLoading: boolean = false;
 
   selectedMonth: string = '';
   selectedMonthIndex: number = Number(new Date().getMonth());
@@ -64,8 +59,8 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
             } else if (typeof value === 'number') {
-            return value == Number(this.searchTerm.toLowerCase());
-          }
+              return value == Number(this.searchTerm.toLowerCase());
+            }
             return false;
           })
       );
@@ -73,6 +68,9 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    const theme = this.cacheService.getCachedAdminData('theme');
+    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+
     this.setCurrentMonthAndYear();
   }
 
@@ -127,6 +125,8 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   }
 
   setParams() {
+    this.isSpinnerLoading = true;
+
     const defaultParams = {
       month: this.selectedMonth,
       year: this.selectedYear,
@@ -143,11 +143,13 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
     selectedMonth: string,
     selectedYear: number
   ) {
+    this.isSpinnerLoading = true;
+
     try {
       const res = await this.analyticsService
         .getPageVisits(page, selectedMonth, selectedYear)
         .toPromise();
-
+      this.isSpinnerLoading = false;
       this.analytics = res;
       this.filteredData = this.analytics?.data;
       this.renderChartData();
@@ -225,7 +227,10 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   }
 
   deleteAnalytics(id: number) {
+    this.isSpinnerLoading = true;
+
     this.analyticsService.deleteAnalytics(id).subscribe((res) => {
+      this.isSpinnerLoading = false;
       const deleteDialogMessage = this.elRef.nativeElement.querySelector(
         '.delete-dialog-message'
       );
