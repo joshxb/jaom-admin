@@ -68,6 +68,12 @@
           <div>
             <p style="font-size: 14px">Profile Settings</p>
             <div style="padding: 0 30px">
+              <p style="font-size: 14px">Profile image</p>
+              <div class="profile-image-cont">
+                <img class="profile-image" alt="" />
+                <input type="file" accept="image/jpeg, image/png" (change)="onImageChange($event)" />
+                <p class="text-danger invalid-image">Invalid image format!</p>
+              </div>
               <p style="font-size: 14px">Name</p>
               <div class="s-panel-item">
                 <input
@@ -358,6 +364,6 @@
     <div class="dialog-messages info-dialog-message">
       <p class="text-dark"></p>
     </div>
-    <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+    <app-spinner-loading class="app-spinner-loading" *ngIf="isSpinnerLoading"></app-spinner-loading>
   </body>
 </html>

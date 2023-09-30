@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 })
 
 export class CacheService {
- 
+
   getCachedAdminData(name: string) {
     if (name === 'theme') {
       const cacheTheme = localStorage.getItem('theme');
@@ -50,9 +50,9 @@ export class CacheService {
         p, label, input, .showing-pagination {
           color: #fff !important;
         }
-  
+
         .modal-overlay p, .modal-overlay label,
-        .modal-overlay input , 
+        .modal-overlay input ,
         .modal-overlay .showing-pagination,
         .modal-overlay input {
           color: rgba(0, 0, 0, 0.829) !important;
@@ -63,7 +63,7 @@ export class CacheService {
         }
 
         input::placeholder,
-        .auto-add-panel small, 
+        .auto-add-panel small,
         .content-container small {
           color: #ffffffb5 !important;
         }
@@ -98,7 +98,7 @@ export class CacheService {
         .empty-data p,
         .search-input input {
           color: rgba(0, 0, 0, 0.829) !important;
-        } 
+        }
       `;
 
       const styleElement = renderer.createElement('style');
