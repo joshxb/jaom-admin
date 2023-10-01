@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAOM Admin - User Management / Contacts</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <app-left-bar style="z-index: 1000;"></app-left-bar>
+
+    <div class="content">
+      <app-top-bar id="top-bar"></app-top-bar>
+      <div class="content-container">
+        <p>Contacts</p>
+        <div class="d-flex justify-content-end" style="margin: 20px;">
+          <div class="input-group" style="width: 20%;">
+            <input type="text" [(ngModel)]="searchTerm" (input)="applySearchFilter()"
+              placeholder="Search by First Name, Last Name ...." class="form-control filter-user-search" />
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <i class="fa fa-search"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let contact of filteredContacts">
+                <td>{{ contact?.id }}</td>
+                <td>{{contact?.firstname}}</td>
+                <td>{{ contact?.lastname }}</td>
+                <td>{{ contact?.phone }}</td>
+                <td>{{ contact?.email }}</td>
+                <td>{{ contact?.message }}</td>
+                <td>{{ contact?.created_at | date : "MM/dd/yyyy - h:mm a"}}</td>
+                <td class="action-cont">
+                  <img (click)="deleteContact(contact?.id)" [src]="imageUrls.delete" alt="" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-cont">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="onPageChange(1)">
+                << </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="onPageChange(currentPage - 1)">Previous</a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPageRange()" [class.active]="currentPage === page">
+              <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === contactsData?.last_page">
+              <a class="page-link" (click)="onPageChange(currentPage + 1)">Next</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === contactsData?.last_page">
+              <a class="page-link" (click)="onPageChange(contactsData?.last_page)">>></a>
+            </li>
+          </ul>
+          <p class="text-muted showing-pagination">
+            Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
+            {{ contactsData?.total }} contacts
+          </p>
+        </div>
+        <div class="dialog-messages delete-dialog-message">
+          <p class="text-danger">Contact deleted successfully</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+</body>
+</html>

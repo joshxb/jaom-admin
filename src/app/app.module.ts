@@ -38,6 +38,7 @@ import { NewAdminComponent } from './main/new-admin/new-admin.component';
 import { AdminAccessComponent } from './main/admin-access/admin-access.component';
 import { OffersComponent } from './main/user-management/offers/offers.component';
 import { SpinnerLoadingComponent } from './common/assets/spinner-loading/spinner-loading.component';
+import { ContactsComponent } from './main/user-management/contacts/contacts.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { SpinnerLoadingComponent } from './common/assets/spinner-loading/spinner
     AdminAccessComponent,
     OffersComponent,
     SpinnerLoadingComponent,
+    ContactsComponent,
   ],
   imports: [
     BrowserModule,
