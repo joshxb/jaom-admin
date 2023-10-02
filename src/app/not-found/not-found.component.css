@@ -1,0 +1,28 @@
+body {
+    background-color: #fff; /* Set a background color */
+}
+
+/* Center the content vertically and horizontally */
+.center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Make the container take the full viewport height */
+}
+
+/* Style the card for the error message */
+.error-card {
+    max-width: 400px; /* Set a maximum width for the card */
+    text-align: center; /* Center the text inside the card */
+    padding: 20px; /* Add some padding for spacing */
+    border: 2px solid #e5e5e5; /* Add a border */
+    border-radius: 10px; /* Add border-radius for rounded corners */
+    background-color: #fff; /* Set the card background color */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add a box shadow */
+}
+
+/* Style the 404 number */
+.error-number {
+    font-size: 96px; /* Increase font size for the number */
+}

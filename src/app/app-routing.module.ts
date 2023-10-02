@@ -22,6 +22,7 @@ import { NewAdminComponent } from './main/new-admin/new-admin.component';
 import { AdminAccessComponent } from './main/admin-access/admin-access.component';
 import { OffersComponent } from './main/user-management/offers/offers.component';
 import { ContactsComponent } from './main/user-management/contacts/contacts.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const userManagementChildren: Routes = [
   { path: 'users', component: UsersComponent },
@@ -101,6 +102,9 @@ const routes: Routes = [
     component: AdminAccessComponent,
     canActivate: [AuthGuard],
   },
+
+  //not found page
+  { path: '**', component: NotFoundComponent, pathMatch: 'full' },
 ];
 
 @NgModule({

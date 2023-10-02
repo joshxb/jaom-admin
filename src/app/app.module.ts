@@ -39,6 +39,7 @@ import { AdminAccessComponent } from './main/admin-access/admin-access.component
 import { OffersComponent } from './main/user-management/offers/offers.component';
 import { SpinnerLoadingComponent } from './common/assets/spinner-loading/spinner-loading.component';
 import { ContactsComponent } from './main/user-management/contacts/contacts.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { ContactsComponent } from './main/user-management/contacts/contacts.comp
     OffersComponent,
     SpinnerLoadingComponent,
     ContactsComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
