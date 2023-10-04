@@ -103,7 +103,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.usersManagementService.getAllUserData(page).subscribe((res) => {
       this.isSpinnerLoading = false;
 
-      this.usersData = res;
+      this.usersData = res[0];
       this.filteredUsers = this.usersData?.data;
     });
   }
