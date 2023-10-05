@@ -5,6 +5,8 @@ import { imageUrls } from 'src/app/app.component';
 import { ModalComponent } from '../../modal/modal.component';
 import { TransactionsService } from 'src/app/configuration/services/transactions/transactions.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-donations',
@@ -19,6 +21,8 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   selectedUser: any;
   filteredTransactions: any[] = [];
   isSpinnerLoading: boolean = false;
+  showModalSS = false;
+  modalImageUrl: string = '';
 
   currentPage = 1;
   itemsPerPage = 1;
@@ -31,7 +35,8 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private imageService: ImageService
   ) {}
 
   ngAfterViewInit() {
@@ -80,6 +85,14 @@ export class DonationsComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {});
   }
+  openModal(imageUrl: string) {
+    this.modalImageUrl = imageUrl;
+    this.showModalSS = true;
+  }
+
+  closeModal() {
+    this.showModalSS = false;
+  }
 
   ngOnInit(): void {
     const theme = this.cacheService.getCachedAdminData('theme');
@@ -102,6 +115,17 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       this.isSpinnerLoading = false;
       this.transactionsData = res;
       this.filteredTransactions = this.transactionsData?.data;
+
+      const ssDonateObservables = this.filteredTransactions.map((transac) => {
+        return this.imageService.getDonationSSData(transac.id);
+      });
+
+      forkJoin(ssDonateObservables).subscribe((transacs) => {
+        transacs.forEach((imageData, index) => {
+          this.filteredTransactions[index].screenshot_img =
+            URL.createObjectURL(imageData);
+        });
+      });
     });
   }
 
