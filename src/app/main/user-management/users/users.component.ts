@@ -7,6 +7,7 @@ import { ModalComponent } from '../../modal/modal.component';
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
 
 @Component({
   selector: 'app-users',
@@ -24,6 +25,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   currentPage = 1;
   itemsPerPage = 1;
+  userImage: Blob | null = null;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -35,7 +37,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private validationService: ValidationService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private imageService: ImageService
   ) {}
 
   openDialog(s: any, type: string) {
@@ -157,73 +160,76 @@ export class UsersComponent implements OnInit, AfterViewInit {
         const modalOverlay =
           this.elRef.nativeElement.querySelector('.modal-overlay');
 
-        const fieldsToUpdate = [
-          {
-            selector: '.profile-image',
-            property: 'src',
-            value: data?.image_blob
-              ? 'data:image/jpeg;base64,' + data?.image_blob
-              : this.imageUrls.user_default,
-          },
-          {
-            selector: '#defaultFirstName',
-            property: 'value',
-            value: data?.firstname,
-          },
-          {
-            selector: '#defaultLastName',
-            property: 'value',
-            value: data?.lastname,
-          },
-          { selector: '#defaultAge', property: 'value', value: data?.age },
-          { selector: '#defaultEmail', property: 'value', value: data?.email },
-          { selector: '#defaultPhone', property: 'value', value: data?.phone },
-          {
-            selector: '#defaultLocation',
-            property: 'value',
-            value: data?.location,
-          },
-          {
-            selector: '#defaultStatus',
-            property: 'value',
-            value: data?.status,
-          },
-          { selector: '#defaultRole', property: 'value', value: data?.type },
-          {
-            selector: '#defaultVisiblity',
-            property: 'value',
-            value: data?.visibility,
-          },
-        ];
-
-        fieldsToUpdate.forEach((field) => {
-          const element = this.elRef.nativeElement.querySelector(
-            field.selector
+          this.imageService.getOtherUserImageData(user).subscribe(
+            (imageData) => {
+              this.isSpinnerLoading = false;
+              this.selectedImageSrc =  URL.createObjectURL(imageData); 
+              const fieldsToUpdate = [
+                {
+                  selector: '#defaultFirstName',
+                  property: 'value',
+                  value: data?.firstname,
+                },
+                {
+                  selector: '#defaultLastName',
+                  property: 'value',
+                  value: data?.lastname,
+                },
+                { selector: '#defaultAge', property: 'value', value: data?.age },
+                { selector: '#defaultEmail', property: 'value', value: data?.email },
+                { selector: '#defaultPhone', property: 'value', value: data?.phone },
+                {
+                  selector: '#defaultLocation',
+                  property: 'value',
+                  value: data?.location,
+                },
+                {
+                  selector: '#defaultStatus',
+                  property: 'value',
+                  value: data?.status,
+                },
+                { selector: '#defaultRole', property: 'value', value: data?.type },
+                {
+                  selector: '#defaultVisiblity',
+                  property: 'value',
+                  value: data?.visibility,
+                },
+              ];
+      
+              fieldsToUpdate.forEach((field) => {
+                const element = this.elRef.nativeElement.querySelector(
+                  field.selector
+                );
+                if (element) {
+                  element[field.property] = field.value;
+                }
+              });
+      
+              // Extract real nickname using custom function
+              const realNickname = this.extractRealNickname(
+                data?.nickname,
+                '~!@#$%^&*()-=_+[]{}|;:,.<>?'
+              );
+              
+              const defaultNickName =
+                this.elRef.nativeElement.querySelector('#defaultNickName');
+              if (defaultNickName) {
+                defaultNickName.value = realNickname;
+              }
+      
+              const hiddenFullNickName = this.elRef.nativeElement.querySelector(
+                '#hiddenFullNickName'
+              );
+      
+              hiddenFullNickName.value = data?.nickname;
+      
+              modalOverlay.style.display = 'flex';
+            },
+            (error) => {
+              this.isSpinnerLoading = false;
+              console.error('Error fetching user image', error);
+            }
           );
-          if (element) {
-            element[field.property] = field.value;
-          }
-        });
-
-        // Extract real nickname using custom function
-        const realNickname = this.extractRealNickname(
-          data?.nickname,
-          '~!@#$%^&*()-=_+[]{}|;:,.<>?'
-        );
-        const defaultNickName =
-          this.elRef.nativeElement.querySelector('#defaultNickName');
-        if (defaultNickName) {
-          defaultNickName.value = realNickname;
-        }
-
-        const hiddenFullNickName = this.elRef.nativeElement.querySelector(
-          '#hiddenFullNickName'
-        );
-
-        hiddenFullNickName.value = data?.nickname;
-
-        modalOverlay.style.display = 'flex';
-        this.isSpinnerLoading = false;
       });
   }
 
@@ -272,7 +278,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
         this.selectedImageFile = file;
       } else {
         invalidImage.style.display = 'block';
-        // this.openDialog("Invalid Image Format", "success");
       }
     } else {
       this.selectedImageSrc = this.imageUrls.user_default;
