@@ -9,7 +9,7 @@
 
 <body>
     <div class="wrapper">
-        <app-left-bar style="z-index: 1000;"></app-left-bar>
+        <app-left-bar style="z-index: 1000"></app-left-bar>
 
         <div class="content">
             <app-top-bar id="top-bar"></app-top-bar>
@@ -19,8 +19,7 @@
                 <div class="user-list">
                     <li class="user-card" *ngFor="let account of data">
                         <div class="user-header">
-                            <img *ngIf="account?.image_blob !== null; else otherImage"
-                                [src]="'data:image/jpeg;base64,' + account?.image_blob" />
+                            <img *ngIf="account?.image_blob !== null; else otherImage" [src]="account?.image_blob" />
                             <ng-template #otherImage>
                                 <img [src]="imageUrls.user_default" />
                             </ng-template>

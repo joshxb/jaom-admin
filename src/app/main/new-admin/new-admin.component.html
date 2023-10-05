@@ -29,7 +29,7 @@
                     <li class="user-card" *ngFor="let account of data">
                         <div class="user-header">
                             <img *ngIf="account?.image_blob !== null; else otherImage"
-                                [src]="'data:image/jpeg;base64,' + account?.image_blob" />
+                                [src]="account?.image_blob" />
                             <ng-template #otherImage>
                                 <img [src]="imageUrls.user_default">
                             </ng-template>

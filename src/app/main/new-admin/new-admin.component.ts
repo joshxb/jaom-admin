@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, forkJoin, switchMap } from 'rxjs';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { UsersService } from 'src/app/configuration/services/pages/users.service';
 
 @Component({
@@ -25,7 +26,8 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
     private elRef: ElementRef,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private imageService: ImageService
     ) {}
 
     ngAfterViewInit() {
@@ -60,12 +62,24 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
       )
       .subscribe((res) => {
         this.showLoading = false;
-        const { data } = res;
-        this.data = data;
-        this.showEmptyData = data.length > 0 ? false : true;
+        this.data = res?.data;
+
+        const accessAdminObservables = this.data.map((data: { id: string }) => {
+          return this.imageService.getOtherUserImageData(data.id);
+        });
+
+        forkJoin(accessAdminObservables).subscribe((data: any) => {
+          data.forEach(
+            (imageData: Blob | MediaSource, index: string | number) => {
+              this.data[index].image_blob = URL.createObjectURL(imageData);
+            }
+          );
+        });
+
+        this.showEmptyData = res?.data.length > 0 ? false : true;
 
         const emptyData = this.elRef.nativeElement.querySelector('.empty-data');
-        if (data.length > 0) {
+        if (res?.data.length > 0) {
           emptyData.style.display = 'none';
         } else {
           emptyData.style.display = 'block';
