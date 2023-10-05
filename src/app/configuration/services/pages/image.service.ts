@@ -17,6 +17,7 @@ export class ImageService {
 
   private apiUploadUserImageUrl = `${this.baseUrl}/${this.suffixUrl}/user-image`;
   private apiUploadOtherUserImageUrl = `${this.baseUrl}/${this.suffixUrl}/other-user-image`;
+  private apiRoomImageUrl = `${this.baseUrl}/${this.suffixUrl}/group-image`;
 
   constructor(private http: HttpClient, private cookieService: CookieService, private router : Router) {}
 
@@ -38,6 +39,18 @@ export class ImageService {
     );
 
     return this.http.get(this.apiUploadOtherUserImageUrl + `/${userId}?role=admin`, {
+      headers,
+      responseType: 'blob',
+    });
+  }
+
+  getGroupImageData(id: number): Observable<Blob> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.get(this.apiRoomImageUrl + `/${id}?role=admin`, {
       headers,
       responseType: 'blob',
     });

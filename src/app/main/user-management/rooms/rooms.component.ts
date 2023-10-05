@@ -1,15 +1,23 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-rooms',
   templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.css']
+  styleUrls: ['./rooms.component.css'],
 })
 export class RoomsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
@@ -35,7 +43,8 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private imageService: ImageService
   ) {}
 
   ngAfterViewInit() {
@@ -77,8 +86,8 @@ export class RoomsComponent implements OnInit, AfterViewInit {
           if (typeof value === 'string') {
             return value.toLowerCase().includes(searchTerm.toLowerCase());
           } else if (typeof value === 'number') {
-          return value == Number(this.searchTerm.toLowerCase());
-        }
+            return value == Number(this.searchTerm.toLowerCase());
+          }
           return false;
         })
       );
@@ -101,7 +110,11 @@ export class RoomsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const theme = this.cacheService.getCachedAdminData('theme');
-    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+    this.cacheService.themeChange(
+      this.renderer,
+      this.elRef.nativeElement,
+      theme
+    );
 
     this.route.queryParams.subscribe(
       (params: { [x: string]: string | number }) => {
@@ -119,10 +132,23 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   }
 
   fetchRoomList(page: number) {
+    this.isSpinnerLoading = true;
+
     this.usersManagementService.getRoomList(page).subscribe((res: any) => {
       this.isSpinnerLoading = false;
       this.roomListData = res;
       this.filteredRooms = this.roomListData?.data;
+
+      const groupImageObservables = this.filteredRooms.map((room) => {
+        return this.imageService.getGroupImageData(room.id);
+      });
+
+      forkJoin(groupImageObservables).subscribe((groupImages) => {
+        groupImages.forEach((imageData, index) => {
+          this.filteredRooms[index].group_image =
+            URL.createObjectURL(imageData);
+        });
+      });
     });
   }
 
