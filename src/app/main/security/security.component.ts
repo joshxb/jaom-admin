@@ -12,7 +12,9 @@ import { imageUrls } from 'src/app/app.component';
 import { ModalComponent } from '../modal/modal.component';
 import { SecurityControlService } from 'src/app/configuration/services/security-control/security-control.service';
 import { ImageService } from 'src/app/configuration/assets/image.service';
+import { ImageService as RoomImageService  } from 'src/app/configuration/services/pages/image.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-security',
@@ -57,6 +59,7 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private securityControlService: SecurityControlService,
     private imageService: ImageService,
+    private roomImageService: RoomImageService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService
@@ -183,6 +186,17 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     this.securityControlService.getRoomList(page).subscribe((res) => {
       this.roomListData = res;
       this.filteredRoomListData = this.roomListData?.data;
+
+      const groupImageObservables = this.filteredRoomListData.map((room) => {
+        return this.roomImageService.getGroupImageData(room.id);
+      });
+
+      forkJoin(groupImageObservables).subscribe((groupImages) => {
+        groupImages.forEach((imageData, index) => {
+          this.filteredRoomListData[index].group_image =
+            URL.createObjectURL(imageData);
+        });
+      });
     });
   }
 
