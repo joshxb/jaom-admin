@@ -140,6 +140,7 @@ nav {
 
   .mobile-text-items:hover {
     color: #fff;
+    opacity: 0.5;
   }
 
   .notifications-dropdown {

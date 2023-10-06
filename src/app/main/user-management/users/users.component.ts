@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -8,11 +14,12 @@ import { Ng2ImgMaxService } from 'ng2-img-max';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
+import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  styleUrls: ['./users.component.css'],
 })
 export class UsersComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
@@ -38,7 +45,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private profileImageCacheService: ProfileImageCacheService
   ) {}
 
   openDialog(s: any, type: string) {
@@ -51,7 +59,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const theme = this.cacheService.getCachedAdminData('theme');
-    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+    this.cacheService.themeChange(
+      this.renderer,
+      this.elRef.nativeElement,
+      theme
+    );
 
     this.route.queryParams.subscribe((params) => {
       if (params['page']) {
@@ -160,76 +172,88 @@ export class UsersComponent implements OnInit, AfterViewInit {
         const modalOverlay =
           this.elRef.nativeElement.querySelector('.modal-overlay');
 
-          this.imageService.getOtherUserImageData(user).subscribe(
-            (imageData) => {
-              this.isSpinnerLoading = false;
-              this.selectedImageSrc =  URL.createObjectURL(imageData); 
-              const fieldsToUpdate = [
-                {
-                  selector: '#defaultFirstName',
-                  property: 'value',
-                  value: data?.firstname,
-                },
-                {
-                  selector: '#defaultLastName',
-                  property: 'value',
-                  value: data?.lastname,
-                },
-                { selector: '#defaultAge', property: 'value', value: data?.age },
-                { selector: '#defaultEmail', property: 'value', value: data?.email },
-                { selector: '#defaultPhone', property: 'value', value: data?.phone },
-                {
-                  selector: '#defaultLocation',
-                  property: 'value',
-                  value: data?.location,
-                },
-                {
-                  selector: '#defaultStatus',
-                  property: 'value',
-                  value: data?.status,
-                },
-                { selector: '#defaultRole', property: 'value', value: data?.type },
-                {
-                  selector: '#defaultVisiblity',
-                  property: 'value',
-                  value: data?.visibility,
-                },
-              ];
-      
-              fieldsToUpdate.forEach((field) => {
-                const element = this.elRef.nativeElement.querySelector(
-                  field.selector
-                );
-                if (element) {
-                  element[field.property] = field.value;
-                }
-              });
-      
-              // Extract real nickname using custom function
-              const realNickname = this.extractRealNickname(
-                data?.nickname,
-                '~!@#$%^&*()-=_+[]{}|;:,.<>?'
+        this.imageService.getOtherUserImageData(user).subscribe(
+          (imageData) => {
+            this.isSpinnerLoading = false;
+            this.selectedImageSrc = URL.createObjectURL(imageData);
+            const fieldsToUpdate = [
+              {
+                selector: '#defaultFirstName',
+                property: 'value',
+                value: data?.firstname,
+              },
+              {
+                selector: '#defaultLastName',
+                property: 'value',
+                value: data?.lastname,
+              },
+              { selector: '#defaultAge', property: 'value', value: data?.age },
+              {
+                selector: '#defaultEmail',
+                property: 'value',
+                value: data?.email,
+              },
+              {
+                selector: '#defaultPhone',
+                property: 'value',
+                value: data?.phone,
+              },
+              {
+                selector: '#defaultLocation',
+                property: 'value',
+                value: data?.location,
+              },
+              {
+                selector: '#defaultStatus',
+                property: 'value',
+                value: data?.status,
+              },
+              {
+                selector: '#defaultRole',
+                property: 'value',
+                value: data?.type,
+              },
+              {
+                selector: '#defaultVisiblity',
+                property: 'value',
+                value: data?.visibility,
+              },
+            ];
+
+            fieldsToUpdate.forEach((field) => {
+              const element = this.elRef.nativeElement.querySelector(
+                field.selector
               );
-              
-              const defaultNickName =
-                this.elRef.nativeElement.querySelector('#defaultNickName');
-              if (defaultNickName) {
-                defaultNickName.value = realNickname;
+              if (element) {
+                element[field.property] = field.value;
               }
-      
-              const hiddenFullNickName = this.elRef.nativeElement.querySelector(
-                '#hiddenFullNickName'
-              );
-      
-              hiddenFullNickName.value = data?.nickname;
-      
-              modalOverlay.style.display = 'flex';
-            },
-            (error) => {
-              this.isSpinnerLoading = false;
-              console.error('Error fetching user image', error);
+            });
+
+            // Extract real nickname using custom function
+            const realNickname = this.extractRealNickname(
+              data?.nickname,
+              '~!@#$%^&*()-=_+[]{}|;:,.<>?'
+            );
+
+            const defaultNickName =
+              this.elRef.nativeElement.querySelector('#defaultNickName');
+            if (defaultNickName) {
+              defaultNickName.value = realNickname;
             }
-          );
+
+            const hiddenFullNickName = this.elRef.nativeElement.querySelector(
+              '#hiddenFullNickName'
+            );
+
+            hiddenFullNickName.value = data?.nickname;
+
+            modalOverlay.style.display = 'flex';
+          },
+          (error) => {
+            this.isSpinnerLoading = false;
+            console.error('Error fetching user image', error);
+          }
+        );
       });
   }
 
@@ -404,6 +428,28 @@ export class UsersComponent implements OnInit, AfterViewInit {
                 .compressImage(this.selectedImageFile, 0.05)
                 .subscribe(
                   (result) => {
+                    const cookieKey = 'userAdminData'; // Define a cookie key
+                    const cachedData = localStorage.getItem(cookieKey);
+                    if (cachedData) {
+                      try {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const imageBlobData = reader.result as string;
+
+                          const data = JSON.parse(cachedData);
+                          if (this.selectedUser === data?.id) {
+                            this.profileImageCacheService.cacheProfileImage(
+                              this.selectedUser,
+                              imageBlobData
+                            );
+                          }
+                        };
+                        reader.readAsDataURL(result);
+                      } catch (error) {
+                        console.error('Error parsing cached data:', error);
+                      }
+                    }
+
                     const dialogMessage =
                       this.elRef.nativeElement.querySelector(
                         '.update-dialog-message'

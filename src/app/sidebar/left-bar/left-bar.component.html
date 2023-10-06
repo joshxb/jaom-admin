@@ -4,7 +4,7 @@
       x
     </div>
     <ng-container *ngIf="data?.image_blob !== null; else otherImage">
-      <img style="width: 40px; height: 40px; border-radius: 50%" [src]="'data:image/jpeg;base64,' + data?.image_blob"
+      <img style="width: 40px; height: 40px; border-radius: 50%" [src]="selectedImageSrc"
         alt="" />
     </ng-container>
     <ng-template #otherImage>

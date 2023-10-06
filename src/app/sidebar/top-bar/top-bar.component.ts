@@ -7,8 +7,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
+import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { NotificationService } from 'src/app/configuration/services/pages/notification.service';
 
 @Component({
@@ -23,11 +25,14 @@ export class TopBarComponent implements OnInit {
   profile_logo!: ElementRef;
   notificationsData: any;
   lastPage: any;
+  selectedImageSrc: any;
 
   constructor(
     private authService: AuthService,
     private adminService: AdminService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private imageService: ImageService,
+    private profileImageCacheService: ProfileImageCacheService
   ) {}
 
   base = new Base();
@@ -40,7 +45,8 @@ export class TopBarComponent implements OnInit {
     const cachedData = localStorage.getItem(cookieKey);
     if (cachedData) {
       try {
-        this.data = JSON.parse(cachedData); // Parse the JSON string into an array
+        this.data = JSON.parse(cachedData);
+        this.getProfileImage(this.data?.id);
       } catch (error) {
         console.error('Error parsing cached data:', error);
       }
@@ -49,6 +55,7 @@ export class TopBarComponent implements OnInit {
         (response) => {
           if (response?.type === 'admin') {
             this.data = response;
+            this.getProfileImage(this.data?.id);
           } else {
             this.redirectToUserPage();
           }
@@ -59,6 +66,24 @@ export class TopBarComponent implements OnInit {
       );
     }
     this.getAllNotification(this.notificationPage);
+  }
+
+  getProfileImage(id : number) {
+    const cachedImage = this.profileImageCacheService.getProfileImage(id);
+    if (cachedImage) {
+      this.selectedImageSrc = cachedImage; 
+    } else {
+      this.imageService.getOtherUserImageData(id).subscribe(
+        (imageData : Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageBlobData = reader.result as string;
+            this.selectedImageSrc = imageBlobData; 
+            this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
+          };
+          reader.readAsDataURL(imageData);
+        });
+    }
   }
 
   getAllNotification(page: number = 1) {

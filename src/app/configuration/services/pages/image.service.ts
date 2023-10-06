@@ -33,7 +33,7 @@ export class ImageService {
     });
   }
 
-  getOtherUserImageData(userId: string): Observable<Blob> {
+  getOtherUserImageData(userId: number): Observable<Blob> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`

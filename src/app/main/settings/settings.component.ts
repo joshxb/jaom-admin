@@ -8,10 +8,12 @@ import {
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
 import { TextService } from 'src/app/configuration/assets/text.service';
 import { ValidationService } from 'src/app/configuration/assets/validation.service';
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { SettingsService } from 'src/app/configuration/services/settings/settings.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 
@@ -50,7 +52,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private usersManagementService: UsersManagementService,
     private adminService: AdminService,
-    private ng2ImgMax: Ng2ImgMaxService
+    private ng2ImgMax: Ng2ImgMaxService,
+    private profileImageCacheService: ProfileImageCacheService,
+    private imageService: ImageService
   ) { }
 
   ngAfterViewInit() {
@@ -278,13 +282,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       theme
     );
 
-    const cookieKey = 'userAdminData'; // Define a cookie key
+    const cookieKey = 'userAdminData';
     const cachedData = localStorage.getItem(cookieKey);
     if (cachedData) {
       try {
-        this.data = JSON.parse(cachedData); // Parse the JSON string into an array
-        this.elRef.nativeElement.querySelector('.profile-image').src =
-          'data:image/jpeg;base64,' + this.data?.image_blob;
+        this.data = JSON.parse(cachedData);
+        this.getProfileImage(this.data?.id);
         this.selectedUser = this.data?.id;
       } catch (error) {
         console.error('Error parsing cached data:', error);
@@ -294,8 +297,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         (response) => {
           if (response?.type === 'admin') {
             this.data = response;
-            this.elRef.nativeElement.querySelector('.profile-image').src =
-              'data:image/jpeg;base64,' + this.data?.image_blob;
             this.selectedUser = this.data?.id;
             localStorage.setItem(cookieKey, this.data);
           } else {
@@ -307,6 +308,26 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       );
     }
+  }
+
+  getProfileImage(id: number) {
+    const cachedImage = this.profileImageCacheService.getProfileImage(id);
+    if (cachedImage) {
+      this.selectedImageSrc = cachedImage;
+    } else {
+      this.imageService.getOtherUserImageData(id).subscribe(
+        (imageData: Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageBlobData = reader.result as string;
+            this.selectedImageSrc = imageBlobData;
+            this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
+          };
+          reader.readAsDataURL(imageData);
+        });
+    }
+
+    this.elRef.nativeElement.querySelector('.profile-image').src = this.selectedImageSrc;
   }
 
   onImageChange(event: any): void {
@@ -346,8 +367,28 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.selectedImageFile = file;
       this.ng2ImgMax.compressImage(this.selectedImageFile, 0.05).subscribe(
         (result) => {
-          const cookieKey = 'userAdminData'; // Define a cookie key
-          localStorage.removeItem(cookieKey);
+          const cookieKey = 'userAdminData';
+          const cachedData = localStorage.getItem(cookieKey);
+          if (cachedData) {
+            try {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const imageBlobData = reader.result as string;
+
+                const data = JSON.parse(cachedData);
+                if (this.selectedUser === data?.id) {
+                  this.profileImageCacheService.cacheProfileImage(
+                    this.selectedUser,
+                    imageBlobData
+                  );
+                }
+              };
+              reader.readAsDataURL(result);
+            } catch (error) {
+              console.error('Error parsing cached data:', error);
+            }
+          }
+
           this.processImage(result);
         },
         (error) => {
@@ -371,7 +412,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       .subscribe((result) => {
         this.isSpinnerLoading = false;
         this.elRef.nativeElement.querySelector('.app-spinner-loading')
-        .style.display = "none";
+          .style.display = "none";
         const dialogMessage = this.elRef.nativeElement.querySelector(
           '.update-dialog-message'
         );

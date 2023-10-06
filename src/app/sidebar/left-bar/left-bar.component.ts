@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
+import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
 import { AuthService } from 'src/app/configuration/services/auth.service';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
+import { ImageService } from 'src/app/configuration/services/pages/image.service';
 
 @Component({
   selector: 'app-left-bar',
@@ -19,6 +21,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
   isSpinnerLoading: boolean = false;
 
   activeIndex: number = 1;
+  selectedImageSrc: any;
 
   constructor(
     private adminService: AdminService,
@@ -26,6 +29,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     private router: Router,
     private renderer: Renderer2,
     private elementRef: ElementRef,
+    private imageService: ImageService,
+    private profileImageCacheService: ProfileImageCacheService
   ) { }
 
   imageUrls = new imageUrls();
@@ -94,20 +99,20 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     this.isAnalyticsExpanded = expandedItems.isAnalyticsExpanded;
     this.isModificationsExpanded = expandedItems.isModificationsExpanded;
 
-    const cookieKey = 'userAdminData'; // Define a cookie key
+    const cookieKey = 'userAdminData'; 
     const cachedData = localStorage.getItem(cookieKey);
     if (cachedData) {
       try {
-        this.data = JSON.parse(cachedData); // Parse the JSON string into an array
+        this.data = JSON.parse(cachedData); 
+        this.getProfileImage(this.data?.id);
       } catch (error) {
         console.error('Error parsing cached data:', error);
       }
     } else {
-      // If not in cookie, fetch from the server and store in cookie
       this.adminService.getUserData().subscribe((response) => {
         this.data = response;
-        console.log(response);
-        localStorage.setItem(cookieKey, JSON.stringify(response)); // Cache the data in cookie
+        this.getProfileImage(this.data?.id);
+        localStorage.setItem(cookieKey, JSON.stringify(response));
       });
     }
   }
@@ -145,6 +150,24 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
           localStorage.setItem('activeCollapse', JSON.stringify(true));
         }
       }
+    }
+  }
+
+  getProfileImage(id : number) {
+    const cachedImage = this.profileImageCacheService.getProfileImage(id);
+    if (cachedImage) {
+      this.selectedImageSrc = cachedImage; 
+    } else {
+      this.imageService.getOtherUserImageData(id).subscribe(
+        (imageData : Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageBlobData = reader.result as string;
+            this.selectedImageSrc = imageBlobData; 
+            this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
+          };
+          reader.readAsDataURL(imageData);
+        });
     }
   }
 }

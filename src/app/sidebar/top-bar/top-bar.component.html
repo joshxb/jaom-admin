@@ -5,7 +5,7 @@
   <img class="logo" [src]="imageUrls.logo" alt="" />
   <ng-container *ngIf="data?.image_blob !== null; else otherImage">
     <img class="navbar-toggler user-profile" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-      aria-expanded="false" aria-label="Toggle navigation" [src]="'data:image/jpeg;base64,' + data?.image_blob"
+      aria-expanded="false" aria-label="Toggle navigation" [src]="selectedImageSrc"
       alt="" />
   </ng-container>
   <ng-template #otherImage>
@@ -101,7 +101,7 @@
           <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
             <ng-container *ngIf="data?.image_blob !== null; else otherImage">
-              <img class="user-profile" [src]="'data:image/jpeg;base64,' + data?.image_blob" alt="" />
+              <img class="user-profile" [src]="selectedImageSrc" alt="" />
             </ng-container>
             <ng-template #otherImage>
               <img class="user-profile" [src]="imageUrls.user_default" alt="" />

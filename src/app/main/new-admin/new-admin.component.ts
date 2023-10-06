@@ -64,7 +64,7 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
         this.showLoading = false;
         this.data = res?.data;
 
-        const accessAdminObservables = this.data.map((data: { id: string }) => {
+        const accessAdminObservables = this.data.map((data: { id: number }) => {
           return this.imageService.getOtherUserImageData(data.id);
         });
 
