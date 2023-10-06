@@ -23,20 +23,20 @@ export class UsersService {
     private imageService: ImageService
   ) {}
 
-  getAllUserData(page: number): Observable<any> {
+  getAllUserData(page: number, request: any = null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(this.apiUserUrl + `?page=${page}`, { headers });
+    return this.http.get<any>(this.apiUserUrl + `?page=${page}${request != null ? '&' + request + '=' + true : ''}`, { headers });
   }
 
-  geSpecificUserData(user: number): Observable<any> {
+  geSpecificUserData(user: number, request: any = null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(this.apiUserUrl + `/${user}`, { headers });
+    return this.http.get<any>(this.apiUserUrl + `/${user}${request != null ? '?' + request + '=' + true : ''}`, { headers });
   }
 
   updateOtherUserData(user : number, formData : any) {
@@ -70,7 +70,7 @@ export class UsersService {
     return this.http.get<any>(endpoint, { headers: headers });
   }
 
-  adminAccessUsers(): Observable<any> { 
+  adminAccessUsers(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`

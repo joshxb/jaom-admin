@@ -103,7 +103,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   fetchUsersData(page: number) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getAllUserData(page).subscribe((res) => {
+    this.usersManagementService.getAllUserData(page, 'configuration').subscribe((res) => {
       this.isSpinnerLoading = false;
       this.usersData = res[0];
       this.filteredUsers = this.usersData?.data;
@@ -153,7 +153,7 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
 
     this.selectedUser = user;
     this.usersManagementService
-      .geSpecificUserData(user)
+      .geSpecificUserData(user, 'configure-edit')
       .subscribe((response) => {
         const { data } = response;
         const modalOverlay =

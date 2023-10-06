@@ -20,12 +20,12 @@ export class UsersManagementService {
     private adminService: AdminService
   ) {}
 
-  getAllUserData(page: number): Observable<any> {
-    return this.usersService.getAllUserData(page);
+  getAllUserData(page: number, request: any = null): Observable<any> {
+    return this.usersService.getAllUserData(page, request);
   }
 
-  geSpecificUserData(user: number): Observable<any> {
-    return this.usersService.geSpecificUserData(user);
+  geSpecificUserData(user: number, request: any = null): Observable<any> {
+    return this.usersService.geSpecificUserData(user, request);
   }
 
   updateOtherUserData(user: number, formData: any) {
