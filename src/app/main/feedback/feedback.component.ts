@@ -177,6 +177,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
 
           const data = {
             response_object: JSON.stringify(decodedResponse),
+            response: response.trim(),
+            description: description.trim()
           };
 
           this.concernService.addResponseFeedback(id, data).subscribe((res) => {
