@@ -48,8 +48,8 @@ export class UsersManagementService {
     return this.chatsService.deleteSpecificMessage(id);
   }
 
-  getRoomList(page: number): Observable<any> {
-    return this.roomService.getRoomList(page, 'local');
+  getRoomList(page: number, access: string = 'local'): Observable<any> {
+    return this.roomService.getRoomList(page, access);
   }
 
   getRoomChatList(page: number): Observable<any> {

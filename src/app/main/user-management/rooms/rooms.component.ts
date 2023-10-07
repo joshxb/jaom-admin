@@ -134,7 +134,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   fetchRoomList(page: number) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getRoomList(page).subscribe((res: any) => {
+    this.usersManagementService.getRoomList(page, 'v2').subscribe((res: any) => {
       this.isSpinnerLoading = false;
       this.roomListData = res;
       this.filteredRooms = this.roomListData?.data;

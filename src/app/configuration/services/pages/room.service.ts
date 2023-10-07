@@ -63,6 +63,8 @@ export class RoomService {
     let url = null;
     if (type === 'default') {
       url = `${this.apiRoomUrl}?page=${page}&default=true`;
+    } else if (type === 'v2') {
+      url = `${this.apiRoomUrl}?page=${page}&v2=true`;
     } else {
       url = `${this.apiRoomUrl}?page=${page}`;
     }
@@ -98,9 +100,12 @@ export class RoomService {
       `Bearer ${this.auth.getToken()}`
     );
 
-    return this.http.delete<any>(`${this.apiRoomChatsUrl}/v2/${id}?role=admin`, {
-      headers,
-    });
+    return this.http.delete<any>(
+      `${this.apiRoomChatsUrl}/v2/${id}?role=admin`,
+      {
+        headers,
+      }
+    );
   }
 
   updateSpecificGroupChat(
