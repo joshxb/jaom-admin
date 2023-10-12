@@ -59,7 +59,7 @@ export class UsersService {
     return this.imageService.updateOtherUserImageData(imageData, userId);
   }
 
-  searchUser(name: any, index: number): Observable<any> {
+  searchUser(name: any, index: number, type: string = ''): Observable<any> {
     const endpoint = this.apiSearchUsersUrl
       .replace(':name', name.toString())
       .replace(':index', index.toString());
@@ -67,7 +67,9 @@ export class UsersService {
       'Authorization',
       'Bearer ' + this.auth.getToken()
     ); // Replace with your authentication mechanism
-    return this.http.get<any>(endpoint, { headers: headers });
+
+    const url = type !== '' ? `${endpoint}&type=${type}` : `${endpoint}`;
+    return this.http.get<any>(url, { headers: headers });
   }
 
   adminAccessUsers(): Observable<any> {

@@ -58,7 +58,7 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        switchMap((term) => this.userService.searchUser(term, this.currentPage))
+        switchMap((term) => this.userService.searchUser(term, this.currentPage, 'v2'))
       )
       .subscribe((res) => {
         this.showLoading = false;
