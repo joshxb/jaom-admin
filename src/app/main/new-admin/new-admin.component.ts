@@ -85,6 +85,7 @@ export class NewAdminComponent implements OnInit, AfterViewInit {
           emptyData.style.display = 'block';
         }
       });
+      this.searchTerms.next(' ');
   }
 
   searchKey(): void {

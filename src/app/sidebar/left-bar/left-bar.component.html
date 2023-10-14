@@ -3,19 +3,23 @@
     <div (click)="hidePanel()" class="exit-icon">
       x
     </div>
-    <ng-container *ngIf="data?.image_blob !== null; else otherImage">
-      <img style="width: 40px; height: 40px; border-radius: 50%" [src]="selectedImageSrc"
-        alt="" />
+    <ng-container *ngIf="data; else showLoading">
+      <ng-container *ngIf="data?.image_blob !== null; else otherImage">
+        <img style="width: 40px; height: 40px; border-radius: 50%" [src]="selectedImageSrc" alt="" />
+      </ng-container>
+      <ng-template #otherImage>
+        <img style="width: 40x; height: 40px; border-radius: 50%" [src]="imageUrls.user_default" alt="" />
+      </ng-template>
+      <div *ngIf="data">
+        <p style="color: #fff; text-align: center; font-size: 16px">
+          {{ data?.firstname + " " + data?.lastname }}
+        </p>
+        <span class="dot"></span><span style="font-size: 13px">Online</span>
+      </div>
     </ng-container>
-    <ng-template #otherImage>
-      <img style="width: 40x; height: 40px; border-radius: 50%" [src]="imageUrls.user_default" alt="" />
+    <ng-template #showLoading>
+      <div class="loading-spinner"></div>
     </ng-template>
-    <div>
-      <p style="color: #fff; text-align: center; font-size: 16px">
-        {{ data?.firstname + " " + data?.lastname }}
-      </p>
-      <span class="dot"></span><span style="font-size: 13px">Online</span>
-    </div>
   </div>
   <ul class="list-unstyled components">
     <p id="admin-txt">Administrator</p>

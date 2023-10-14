@@ -23,6 +23,7 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
   showEmptyData: boolean = true;
   data: any = [];
   isSpinnerLoading: boolean = false;
+  cacheData: any;
 
   constructor(
     private userService: UsersService,
@@ -50,6 +51,16 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const cookieKey = 'userAdminData';
+    const cachedData = localStorage.getItem(cookieKey);
+    if (cachedData) {
+      try {
+        this.cacheData = JSON.parse(cachedData);
+      } catch (error) {
+        console.error('Error parsing cached data:', error);
+      }
+    }
+
     this.isSpinnerLoading = true;
     const theme = this.cacheService.getCachedAdminData('theme');
     this.cacheService.themeChange(
@@ -87,6 +98,10 @@ export class AdminAccessComponent implements OnInit, AfterViewInit {
   }
 
   removeAdminAccess(id: number) {
+    if (this.cacheData?.id === id) {
+      return;
+    }
+
     this.isSpinnerLoading = true;
     this.userService
       .updateOtherUserData(id, { type: 'local' })

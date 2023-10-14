@@ -17,7 +17,7 @@
                 <h1>Manage Administrative Access</h1>
                 <div class="loading-spinner" *ngIf="showLoading"></div>
                 <div class="user-list">
-                    <li class="user-card" *ngFor="let account of data">
+                    <li class="user-card" *ngFor="let account of data" [ngStyle]="{'opacity': cacheData?.id === account?.id ? 0.5 : 1}">
                         <div class="user-header">
                             <img *ngIf="account?.image_blob !== null; else otherImage" [src]="account?.image_blob" />
                             <ng-template #otherImage>

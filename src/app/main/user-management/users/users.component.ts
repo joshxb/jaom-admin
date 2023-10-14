@@ -33,6 +33,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
   userImage: Blob | null = null;
+  data: any;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -47,17 +48,27 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private imageService: ImageService,
     private profileImageCacheService: ProfileImageCacheService
-  ) {}
+  ) { }
 
   openDialog(s: any, type: string) {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {
+    const cookieKey = 'userAdminData';
+    const cachedData = localStorage.getItem(cookieKey);
+    if (cachedData) {
+      try {
+        this.data = JSON.parse(cachedData);
+      } catch (error) {
+        console.error('Error parsing cached data:', error);
+      }
+    }
+
     const theme = this.cacheService.getCachedAdminData('theme');
     this.cacheService.themeChange(
       this.renderer,
@@ -259,19 +270,34 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   deleteSpecificUser(user: any) {
     this.isSpinnerLoading = true;
+    const deleteDialogMessage = this.elRef.nativeElement.querySelector(
+      '.delete-dialog-message'
+    );
+    const deleteDialogMessageP = this.elRef.nativeElement.querySelector(
+      '.delete-dialog-message p'
+    );
 
-    this.usersManagementService.deleteSpecificUser(user).subscribe((res) => {
-      this.isSpinnerLoading = false;
-
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      deleteDialogMessage.style.display = 'block';
-
+    if (user === this.data?.id) {
       setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
+        this.isSpinnerLoading = false;
+        deleteDialogMessage.style.display = 'block';
+        deleteDialogMessageP.textContent = 'Current user cannot be deleted!';
+
+        setTimeout(() => {
+          deleteDialogMessage.style.display = 'none';
+        }, 3000);
+      }, 1000);
+    } else {
+      this.usersManagementService.deleteSpecificUser(user).subscribe((res) => {
+        this.isSpinnerLoading = false;
+        deleteDialogMessageP.textContent = 'User deleted successfully';
+        deleteDialogMessage.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      });
+    }
   }
 
   // Custom function to extract real nickname
@@ -458,7 +484,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
                     this.processImage(result);
                   },
-                  (error) => {}
+                  (error) => { }
                 );
             } else {
               const dialogMessage = this.elRef.nativeElement.querySelector(
@@ -471,7 +497,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
               }, 2000);
             }
           },
-          (error) => {}
+          (error) => { }
         );
     } else {
       const noChangesTxt =
