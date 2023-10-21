@@ -46,6 +46,12 @@
                       <a href="/transactions/donations" class="notification-link">Browse details</a>
                     </div>
                     <div class="notification-description" *ngIf="
+                        notif?.title === 'Concern & Feedback Notification'
+                      ">
+                      Someone from the online community is raising a concern with USER-ID = <b>{{ notif?.user_id }}.</b> Please take a look for your response.<br />
+                      <a href="/feedbacks" class="notification-link">Browse details</a>
+                    </div>
+                    <div class="notification-description" *ngIf="
                         notif?.title === 'Prayer Offer Request Notification'
                       ">
                       There is a prayer offer from USER-ID =
