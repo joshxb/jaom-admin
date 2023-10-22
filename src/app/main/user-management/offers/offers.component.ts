@@ -168,6 +168,7 @@ export class OffersComponent implements OnInit, AfterViewInit {
   }
 
   exportToEXCEL() {
+    this.isSpinnerLoading = true;
     const table = document.getElementById('offerTable') as HTMLTableElement;
 
     if (!table) {
@@ -175,7 +176,7 @@ export class OffersComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const data = [];
+    const data: any[] = [];
     for (let i = 1; i < table.rows.length; i++) {
       const row = table.rows[i];
 
@@ -196,6 +197,8 @@ export class OffersComponent implements OnInit, AfterViewInit {
       data.push(rowData);
     }
 
-    this.exportToExcelService.exportToExcel(table, data, 'offer-prayer-list');
-  }
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.exportToExcelService.exportToExcel(table, data, 'contact-list');
+    }, 2000);  }
 }

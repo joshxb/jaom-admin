@@ -39,7 +39,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private imageService: ImageService,
     private exportToExcelService: ExportToExcelService
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(
@@ -85,7 +85,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
   openModal(imageUrl: string) {
     this.modalImageUrl = imageUrl;
@@ -192,6 +192,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   }
 
   exportToEXCEL() {
+    this.isSpinnerLoading = true;
     const table = document.getElementById('donationTable') as HTMLTableElement;
 
     if (!table) {
@@ -199,7 +200,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const data = [];
+    const data: any[] = [];
     for (let i = 1; i < table.rows.length; i++) {
       const row = table.rows[i];
 
@@ -220,6 +221,9 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       data.push(rowData);
     }
 
-    this.exportToExcelService.exportToExcel(table, data, 'donation-list');
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.exportToExcelService.exportToExcel(table, data, 'contact-list');
+    }, 2000);
   }
 }
