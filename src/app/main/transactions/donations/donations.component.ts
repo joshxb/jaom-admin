@@ -7,6 +7,7 @@ import { TransactionsService } from 'src/app/configuration/services/transactions
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { forkJoin } from 'rxjs';
+import { ExportToExcelService } from 'src/app/configuration/assets/export-to-excel.service';
 
 @Component({
   selector: 'app-donations',
@@ -36,7 +37,8 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private exportToExcelService: ExportToExcelService
   ) {}
 
   ngAfterViewInit() {
@@ -187,5 +189,37 @@ export class DonationsComponent implements OnInit, AfterViewInit {
         window.location.reload();
       }, 2000);
     });
+  }
+
+  exportToEXCEL() {
+    const table = document.getElementById('donationTable') as HTMLTableElement;
+
+    if (!table) {
+      console.error("Table element not found");
+      return;
+    }
+
+    const data = [];
+    for (let i = 1; i < table.rows.length; i++) {
+      const row = table.rows[i];
+
+      if (!row) {
+        console.error("Row element not found");
+        continue;
+      }
+
+      const rowData: { [key: string]: string } = {};
+      for (let j = 0; j < row.cells.length - 1; j++) {
+        const cell = row.cells[j];
+        if (cell.textContent !== null) {
+          const cellText = cell.textContent;
+          rowData[cellText] = cellText;
+        }
+      }
+
+      data.push(rowData);
+    }
+
+    this.exportToExcelService.exportToExcel(table, data, 'donation-list');
   }
 }

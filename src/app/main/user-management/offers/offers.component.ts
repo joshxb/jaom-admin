@@ -5,6 +5,7 @@ import { imageUrls } from 'src/app/app.component';
 import { ModalComponent } from '../../modal/modal.component';
 import { OfferService } from 'src/app/configuration/services/pages/offer.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { ExportToExcelService } from 'src/app/configuration/assets/export-to-excel.service';
 
 @Component({
   selector: 'app-offers',
@@ -31,7 +32,8 @@ export class OffersComponent implements OnInit, AfterViewInit {
     private offerService: OfferService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private exportToExcelService: ExportToExcelService
   ) { }
 
   applySearchFilter() {
@@ -163,5 +165,37 @@ export class OffersComponent implements OnInit, AfterViewInit {
         window.location.reload();
       }, 2000);
     });
+  }
+
+  exportToEXCEL() {
+    const table = document.getElementById('offerTable') as HTMLTableElement;
+
+    if (!table) {
+      console.error("Table element not found");
+      return;
+    }
+
+    const data = [];
+    for (let i = 1; i < table.rows.length; i++) {
+      const row = table.rows[i];
+
+      if (!row) {
+        console.error("Row element not found");
+        continue;
+      }
+
+      const rowData: { [key: string]: string } = {};
+      for (let j = 0; j < row.cells.length - 1; j++) {
+        const cell = row.cells[j];
+        if (cell.textContent !== null) {
+          const cellText = cell.textContent;
+          rowData[cellText] = cellText;
+        }
+      }
+
+      data.push(rowData);
+    }
+
+    this.exportToExcelService.exportToExcel(table, data, 'offer-prayer-list');
   }
 }
