@@ -26,6 +26,7 @@ export class TopBarComponent implements OnInit {
   notificationsData: any;
   lastPage: any;
   selectedImageSrc: any;
+  isSpinnerLoading: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -71,14 +72,14 @@ export class TopBarComponent implements OnInit {
   getProfileImage(id : number) {
     const cachedImage = this.profileImageCacheService.getProfileImage(id);
     if (cachedImage) {
-      this.selectedImageSrc = cachedImage; 
+      this.selectedImageSrc = cachedImage;
     } else {
       this.imageService.getOtherUserImageData(id).subscribe(
         (imageData : Blob) => {
           const reader = new FileReader();
           reader.onloadend = () => {
             const imageBlobData = reader.result as string;
-            this.selectedImageSrc = imageBlobData; 
+            this.selectedImageSrc = imageBlobData;
             this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
           };
           reader.readAsDataURL(imageData);
@@ -91,6 +92,7 @@ export class TopBarComponent implements OnInit {
       const { data } = res;
       this.notificationsData = data;
       this.lastPage = res?.last_page;
+      this.isSpinnerLoading = false;
     });
   }
 
@@ -124,6 +126,7 @@ export class TopBarComponent implements OnInit {
 
   prevNotif(event: any) {
     if (this.notificationPage > 1) {
+      this.isSpinnerLoading = true;
       this.notificationPage = this.notificationPage - 1;
       this.getAllNotification(this.notificationPage);
     }
@@ -131,6 +134,7 @@ export class TopBarComponent implements OnInit {
 
   nextNotif(event: any) {
     if (this.notificationPage < this.lastPage) {
+      this.isSpinnerLoading = true;
       this.notificationPage = this.notificationPage + 1;
       this.getAllNotification(this.notificationPage);
     }
@@ -141,6 +145,10 @@ export class TopBarComponent implements OnInit {
   }
 
   logOut() {
-    this.authService.logout();
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.authService.logout();
+    }, 2000);
   }
 }

@@ -113,7 +113,7 @@
               <img class="user-profile" [src]="imageUrls.user_default" alt="" />
             </ng-template>
           </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <div class="dropdown-menu dropdown-menu-right custom-dropdown-menu" aria-labelledby="userDropdown">
             <a class="dropdown-item top-items" href="/settings">Settings</a>
             <a class="dropdown-item top-items" (click)="logOut()">Log Out <img class="logout-icon"
                 [src]="imageUrls.logout" /></a>
@@ -130,3 +130,4 @@
     </ul>
   </div>
 </nav>
+<app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>

@@ -10,6 +10,10 @@ export class ContactsService {
     private contactService: ContactService
   ) {}
 
+  getExportContacts(value: number): Observable<any> {
+    return this.contactService.getExportContacts(value);
+  }
+
   getContact(page: number): Observable<any> {
     return this.contactService.getContact(page);
   }

@@ -200,6 +200,11 @@ a.download:hover {
   opacity: 0.8;
 }
 
+.export-item:active {
+  background-color: #00000038;
+  opacity: 0.8;
+}
+
 @media screen and (max-width: 800px) {
   .exit-icon {
     display: block;

@@ -7,7 +7,8 @@ import { TransactionsService } from 'src/app/configuration/services/transactions
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { forkJoin } from 'rxjs';
-import { ExportToExcelService } from 'src/app/configuration/assets/export-to-excel.service';
+import { DataName, ExportToExcelService, ExportType } from 'src/app/configuration/assets/export-to-excel.service';
+import { DonationService } from 'src/app/configuration/services/pages/donation.service';
 
 @Component({
   selector: 'app-donations',
@@ -38,7 +39,8 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService,
     private imageService: ImageService,
-    private exportToExcelService: ExportToExcelService
+    private exportToExcelService: ExportToExcelService,
+    private donationService: DonationService
   ) { }
 
   ngAfterViewInit() {
@@ -191,7 +193,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  exportToEXCEL() {
+  exportToEXCEL(value: number = 0) {
     this.isSpinnerLoading = true;
     const table = document.getElementById('donationTable') as HTMLTableElement;
 
@@ -200,7 +202,7 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const data: any[] = [];
+    let data: any[] = [];
     for (let i = 1; i < table.rows.length; i++) {
       const row = table.rows[i];
 
@@ -221,9 +223,35 @@ export class DonationsComponent implements OnInit, AfterViewInit {
       data.push(rowData);
     }
 
-    setTimeout(() => {
-      this.isSpinnerLoading = false;
-      this.exportToExcelService.exportToExcel(table, data, 'contact-list');
-    }, 2000);
+    if (value) {
+      this.donationService.getExportDonations(value).subscribe((res) => {
+        let data: any[] = [];
+        const headers: { [key: string]: string | number } = {};
+
+        res.map((item: ArrayLike<unknown> | { [s: string]: unknown; }) => {
+          const newObject: { [key: string]: string | number } = {};
+            Object.entries(item).forEach(([key, value]) => {
+              if (typeof value === 'string') {
+                headers[key] = key;
+                newObject[value] = value;
+              }
+            });
+          data.push(newObject);
+        });
+
+        delete headers['updated_at'];
+        data.unshift(headers);
+
+        setTimeout(() => {
+          this.isSpinnerLoading = false;
+          this.exportToExcelService.exportToExcel(table, data, 'donation-transactions-list', ExportType.Data, DataName.Donation);
+        }, 2000);
+      });
+    } else {
+      setTimeout(() => {
+        this.isSpinnerLoading = false;
+        this.exportToExcelService.exportToExcel(table, data, 'donation-transactions-list', ExportType.Container, DataName.Donation);
+      }, 2000);
+    }
   }
 }

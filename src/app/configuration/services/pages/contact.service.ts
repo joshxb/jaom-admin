@@ -14,8 +14,20 @@ export class ContactService {
   private baseUrl = this.base.baseUrl;
   private suffixUrl = this.base.suffixUrl;
   private apiContactUrl = `${this.baseUrl}/${this.suffixUrl}/external-contacts`;
+  private apiExportContactUrl = `${this.baseUrl}/${this.suffixUrl}/export/contact`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
+
+  getExportContacts(value: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.get<any>(this.apiExportContactUrl + `/${value}?role=admin`, {
+      headers,
+    });
+  }
 
   getContact(page: number): Observable<any> {
     const headers = new HttpHeaders().set(

@@ -6,7 +6,7 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { OfferService } from 'src/app/configuration/services/pages/offer.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { ContactsService } from 'src/app/configuration/services/contacts/contacts.service';
-import { ExportToExcelService } from 'src/app/configuration/assets/export-to-excel.service';
+import { DataName, ExportToExcelService, ExportType } from 'src/app/configuration/assets/export-to-excel.service';
 
 @Component({
   selector: 'app-contacts',
@@ -172,7 +172,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  exportToEXCEL() {
+  exportToEXCEL(value: number = 0) {
     this.isSpinnerLoading = true;
     const table = document.getElementById('contactTable') as HTMLTableElement;
 
@@ -181,7 +181,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const data: any[] = [];
+    let data: any[] = [];
     for (let i = 1; i < table.rows.length; i++) {
       const row = table.rows[i];
 
@@ -202,9 +202,35 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       data.push(rowData);
     }
 
-    setTimeout(() => {
-      this.isSpinnerLoading = false;
-      this.exportToExcelService.exportToExcel(table, data, 'contact-list');
-    }, 2000);
+    if (value) {
+      this.contactService.getExportContacts(value).subscribe((res) => {
+        let data: any[] = [];
+        const headers: { [key: string]: string | number } = {};
+
+        res.map((item: ArrayLike<unknown> | { [s: string]: unknown; }) => {
+          const newObject: { [key: string]: string | number } = {};
+            Object.entries(item).forEach(([key, value]) => {
+              if (typeof value === 'string') {
+                headers[key] = key;
+                newObject[value] = value;
+              }
+            });
+          data.push(newObject);
+        });
+
+        delete headers['updated_at'];
+        data.unshift(headers);
+
+        setTimeout(() => {
+          this.isSpinnerLoading = false;
+          this.exportToExcelService.exportToExcel(table, data, 'contact-list', ExportType.Data, DataName.Contact);
+        }, 2000);
+      });
+    } else {
+      setTimeout(() => {
+        this.isSpinnerLoading = false;
+        this.exportToExcelService.exportToExcel(table, data, 'contact-list', ExportType.Container, DataName.Contact);
+      }, 2000);
+    }
   }
 }

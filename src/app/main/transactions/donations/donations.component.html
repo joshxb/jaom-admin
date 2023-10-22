@@ -1,136 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JAOM Admin - Transactions / Donations</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAOM Admin - Transactions / Donations</title>
+</head>
 
-  <body>
-    <div class="wrapper">
-      <app-left-bar style="z-index: 1000"></app-left-bar>
+<body>
+  <div class="wrapper">
+    <app-left-bar style="z-index: 1000"></app-left-bar>
 
-      <div class="content">
-        <app-top-bar id="top-bar"></app-top-bar>
-        <div class="content-container">
-          <p>Donations</p>
-          <div class="d-flex justify-content-end" style="margin: 20px">
-            <button (click)="exportToEXCEL()" class="btn btn-primary">
-              <i class="fa fa-download"></i> Export
-            </button>&nbsp;
-            <div class="input-group" style="width: 20%">
-              <input
-                type="text"
-                [(ngModel)]="searchTerm"
-                (input)="applySearchFilter()"
-                placeholder="Search by ID, Fullname, Phone, Email...."
-                class="form-control filter-user-search"
-              />
-              <div class="input-group-append">
-                <span class="input-group-text">
-                  <i class="fa fa-search"></i>
-                </span>
-              </div>
+    <div class="content">
+      <app-top-bar id="top-bar"></app-top-bar>
+      <div class="content-container">
+        <p>Donations</p>
+        <div class="d-flex justify-content-end" style="margin: 20px">
+          <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-download"></i> Export
+          </button>
+          <ul class="dropdown-menu">
+            <li style="
+                  border-bottom: 1px solid #eee;
+                  text-align: center;
+                  padding-bottom: 10px;
+                ">
+              <b>Export to Excel</b>
+            </li>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL()">Export by Page</a>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(50)">Export by 50</a>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(100)">Export by 100</a>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(200)">Export by 200</a>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(300)">Export by 300</a>
+            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(500)">Export by 500</a>
+          </ul>&nbsp;&nbsp;
+          <div class="input-group" style="width: 20%">
+            <input type="text" [(ngModel)]="searchTerm" (input)="applySearchFilter()"
+              placeholder="Search by ID, Fullname, Phone, Email...." class="form-control filter-user-search" />
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <i class="fa fa-search"></i>
+              </span>
             </div>
           </div>
-          <div class="table-responsive">
-            <table id="donationTable" class="table table-bordered users-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Fullname</th>
-                  <th>Phone</th>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Bank Type</th>
-                  <th>Amount</th>
-                  <th style="text-align: center">Proof of Transac</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let transac of filteredTransactions">
-                  <td>{{ transac?.id }}</td>
-                  <td>{{ transac?.fullname }}</td>
-                  <td>{{ transac?.phone }}</td>
-                  <td>{{ transac?.email }}</td>
-                  <td>{{ transac?.location }}</td>
-                  <td>{{ transac?.payment_method }}</td>
-                  <td>{{ transac?.amount }}</td>
-                  <td style="text-align: center">
-                    <img
-                      style="width: 100px; height: 100px; cursor: pointer"
-                      [src]="transac?.screenshot_img"
-                      (click)="openModal(transac?.screenshot_img)"
-                    />
-                  </td>
-                  <td>{{ transac?.created_at | date : "longDate" }}</td>
-                  <td class="action-cont">
-                    <img
-                      (click)="deleteDonationTransaction(transac?.id)"
-                      [src]="imageUrls.delete"
-                      alt=""
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="pagination-cont">
-            <ul class="pagination">
-              <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="onPageChange(1)"> << </a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" (click)="onPageChange(currentPage - 1)"
-                  >Previous</a
-                >
-              </li>
-              <li
-                class="page-item"
-                *ngFor="let page of getPageRange()"
-                [class.active]="currentPage === page"
-              >
-                <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
-              </li>
-              <li
-                class="page-item"
-                [class.disabled]="currentPage === transactionsData?.last_page"
-              >
-                <a class="page-link" (click)="onPageChange(currentPage + 1)"
-                  >Next</a
-                >
-              </li>
-              <li
-                class="page-item"
-                [class.disabled]="currentPage === transactionsData?.last_page"
-              >
-                <a
-                  class="page-link"
-                  (click)="onPageChange(transactionsData?.last_page)"
-                  >>></a
-                >
-              </li>
-            </ul>
-            <p class="text-muted showing-pagination">
-              Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
-              {{ transactionsData?.total }} donations
-            </p>
-          </div>
-          <div class="dialog-messages delete-dialog-message">
-            <p class="text-danger"></p>
-          </div>
+        </div>
+        <div class="table-responsive">
+          <table id="donationTable" class="table table-bordered users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fullname</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Bank Type</th>
+                <th>Amount</th>
+                <th style="text-align: center">Proof of Transac</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transac of filteredTransactions">
+                <td>{{ transac?.id }}</td>
+                <td>{{ transac?.fullname }}</td>
+                <td>{{ transac?.phone }}</td>
+                <td>{{ transac?.email }}</td>
+                <td>{{ transac?.location }}</td>
+                <td>{{ transac?.payment_method }}</td>
+                <td>{{ transac?.amount }}</td>
+                <td style="text-align: center">
+                  <img style="width: 100px; height: 100px; cursor: pointer" [src]="transac?.screenshot_img"
+                    (click)="openModal(transac?.screenshot_img)" />
+                </td>
+                <td>{{ transac?.created_at | date : "longDate" }}</td>
+                <td class="action-cont">
+                  <img (click)="deleteDonationTransaction(transac?.id)" [src]="imageUrls.delete" alt="" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-cont">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="onPageChange(1)">
+                << </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="onPageChange(currentPage - 1)">Previous</a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPageRange()" [class.active]="currentPage === page">
+              <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === transactionsData?.last_page">
+              <a class="page-link" (click)="onPageChange(currentPage + 1)">Next</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === transactionsData?.last_page">
+              <a class="page-link" (click)="onPageChange(transactionsData?.last_page)">>></a>
+            </li>
+          </ul>
+          <p class="text-muted showing-pagination">
+            Showing {{ getStartingIndex() }} - {{ getCurrentPageEnd() }} of
+            {{ transactionsData?.total }} donations
+          </p>
+        </div>
+        <div class="dialog-messages delete-dialog-message">
+          <p class="text-danger"></p>
         </div>
       </div>
     </div>
-    <!-- Modal -->
-    <div class="modal-ss" [ngClass]="{ 'show-modal-ss': showModalSS }">
-      <div class="modal-content-ss">
-        <span class="close-ss" (click)="closeModal()">&times;</span>
-        <img class="modal-image-ss" [src]="modalImageUrl" alt="Image" />
-      </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal-ss" [ngClass]="{ 'show-modal-ss': showModalSS }">
+    <div class="modal-content-ss">
+      <span class="close-ss" (click)="closeModal()">&times;</span>
+      <img class="modal-image-ss" [src]="modalImageUrl" alt="Image" />
     </div>
-    <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
-  </body>
+  </div>
+  <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+</body>
+
 </html>

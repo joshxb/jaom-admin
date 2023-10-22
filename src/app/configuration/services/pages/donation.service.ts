@@ -15,8 +15,20 @@ export class DonationService {
   private suffixUrl = this.base.suffixUrl;
 
   private apiDonationUrl = `${this.baseUrl}/${this.suffixUrl}/transactions/donate`;
+  private apiExportDonationUrl = `${this.baseUrl}/${this.suffixUrl}/export/donation`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
+
+  getExportDonations(value: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.get<any>(this.apiExportDonationUrl + `/${value}?role=admin`, {
+      headers,
+    });
+  }
 
   getDonationTransactions(
     page: number,

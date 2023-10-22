@@ -28,6 +28,22 @@ li {
   cursor: pointer;
 }
 
+#dashSubmenu li,
+#transSubmenu li,
+#transSubmenu li,
+#analyticsSubmenu li,
+#modifySubmenu li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.358);
+}
+
+#dashSubmenu li a,
+#transSubmenu li a,
+#transSubmenu li a,
+#analyticsSubmenu li a,
+#modifySubmenu li a {
+  background: rgba(0, 0, 0, 0.428);
+}
+
 .loading-spinner {
   border: 4px solid #ccc;
   border-top: 4px solid #333;
@@ -40,10 +56,16 @@ li {
 
 @keyframes spin {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
 
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
+}
+
+#footer-p {
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 20px;
 }
