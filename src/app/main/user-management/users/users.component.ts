@@ -35,6 +35,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   userImage: Blob | null = null;
   data: any;
 
+  showConfirmationModal = false;
+  userToDeleteId!: number;
+
   constructor(
     private usersManagementService: UsersManagementService,
     private router: Router,
@@ -49,6 +52,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private imageService: ImageService,
     private profileImageCacheService: ProfileImageCacheService
   ) { }
+
+  
+  openConfirmationModal(user_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.userToDeleteId = user_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteSpecificUser(this.userToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   openDialog(s: any, type: string) {
     const dialogRef = this.dialog.open(ModalComponent, {
@@ -500,6 +522,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
           (error) => { }
         );
     } else {
+      this.isSpinnerLoading = false;
       const noChangesTxt =
         this.elRef.nativeElement.querySelector('.no-changes-txt');
       noChangesTxt.style.display = 'block';

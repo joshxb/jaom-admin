@@ -60,7 +60,7 @@
                     <td>{{ data?.created_at | date : "h:mm a" }}</td>
                     <td class="action-cont">
                       <img
-                        (click)="deleteSpecificRoom(data?.id)"
+                        (click)="openConfirmationModal(data?.id, 0)"
                         [src]="imageUrls.delete"
                         alt=""
                       />
@@ -115,9 +115,11 @@
                 Showing {{ getStartingIndex(0) }} -
                 {{ getCurrentPageEnd(0) }} of {{ roomListData?.total }} rooms
               </p>
-            </div>
-          </div>
-
+            </div>  
+          </div><br><br>
+          <hr style="border: 1px solid rgba(0, 0, 0, 0.275);">
+          <br><br>
+          <p>Group Messages</p>
           <div>
             <div class="d-flex justify-content-end" style="margin: 20px">
               <div class="input-group" style="width: 20%">
@@ -160,7 +162,7 @@
                     <td>{{ data?.created_at | date : "h:mm a" }}</td>
                     <td class="action-cont">
                       <img
-                        (click)="deleteSpecificRoomChat(data?.id)"
+                        (click)="openConfirmationModal(data?.id, 1)"
                         [src]="imageUrls.delete"
                         alt=""
                       />
@@ -229,5 +231,22 @@
       </div>
     </div>
     <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+    <div *ngIf="showConfirmationModal" class="modal-conf" id="confirmationModal">
+      <div class="modal-dialog-conf">
+        <div class="modal-content-conf">
+          <div class="modal-header-conf">
+            <h5 class="modal-title-conf">Confirmation</h5>
+            <button type="button" class="close-conf" (click)="closeConfirmationModal()">&times;</button>
+          </div>
+          <div class="modal-body-conf">
+            Do you want to remove this {{selectedDataList}}?
+          </div>
+          <div class="modal-footer-conf">
+            <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
+            <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

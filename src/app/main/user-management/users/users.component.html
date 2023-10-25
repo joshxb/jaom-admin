@@ -51,7 +51,7 @@
                 </td>
                 <td class="action-cont" disabled>
                   <img [src]="imageUrls.editUsers" alt="" (click)="openEditModal(user?.id)" />
-                  <img (click)="deleteSpecificUser(user?.id)" [src]="imageUrls.delete" alt="" />
+                  <img (click)="openConfirmationModal(user?.id)" [src]="imageUrls.delete" alt="" />
                 </td>
               </tr>
             </tbody>
@@ -169,6 +169,25 @@
     </div>
   </div>
   <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+  
+  <div *ngIf="showConfirmationModal" class="modal-conf" id="confirmationModal">
+    <div class="modal-dialog-conf">
+      <div class="modal-content-conf">
+        <div class="modal-header-conf">
+          <h5 class="modal-title-conf">Confirmation</h5>
+          <button type="button" class="close-conf" (click)="closeConfirmationModal()">&times;</button>
+        </div>
+        <div class="modal-body-conf">
+          Do you want to remove this user?
+        </div>
+        <div class="modal-footer-conf">
+          <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
+          <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </body>
 
 </html>

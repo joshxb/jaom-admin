@@ -23,6 +23,9 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  chatToDeleteId!: number;
+
   constructor(
     private usersManagementService: UsersManagementService,
     private router: Router,
@@ -33,6 +36,24 @@ export class ChatsComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.chatToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteSpecificMessage(this.chatToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(

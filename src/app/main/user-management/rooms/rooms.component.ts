@@ -35,6 +35,11 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   currentPage2 = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  selectedToDeleteId!: number;
+  selectedOption!: number;
+  selectedDataList!: string;
+
   constructor(
     private usersManagementService: UsersManagementService,
     private router: Router,
@@ -46,6 +51,33 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private imageService: ImageService
   ) {}
+
+  openConfirmationModal(id: number, index: number) {
+    this.isSpinnerLoading = true;
+    this.selectedOption = index;
+
+
+    this.selectedDataList = index === 0 ? 'room' : 'room chat';
+    
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.selectedToDeleteId = id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    if (this.selectedOption === 0) {
+      this.deleteSpecificRoom(this.selectedToDeleteId);
+    } else {
+      this.deleteSpecificRoomChat(this.selectedToDeleteId);
+    }
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(
