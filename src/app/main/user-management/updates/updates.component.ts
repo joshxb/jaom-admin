@@ -23,6 +23,9 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
 
   currentPage = 1;
   itemsPerPage = 1;
+  
+  showConfirmationModal = false;
+  updateToDeleteId!: number;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -35,6 +38,24 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.updateToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteSpecificUpdate(this.updateToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(

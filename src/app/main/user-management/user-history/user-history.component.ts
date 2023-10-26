@@ -21,6 +21,9 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  userHistoryToDeleteId!: number;
+
   constructor(
     private usersManagementService: UsersManagementService,
     private router: Router,
@@ -30,6 +33,24 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.userHistoryToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteSpecificUserHistory(this.userHistoryToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(

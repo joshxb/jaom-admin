@@ -20,6 +20,9 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   newDefinition: string = '';
   isSpinnerLoading: boolean = false;
 
+  showConfirmationModal = false;
+  faqsToDeleteId!: number;
+
   constructor(
     private modificationService: ModificationsService,
     private elRef: ElementRef,
@@ -35,6 +38,24 @@ export class FaqsComponent implements OnInit, AfterViewInit {
     this.modificationService.showAllFAQS().subscribe((res) => {
       this.faqsData = res;
     });
+  }
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.faqsToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteFaq(this.faqsToDeleteId);
+    this.closeConfirmationModal();
   }
 
   ngAfterViewInit() {

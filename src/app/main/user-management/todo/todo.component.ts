@@ -22,6 +22,9 @@ export class TodoComponent implements OnInit, AfterViewInit {
 
   currentPage = 1;
   itemsPerPage = 1;
+    
+  showConfirmationModal = false;
+  todoToDeleteId!: number;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -33,6 +36,24 @@ export class TodoComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.todoToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteSpecificTodo(this.todoToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(

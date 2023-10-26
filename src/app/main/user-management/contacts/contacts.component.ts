@@ -25,6 +25,9 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  contactsToDeleteId!: number;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -36,6 +39,24 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     private contactService: ContactsService,
     private exportToExcelService: ExportToExcelService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.contactsToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteContact(this.contactsToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {

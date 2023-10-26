@@ -52,6 +52,9 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   selectedRoomName: string = '';
   modifiedRoomName: string = '';
 
+  showConfirmationModal = false;
+  chatToDeleteId!: number;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -64,6 +67,24 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService
   ) {}
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.chatToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteDefaultRoom(this.chatToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   ngAfterViewInit() {
     const scb = this.elementRef.nativeElement.querySelector(

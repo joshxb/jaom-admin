@@ -29,6 +29,9 @@ export class DonationsComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  donationToDeleteId!: number;
+
   constructor(
     private transactionService: TransactionsService,
     private router: Router,
@@ -59,6 +62,24 @@ export class DonationsComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.donationToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteDonationTransaction(this.donationToDeleteId);
+    this.closeConfirmationModal();
   }
 
   applySearchFilter() {

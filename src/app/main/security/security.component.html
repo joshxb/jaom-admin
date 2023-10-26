@@ -109,7 +109,7 @@
                 </button>
               </div>
             </div>
-            <div 
+            <div
               class="default-room-list-panel">
               <table
                 style="width: 100%"
@@ -149,7 +149,7 @@
                         alt=""
                       />
                       <img
-                        (click)="deleteDefaultRoom(list?.id)"
+                        (click)="openConfirmationModal(list?.id)"
                         [src]="imageUrls.delete"
                         alt=""
                       />
@@ -373,7 +373,7 @@
                       class="col-sm-3 col-form-label"
                       >Room Name</label
                     >
-                    <div class="col-sm-9 d-flex align-items-center">    
+                    <div class="col-sm-9 d-flex align-items-center">
                       <input
                         type="text"
                         class="form-control mr-3"
@@ -441,5 +441,22 @@
       <p class="text-dark"></p>
     </div>
     <app-spinner-loading *ngIf="isSpinnerLoading"></app-spinner-loading>
+    <div *ngIf="showConfirmationModal" class="modal-conf" id="confirmationModal">
+      <div class="modal-dialog-conf">
+        <div class="modal-content-conf">
+          <div class="modal-header-conf">
+            <h5 class="modal-title-conf">Confirmation</h5>
+            <button type="button" class="close-conf" (click)="closeConfirmationModal()">&times;</button>
+          </div>
+          <div class="modal-body-conf">
+            Do you want to remove this security item?
+          </div>
+          <div class="modal-footer-conf">
+            <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
+            <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -24,6 +24,9 @@ export class OffersComponent implements OnInit, AfterViewInit {
   currentPage = 1;
   itemsPerPage = 1;
 
+  showConfirmationModal = false;
+  offerToDeleteId!: number;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -35,6 +38,24 @@ export class OffersComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private exportToExcelService: ExportToExcelService
   ) { }
+
+  openConfirmationModal(chat_id: number) {
+    this.isSpinnerLoading = true;
+    setTimeout(() => {
+      this.isSpinnerLoading = false;
+      this.offerToDeleteId = chat_id;
+      this.showConfirmationModal = true;
+    }, 1000);
+  }
+
+  closeConfirmationModal() {
+    this.showConfirmationModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteOffer(this.offerToDeleteId);
+    this.closeConfirmationModal();
+  }
 
   applySearchFilter() {
     if (!this.searchTerm) {
