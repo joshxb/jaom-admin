@@ -15,7 +15,7 @@ export class AdminService {
   private suffixUrl = this.base.suffixUrl;
   private apiUserUrl = `${this.baseUrl}/${this.suffixUrl}/user`;
   private apiUserHistoryUrl = `${this.baseUrl}/${this.suffixUrl}/history`;
-  private apiServerConfigUrl = `${this.baseUrl}/${this.suffixUrl}/sys-config/server-info`;
+  private apiServerConfigUrl = `${this.baseUrl}/${this.suffixUrl}/sys_config/server_info`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
