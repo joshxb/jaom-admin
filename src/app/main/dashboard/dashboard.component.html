@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JAOM Admin - Dashboard</title>
   </head>
+
   <body>
     <div class="wrapper">
-      <app-left-bar style="z-index: 1000;"></app-left-bar>
+      <app-left-bar style="z-index: 1000"></app-left-bar>
 
       <div class="content">
         <app-top-bar id="top-bar"></app-top-bar>
@@ -18,7 +19,7 @@
               <div>
                 <img [src]="imageUrls.totalUser" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{userCounts}}</h3>
+                <h3>{{ userCounts }}</h3>
               </div>
               <p>Total Users</p>
             </div>
@@ -33,7 +34,7 @@
                   <div class="active-indicator"></div>
                 </div>
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{userStatusCounts?.active_user_count}}</h3>
+                <h3>{{ userStatusCounts?.active_user_count }}</h3>
               </div>
               <p>Active Users</p>
             </div>
@@ -45,10 +46,13 @@
                     [src]="imageUrls.totalUser"
                     alt=""
                   />
-                  <div style="background-color: #dc3545;" class="active-indicator"></div>
+                  <div
+                    style="background-color: #dc3545"
+                    class="active-indicator"
+                  ></div>
                 </div>
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{userStatusCounts?.inactive_user_count}}</h3>
+                <h3>{{ userStatusCounts?.inactive_user_count }}</h3>
               </div>
               <p>Inactive Users</p>
             </div>
@@ -56,7 +60,7 @@
               <div>
                 <img [src]="imageUrls.allChat" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{chatCounts}}</h3>
+                <h3>{{ chatCounts }}</h3>
               </div>
               <p>Chats</p>
             </div>
@@ -64,7 +68,7 @@
               <div>
                 <img [src]="imageUrls.user_management" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{roomCounts}}</h3>
+                <h3>{{ roomCounts }}</h3>
               </div>
               <p>Rooms</p>
             </div>
@@ -72,7 +76,7 @@
               <div>
                 <img [src]="imageUrls.updateChats" alt="" />
                 <img [src]="imageUrls.arrowRight" alt="" />
-                <h3>{{updateCounts}}</h3>
+                <h3>{{ updateCounts }}</h3>
               </div>
               <p>Updates</p>
             </div>
@@ -112,22 +116,28 @@
                   name="selectedYear"
                   (ngModelChange)="onMonthYearChange()"
                 >
-                <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+                  <option *ngFor="let year of yearOptions" [value]="year">
+                    {{ year }}
+                  </option>
                 </select>
               </div>
             </div>
           </div>
           <div class="content-wrapper">
-            <div id="chartContainer" style="height: 360px; width: 100%;"></div>
+            <div id="chartContainer" style="height: 360px; width: 100%"></div>
             <div class="line"></div>
           </div>
           <div class="donations-information">
             <div class="donation-sub-list">
               <p>Total donations:</p>
               <div class="donations-amount">
-                <p>Php. {{ donationTransactions?.total_amount }} / {{donationTransactions?.total_user_donations }} users</p>
+                <p>
+                  Php. {{ donationTransactions?.total_amount }} /
+                  {{ donationTransactions?.total_user_donations }} users
+                </p>
               </div>
-            </div>&nbsp;&nbsp;
+            </div>
+            &nbsp;&nbsp;
             <div class="donation-sub-list">
               <p>Donations per month & year:</p>
               <div class="donations-amount">
@@ -137,7 +147,72 @@
                 </p>
               </div>
             </div>
+          </div><br><br>
+          <p>Server-Info Analytics</p>
+          <div class="chart-container">
+            <div class="chart-panel">
+              <div class="chart cpu-usage">
+                <div class="percent-text">{{serverData?.cpuUsage}}</div>
+              </div>
+              <p>CPU Usage</p>
+            </div>
+            <div class="chart-panel">
+              <div class="chart memory-usage">
+                <div class="percent-text">{{serverData?.memoryUsage}}</div>
+              </div>
+              <p>Memory Usage</p>
+            </div>
+            <div class="chart-panel">
+              <div class="chart network-traffic">
+                <div class="percent-text">
+                  <small style="font-size:10px;">
+                    <b>rx_bytes:</b> {{serverData?.networkTraffic?.rx_bytes}}<br>
+                    <b>tx_bytes:</b> {{serverData?.networkTraffic?.tx_bytes}}
+                  </small>
+                </div>
+              </div>
+              <p>Network Traffic</p>
+            </div>
+            <div class="chart-panel">
+              <div class="chart engine-type">
+                <div class="percent-text">{{serverData?.databaseEngine[0].ENGINE}}</div>
+              </div>
+              <p>Engine Type</p>
+            </div>
+            <div class="chart-panel">
+              <div class="chart db-type">
+                <div class="percent-text">{{serverData?.databaseType}}</div>
+              </div>
+              <p>DB Type</p>
+            </div>
+            <div class="chart-panel">
+              <div class="chart total-storage">
+                <div class="percent-text" style="font-size: 14px;">
+                  {{serverData?.totalStorage}}
+                </div>
+              </div>
+              <p>Total Data Use</p>
+            </div>
           </div>
+          <div id="serverChartContainer" style="height: 420px; width: 100%"></div>
+          <!-- <div class="options-container">
+            <p id="donation-header"></p>
+            <div class="options">
+              <div class="d-flex options-control">
+                <label for="yearSelect">Tables: </label>&nbsp;
+                <select
+                  class="form-control"
+                  id="yearSelect"
+                  name="selectedYear"
+                >
+                  <option *ngFor="let db of serverData?.tableStatus" [value]="db?.table_name">
+                    {{ db?.table_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+          </div> -->
         </div>
       </div>
     </div>

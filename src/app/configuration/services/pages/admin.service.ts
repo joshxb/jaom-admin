@@ -15,6 +15,7 @@ export class AdminService {
   private suffixUrl = this.base.suffixUrl;
   private apiUserUrl = `${this.baseUrl}/${this.suffixUrl}/user`;
   private apiUserHistoryUrl = `${this.baseUrl}/${this.suffixUrl}/history`;
+  private apiServerConfigUrl = `${this.baseUrl}/${this.suffixUrl}/sys-config/server-info`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
@@ -33,7 +34,7 @@ export class AdminService {
     );
     return this.http.put<any>(this.apiUserUrl + `s/${user}`, formData, { headers });
   }
-  
+
   getUserCounts(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -64,5 +65,13 @@ export class AdminService {
       `Bearer ${this.auth.getToken()}`
     );
     return this.http.delete<any>(`${this.apiUserHistoryUrl}/${id}`, { headers });
+  }
+
+  getServerConfiguration(): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+    return this.http.get<any>(`${this.apiServerConfigUrl}`, { headers });
   }
 }

@@ -6,24 +6,36 @@ import { CanvasJS } from '@canvasjs/angular-charts';
 })
 export class ChartService {
 
-  initializeChart(option: string, ...dataPoints: any) {
+  initializeChart(type: ChartType = ChartType.Area, option: string, ...dataPoints: any) {
     try {
       var chart;
+      let xAxisTitle = "Date"; // Default x-axis title
+      let yAxisTitle = ""; // Default y-axis title
 
       if (dataPoints.length > 0) {
-        chart = new CanvasJS.Chart('chartContainer', {
+        if (option === "server-info") {
+          xAxisTitle = "Tables";
+          yAxisTitle = "Data Size";
+        }
+
+        chart = new CanvasJS.Chart(type === ChartType.Area ? 'chartContainer' : 'serverChartContainer', {
           title: {
-            text: '',
+            text: option === "server-info" ? "Storage Engine" : "",
+            fontSize: 18,
           },
           animationEnabled: true,
           axisX: {
-            interval: 4,
+            interval: type === ChartType.Area ? 4 : 1,
             intervalType: 'day',
-            valueFormatString: 'M-DD-YY', // Format for x-axis labels
+            valueFormatString: 'M-DD-YY',
+            title: xAxisTitle,
+          },
+          axisY: {
+            title: yAxisTitle,
           },
           data: [
             {
-              type: 'area',
+              type: type,
               dataPoints: [...dataPoints],
             },
           ],
@@ -31,12 +43,13 @@ export class ChartService {
       } else {
         const titlesMap: { [key: string]: string } = {
           'page-visit': 'No Page Visits Interaction',
-          transactions: 'No Donation Transactions Data',
+          'transactions': 'No Donation Transactions Data',
+          'server-info': 'No Server Info Data',
         };
 
         const title = titlesMap[option] || 'Default Title';
 
-        chart = new CanvasJS.Chart('chartContainer', {
+        chart = new CanvasJS.Chart(type === ChartType.Area ? 'chartContainer' : 'serverChartContainer', {
           title: {
             text: title,
             fontSize: 18,
@@ -50,4 +63,12 @@ export class ChartService {
       console.error('Error rendering chart:', error);
     }
   }
+
 }
+
+enum ChartType {
+  Area = 'area',
+  Bar = 'bar',
+}
+
+export default ChartType;

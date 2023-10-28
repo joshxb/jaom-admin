@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
-import { ChartService } from 'src/app/configuration/assets/chart.service';
+import ChartType, { ChartService } from 'src/app/configuration/assets/chart.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
 import { Base } from 'src/app/configuration/configuration.component';
 import { AnalyticsService } from 'src/app/configuration/services/analytics/analytics.service';
@@ -175,7 +175,7 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
         });
       });
 
-      this.chartService.initializeChart('page-visit', ...chartDataPoints);
+      this.chartService.initializeChart(ChartType.Area, 'page-visit', ...chartDataPoints);
     }
   }
 

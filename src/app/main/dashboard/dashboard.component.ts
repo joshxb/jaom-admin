@@ -4,7 +4,6 @@ import {
   ElementRef,
   OnInit,
   Renderer2,
-  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -12,7 +11,7 @@ import { Base } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
-import { ChartService } from 'src/app/configuration/assets/chart.service';
+import ChartType, { ChartService } from 'src/app/configuration/assets/chart.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 
 @Component({
@@ -22,6 +21,7 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
+  serverData: any;
 
   constructor(
     private renderer: Renderer2,
@@ -33,8 +33,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private dateService: DateService,
     private chartService: ChartService,
     private cacheService: CacheService,
-    private elRef: ElementRef
-  ) { }
+    private elRef: ElementRef,
+  ) {
+  }
+
   base = new Base();
   public data: any;
   public donationTransactions: any;
@@ -83,6 +85,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
 
     this.renderChartData();
+    this.initializeServerChartHorizonalLeftBar();
+  }
+
+  initializeServerChartHorizonalLeftBar() {
+    this.adminService.getServerConfiguration().subscribe((res) => {
+      const { tableStatus } = res;
+      this.serverData = res;
+
+      let chartDataPoints: { y: number; label: string; indexLabel: string; indexLabelFontColor: string; indexLabelFontSize: number }[] = tableStatus.map((table: any) => ({
+        y: table.total_storage_kb,
+        label: table.table_name,
+        indexLabel: `${table.total_storage_kb < 1000 ? table.total_storage_kb : (table.total_storage_kb / 1000)}` + `${table.total_storage_kb < 1000 ? ' kb' : ' mb'}`,
+        indexLabelFontColor: "black",
+        indexLabelFontSize: 14
+      }));
+
+      this.chartService.initializeChart(ChartType.Bar, 'server-info', ...chartDataPoints);
+    });
   }
 
   async setCurrentMonthAndYear() {
@@ -164,7 +184,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         });
       });
 
-      this.chartService.initializeChart('transactions', ...chartDataPoints);
+      this.chartService.initializeChart(ChartType.Area, 'transactions', ...chartDataPoints);
     }
   }
 
