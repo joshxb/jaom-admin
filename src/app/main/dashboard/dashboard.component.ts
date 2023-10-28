@@ -93,13 +93,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       const { tableStatus } = res;
       this.serverData = res;
 
-      let chartDataPoints: { y: number; label: string; indexLabel: string; indexLabelFontColor: string; indexLabelFontSize: number }[] = tableStatus.map((table: any) => ({
-        y: (table.data_length + table.index_length) / 1024,
-        label: table.table_name,
-        indexLabel: `${((table.data_length + table.index_length) / 1024) < 1000 ? ((table.data_length + table.index_length) / 1024) : (((table.data_length + table.index_length) / 1024) / 1000)}` + `${((table.data_length + table.index_length) / 1024) < 1000 ? ' kb' : ' mb'}`,
-        indexLabelFontColor: "black",
-        indexLabelFontSize: 14
-      }));
+      let chartDataPoints: { y: number; label: string; indexLabel: string; indexLabelFontColor: string; indexLabelFontSize: number }[] = tableStatus.map((table: any) => {
+        const dataLength = table.data_length !== undefined ? table.data_length : table.DATA_LENGTH;
+        const tableName = table.table_name !== undefined ? table.table_name : table.TABLE_NAME;
+        const indexLength = table.index_length !== undefined ? table.index_length : table.INDEX_LENGTH;
+
+        const storageMB = (dataLength + indexLength) / 1024;
+        const storageLabel = `${storageMB < 1000 ? storageMB : storageMB / 1000}` + `${storageMB < 1000 ? ' kb' : ' mb'}`;
+
+        return {
+            y: storageMB,
+            label: tableName,
+            indexLabel: storageLabel,
+            indexLabelFontColor: "black",
+            indexLabelFontSize: 14
+        };
+    });
 
       this.chartService.initializeChart(ChartType.Bar, 'server-info', ...chartDataPoints);
     });
