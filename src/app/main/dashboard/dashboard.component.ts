@@ -94,9 +94,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.serverData = res;
 
       let chartDataPoints: { y: number; label: string; indexLabel: string; indexLabelFontColor: string; indexLabelFontSize: number }[] = tableStatus.map((table: any) => ({
-        y: table.total_storage_kb,
+        y: (table.data_length + table.index_length) / 1024,
         label: table.table_name,
-        indexLabel: `${table.total_storage_kb < 1000 ? table.total_storage_kb : (table.total_storage_kb / 1000)}` + `${table.total_storage_kb < 1000 ? ' kb' : ' mb'}`,
+        indexLabel: `${((table.data_length + table.index_length) / 1024) < 1000 ? ((table.data_length + table.index_length) / 1024) : (((table.data_length + table.index_length) / 1024) / 1000)}` + `${((table.data_length + table.index_length) / 1024) < 1000 ? ' kb' : ' mb'}`,
         indexLabelFontColor: "black",
         indexLabelFontSize: 14
       }));
