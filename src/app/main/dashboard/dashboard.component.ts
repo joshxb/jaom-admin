@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { Base } from 'src/app/configuration/configuration.component';
-import { AdminService } from 'src/app/configuration/services/pages/admin.service';
+import ServerConfParams, { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { DashboardService } from 'src/app/configuration/services/dashboard/dashboard.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
 import ChartType, { ChartService } from 'src/app/configuration/assets/chart.service';
@@ -22,6 +22,8 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 export class DashboardComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
   serverData: any;
+  selectedTable: string = 'users';
+  columnData: any;
 
   constructor(
     private renderer: Renderer2,
@@ -65,6 +67,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.getChatCounts();
     this.getRoomCounts();
     this.getUpdateCounts();
+    this.onTableOptionChange();
   }
 
   ngAfterViewInit() {
@@ -89,7 +92,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   initializeServerChartHorizonalLeftBar() {
-    this.adminService.getServerConfiguration().subscribe((res) => {
+    this.adminService.getServerConfiguration(ServerConfParams.SysDataConf).subscribe((res) => {
       const { tableStatus } = res;
       this.serverData = res;
 
@@ -228,6 +231,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   getUpdateCounts() {
     this.dashboardService.getUpdatesCounts().subscribe((res) => {
       this.updateCounts = res?.update_count;
+    });
+  }
+
+  onTableOptionChange() {
+    this.isSpinnerLoading = true;
+    this.adminService.getServerConfiguration(ServerConfParams.ColumnData, this.selectedTable).subscribe((res) => {
+      this.columnData = res;
+      this.isSpinnerLoading = false;
     });
   }
 }

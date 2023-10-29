@@ -17,7 +17,7 @@ export class AdminService {
   private apiUserHistoryUrl = `${this.baseUrl}/${this.suffixUrl}/history`;
   private apiServerConfigUrl = `${this.baseUrl}/${this.suffixUrl}/sys_config/server_info`;
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) { }
 
   getUserData(): Observable<any> {
     const headers = new HttpHeaders().set(
@@ -27,7 +27,7 @@ export class AdminService {
     return this.http.get<any>(this.apiUserUrl, { headers });
   }
 
-  updateOtherUserData(user : number, formData : any) {
+  updateOtherUserData(user: number, formData: any) {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
@@ -59,7 +59,7 @@ export class AdminService {
     return this.http.get<any>(`${this.apiUserHistoryUrl}/all?page=${page}`, { headers });
   }
 
-  deleteUserHistory(id : number): Observable<any> {
+  deleteUserHistory(id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
@@ -67,11 +67,20 @@ export class AdminService {
     return this.http.delete<any>(`${this.apiUserHistoryUrl}/${id}`, { headers });
   }
 
-  getServerConfiguration(): Observable<any> {
+  getServerConfiguration(key: ServerConfParams, table: string = ''): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(`${this.apiServerConfigUrl}`, { headers });
+    const apiUrl = `${this.apiServerConfigUrl}?key=${key}${key === ServerConfParams.ColumnData ? `&table=${table}` : ''}`;
+
+    return this.http.get<any>(apiUrl, { headers });
   }
 }
+
+enum ServerConfParams {
+  SysDataConf = 'sys_data_conf',
+  ColumnData = 'column_data',
+}
+
+export default ServerConfParams;
