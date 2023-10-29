@@ -215,7 +215,7 @@
                   (ngModelChange)="onTableOptionChange()"
                 >
                   <option *ngFor="let db of serverData?.tableStatus" [value]="db?.table_name">
-                    {{ db?.table_name }}
+                    {{ db?.table_name !== undefined ? db?.table_name : db?.TABLE_NAME }}
                   </option>
                 </select>
               </div>
