@@ -120,6 +120,7 @@
 
 .chart-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
   width: 100%;
   padding: 50px 0 20px 0;
@@ -185,6 +186,11 @@
   color: rgba(0, 0, 0, 0.862);
 }
 
+@media screen and (max-width: 1000px) {
+  .db-value {
+    width: 200px;
+  }
+}
 /* Media query for mobile devices */
 @media (max-width: 767px) {
   .flex-container {
@@ -228,3 +234,21 @@
     font-size: 13px !important;
   }
 }
+@media screen and (max-width: 650px) {
+  .db-value {
+    width: 100px;
+  }
+}
+
+@media screen and (max-width: 410px) {
+  .db-value {
+    width: 80px;
+  }
+}
+
+@media screen and (max-width: 410px) {
+  .db-value {
+    width: 75px;
+  }
+}
+

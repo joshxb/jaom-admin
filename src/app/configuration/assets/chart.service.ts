@@ -60,7 +60,6 @@ export class ChartService {
 
       chart.render();
     } catch (error) {
-      console.error('Error rendering chart:', error);
     }
   }
 
