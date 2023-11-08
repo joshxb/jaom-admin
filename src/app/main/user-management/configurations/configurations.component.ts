@@ -7,6 +7,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 import { ModalComponent } from '../../modal/modal.component';
 import { TextService } from 'src/app/configuration/assets/text.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-configurations',
@@ -24,8 +25,11 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
   nicknameBoolean: boolean = false;
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -96,14 +100,27 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchUsersData(this.currentPage);
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchUsersData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchUsersData(page: number) {
+  fetchUsersData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getAllUserData(page, 'configuration').subscribe((res) => {
+    this.usersManagementService.getAllUserData(page, 'configuration', order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.usersData = res[0];
       this.filteredUsers = this.usersData?.data;
@@ -119,19 +136,30 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.usersData?.total / this.usersData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchUsersData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

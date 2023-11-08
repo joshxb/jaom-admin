@@ -7,6 +7,7 @@ import { ModalComponent } from '../modal/modal.component';
 import { ConcernService } from 'src/app/configuration/services/concerns/concern.service';
 import { NotificationEnum } from 'src/app/configuration/enums/notifications.enum';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-feedback',
@@ -23,8 +24,11 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   textareaValues: string[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
 
   constructor(
     private router: Router,
@@ -94,13 +98,26 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchFeedbacksData(this.currentPage);
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchFeedbacksData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchFeedbacksData(page: number) {
+  fetchFeedbacksData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
-    this.concernService.getFeedbacks(page).subscribe((res) => {
+    this.concernService.getFeedbacks(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.feedbacksData = res;
       this.filteredFeedbacks = this.feedbacksData?.data;
@@ -116,19 +133,30 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.feedbacksData?.total / this.feedbacksData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchFeedbacksData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

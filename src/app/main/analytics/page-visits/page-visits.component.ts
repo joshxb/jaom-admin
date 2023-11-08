@@ -11,6 +11,7 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 import ChartType, { ChartService } from 'src/app/configuration/assets/chart.service';
 import { DateService } from 'src/app/configuration/assets/date.service';
 import { Base } from 'src/app/configuration/configuration.component';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 import { AnalyticsService } from 'src/app/configuration/services/analytics/analytics.service';
 
 @Component({
@@ -35,8 +36,11 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   base = new Base();
   public analytics: any;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
   searchTerm: string = '';
   filteredData: any[] = [];
   isSpinnerLoading: boolean = false;
@@ -46,6 +50,8 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   selectedYear: number = new Date().getFullYear();
 
   yearOptions: number[] = this.dateService.generateYearOptions();
+
+  activeSelectedList: any = null;
 
   applySearchFilter() {
     if (!this.searchTerm) {
@@ -71,7 +77,13 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
     const theme = this.cacheService.getCachedAdminData('theme');
     this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
 
-    this.setCurrentMonthAndYear();
+    if (!this.activeSelectedList) {
+      this.setCurrentMonthAndYear();
+    } else {
+      if (this.activeSelectedList === 'table') {
+        this.setCurrentMonthAndYear();
+      }
+    }
   }
 
   ngAfterViewInit() {
@@ -91,7 +103,13 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.renderChartData();
+    if (!this.activeSelectedList) {
+      this.renderChartData();
+    } else {
+      if (this.activeSelectedList === 'graph') {
+        this.renderChartData();
+      }
+    }
   }
 
   setCurrentMonthAndYear() {
@@ -114,11 +132,19 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
       this.route.queryParamMap.subscribe(async (queryParams) => {
         const month = queryParams.get('month');
         const year = queryParams.get('year');
+        const order = queryParams.get('order');
+        const items = queryParams.get('items');
+
+        if (order && items) {
+          this.order = order as Order;
+          this.itemsPerPage = items as ItemsPerPage;
+        }
 
         if (month && year) {
           this.selectedMonth = month;
           this.selectedYear = Number(year);
-          await this.getPageVisits(this.currentPage, month, Number(year));
+
+          await this.getPageVisits(this.currentPage, month, Number(year), this.order, this.itemsPerPage);
         }
       });
     }
@@ -141,13 +167,15 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   async getPageVisits(
     page: number,
     selectedMonth: string,
-    selectedYear: number
+    selectedYear: number,
+    order: Order = Order.Null,
+    items: ItemsPerPage = ItemsPerPage.Null
   ) {
     this.isSpinnerLoading = true;
 
     try {
       const res = await this.analyticsService
-        .getPageVisits(page, selectedMonth, selectedYear)
+        .getPageVisits(page, selectedMonth, selectedYear, order, items)
         .toPromise();
       this.isSpinnerLoading = false;
       this.analytics = res;
@@ -180,6 +208,7 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
   }
 
   onMonthYearChange() {
+    this.activeSelectedList = 'graph';
     this.setParams();
   }
 
@@ -192,24 +221,32 @@ export class PageVisitsComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.analytics?.total_visits / this.analytics?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.analyticsService
-      .getPageVisits(this.currentPage, this.selectedMonth, this.selectedYear)
-      .subscribe((res) => {
-        this.analytics = res;
-        this.filteredData = this.analytics?.data;
-      });
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
+
+    this.activeSelectedList = 'table';
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

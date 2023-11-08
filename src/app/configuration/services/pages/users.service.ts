@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
 import { ImageService } from './image.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -23,12 +24,20 @@ export class UsersService {
     private imageService: ImageService
   ) {}
 
-  getAllUserData(page: number, request: any = null): Observable<any> {
+  getAllUserData(page: number, request: any = null, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(this.apiUserUrl + `?page=${page}${request != null ? '&' + request + '=' + true : ''}`, { headers });
+
+    return this.http.get<any>(
+      this.apiUserUrl +
+        `?page=${page}` +
+        (request != null ? `&${request}=true` : '') +
+        (order != Order.Null ? `&order=${order}` : '') +
+        (items != ItemsPerPage.Null ? `&items=${items}` : ''),
+      { headers }
+    );
   }
 
   geSpecificUserData(user: number, request: any = null): Observable<any> {

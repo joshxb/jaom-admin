@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
 import { ImageService } from './image.service';
+import { Order, ItemsPerPage } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -21,14 +22,20 @@ export class ChatsService {
     private http: HttpClient,
     private cookieService: CookieService,
     private imageService: ImageService
-  ) {}
+  ) { }
 
-  getAllChatsData(page: number): Observable<any> {
+  getAllChatsData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(this.apiChatUrl + `?page=${page}&role=admin`, { headers });
+    return this.http.get<any>(
+      this.apiChatUrl +
+      `?page=${page}&role=admin` +
+      (order != Order.Null ? `&order=${order}` : '') +
+      (items != ItemsPerPage.Null ? `&items=${items}` : ''),
+      { headers }
+    );
   }
 
   deleteSpecificMessage(id: number): Observable<any> {

@@ -15,6 +15,7 @@ import { ImageService } from 'src/app/configuration/assets/image.service';
 import { ImageService as RoomImageService  } from 'src/app/configuration/services/pages/image.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { forkJoin } from 'rxjs';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-security',
@@ -39,8 +40,11 @@ export class SecurityComponent implements OnInit, AfterViewInit {
   textareaValues: string[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
   roomName: string = '';
   modificationsData: any;
   loginMethods: any;
@@ -199,12 +203,25 @@ export class SecurityComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchRoomListData(this.currentPage);
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchRoomListData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchRoomListData(page: number) {
-    this.securityControlService.getRoomList(page).subscribe((res) => {
+  fetchRoomListData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+    this.securityControlService.getRoomList(page, order, items).subscribe((res) => {
       this.roomListData = res;
       this.filteredRoomListData = this.roomListData?.data;
 
@@ -230,19 +247,30 @@ export class SecurityComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.roomListData?.total / this.roomListData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchRoomListData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

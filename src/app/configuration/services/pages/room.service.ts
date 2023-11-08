@@ -6,6 +6,7 @@ import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { ImageService } from '../../assets/image.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,7 @@ export class RoomService {
     private http: HttpClient,
     private cookieService: CookieService,
     private imageService: ImageService
-  ) {}
+  ) { }
 
   addGroupChat(
     groupChatName: string,
@@ -54,7 +55,7 @@ export class RoomService {
     return this.http.get<any>(`${this.apiRoomUrl}/count`, { headers });
   }
 
-  getRoomList(page: number, type: string): Observable<any> {
+  getRoomList(page: number, type: string, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
@@ -69,18 +70,29 @@ export class RoomService {
       url = `${this.apiRoomUrl}?page=${page}`;
     }
 
+    if (order != Order.Null) {
+      url += `&order=${order}`;
+    }
+
+    if (items != ItemsPerPage.Null) {
+      url += `&items=${items}`;
+    }
+
     return this.http.get<any>(url, { headers });
   }
 
-  getRoomChatList(page: number): Observable<any> {
+  getRoomChatList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
 
-    return this.http.get<any>(`${this.apiRoomChatsUrl}?page=${page}`, {
-      headers,
-    });
+    return this.http.get<any>(
+      this.apiRoomChatsUrl + `?page=${page}` +
+      (order != Order.Null ? `&order=${order}` : '') +
+      (items != ItemsPerPage.Null ? `&items=${items}` : ''),
+      { headers }
+    );
   }
 
   deleteRoom(id: number): Observable<any> {
@@ -120,7 +132,7 @@ export class RoomService {
     );
 
     if (image) {
-      this.updateGroupChatImage(groupChatId, image).subscribe((res) => {});
+      this.updateGroupChatImage(groupChatId, image).subscribe((res) => { });
     }
 
     const body = { name: groupChatName };

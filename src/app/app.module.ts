@@ -41,6 +41,7 @@ import { SpinnerLoadingComponent } from './common/assets/spinner-loading/spinner
 import { ContactsComponent } from './main/user-management/contacts/contacts.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     ReactiveFormsModule,
     CanvasJSAngularChartsModule,
     MatDialogModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSelectModule
   ],
   exports: [NgModel],
 

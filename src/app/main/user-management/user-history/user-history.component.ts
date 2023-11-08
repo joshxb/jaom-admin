@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 
 @Component({
@@ -18,8 +19,11 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
   filteredUserHistory: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
 
   showConfirmationModal = false;
   userHistoryToDeleteId!: number;
@@ -100,14 +104,27 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchUserHistoryData(this.currentPage);
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchUserHistoryData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchUserHistoryData(page: number) {
+  fetchUserHistoryData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getUserHistoryData(page).subscribe((res) => {
+    this.usersManagementService.getUserHistoryData(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.userHistoryData = res;
       this.filteredUserHistory = this.userHistoryData?.data;
@@ -125,19 +142,30 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     );
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchUserHistoryData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

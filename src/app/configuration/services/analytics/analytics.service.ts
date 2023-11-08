@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PageVisitService } from '../pages/page-visit.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,16 @@ export class AnalyticsService {
   getPageVisits(
     page: number,
     selectedMonth: string,
-    selectedYear: number
+    selectedYear: number,
+    order: Order = Order.Null, 
+    items: ItemsPerPage = ItemsPerPage.Null
   ): Observable<any> {
     return this.pageVisitService.getPageVisits(
       page,
       selectedMonth,
-      selectedYear
+      selectedYear,
+      order,
+      items
     );
   }
 

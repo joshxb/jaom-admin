@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RoomService } from '../pages/room.service';
 import { Observable } from 'rxjs';
 import { ModificationsService } from '../modifications/modifcations.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,8 @@ export class SecurityControlService {
     return this.roomService.addGroupChat(groupChatName, userIds, image);
   }
 
-  getRoomList(page: number): Observable<any> {
-    return this.roomService.getRoomList(page, 'default');
+  getRoomList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.roomService.getRoomList(page, 'default', order, items);
   }
 
   deleteSpecificRoom(id: number): Observable<any> {

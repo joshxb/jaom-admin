@@ -6,6 +6,7 @@ import { RoomService } from '../pages/room.service';
 import { UpdatesService } from '../pages/updates.service';
 import { TodoService } from '../pages/todo.service';
 import { AdminService } from '../pages/admin.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,8 @@ export class UsersManagementService {
     private adminService: AdminService
   ) {}
 
-  getAllUserData(page: number, request: any = null): Observable<any> {
-    return this.usersService.getAllUserData(page, request);
+  getAllUserData(page: number, request: any = null, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.usersService.getAllUserData(page, request, order, items);
   }
 
   geSpecificUserData(user: number, request: any = null): Observable<any> {
@@ -40,20 +41,20 @@ export class UsersManagementService {
     return this.usersService.deleteSpecificUser(user);
   }
 
-  getAllChatsData(page: number): Observable<any> {
-    return this.chatsService.getAllChatsData(page);
+  getAllChatsData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.chatsService.getAllChatsData(page, order, items);
   }
 
   deleteSpecificMessage(id: number): Observable<any> {
     return this.chatsService.deleteSpecificMessage(id);
   }
 
-  getRoomList(page: number, access: string = 'local'): Observable<any> {
-    return this.roomService.getRoomList(page, access);
+  getRoomList(page: number, access: string = 'local',  order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.roomService.getRoomList(page, access, order, items);
   }
 
-  getRoomChatList(page: number): Observable<any> {
-    return this.roomService.getRoomChatList(page);
+  getRoomChatList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.roomService.getRoomChatList(page, order, items);
   }
 
   deleteRoom(id: number): Observable<any> {
@@ -64,8 +65,8 @@ export class UsersManagementService {
     return this.roomService.deleteSpecificRoomChat(id);
   }
 
-  getAllUpdates(page: number): Observable<any> {
-    return this.updateService.getAllUpdates(page);
+  getAllUpdates(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.updateService.getAllUpdates(page, order, items);
   }
 
   deleteSpecificUpdate(id: number): Observable<any> {
@@ -76,16 +77,16 @@ export class UsersManagementService {
     return this.updateService.updatePermission(data, id);
   }
 
-  getAllTodoData(page: number): Observable<any> {
-    return this.todoService.getAllTodoData(page);
+  getAllTodoData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.todoService.getAllTodoData(page, order, items);
   }
 
   deleteSpecificTodo(id: number): Observable<any> {
     return this.todoService.deleteSpecificTodo(id);
   }
 
-  getUserHistoryData(page: number): Observable<any> {
-    return this.adminService.getUserHistoryData(page);
+  getUserHistoryData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.adminService.getUserHistoryData(page, order, items);
   }
 
   deleteUserHistory(id: number): Observable<any> {

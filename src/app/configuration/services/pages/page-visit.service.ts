@@ -6,6 +6,7 @@ import { Base } from '../../configuration.component';
 import { AuthService } from '../auth.service';
 import { ImageService } from './image.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { Order, ItemsPerPage } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,9 @@ export class PageVisitService {
   getPageVisits(
     page: number,
     selectedMonth: string,
-    selectedYear: number
+    selectedYear: number,
+    order: Order = Order.Null, 
+    items: ItemsPerPage = ItemsPerPage.Null
   ): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -32,7 +35,9 @@ export class PageVisitService {
     //params = ?page=1&month=july&year=2023
     return this.http.get<any>(
       this.apiPageAnalyticsUrl +
-        `?page=${page}&month=${selectedMonth}&year=${selectedYear}`,
+        `?page=${page}&month=${selectedMonth}&year=${selectedYear}` + 
+        (order !== Order.Null ? `&order=${order}` : '') +
+        (items !== ItemsPerPage.Null ? `&items=${items}` : ''),
       { headers }
     );
   }

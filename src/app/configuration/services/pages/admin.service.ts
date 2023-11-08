@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Base, Redirects } from '../../configuration.component';
 import { AuthService } from '../auth.service';
 import { CookieService } from 'ngx-cookie-service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -51,12 +52,16 @@ export class AdminService {
     return this.http.get<any>(this.apiUserUrl + 's/status', { headers });
   }
 
-  getUserHistoryData(page: number): Observable<any> {
+  getUserHistoryData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
     );
-    return this.http.get<any>(`${this.apiUserHistoryUrl}/all?page=${page}`, { headers });
+    return this.http.get<any>(
+      `${this.apiUserHistoryUrl}/all?page=${page}` +
+      `${order !== Order.Null ? `&order=${order}` : ''}` +
+      `${items !== ItemsPerPage.Null ? `&items=${items}` : ''}`,
+      { headers });
   }
 
   deleteUserHistory(id: number): Observable<any> {

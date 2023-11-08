@@ -6,6 +6,7 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 import { ModalComponent } from '../../modal/modal.component';
 import { TextService } from 'src/app/configuration/assets/text.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-updates',
@@ -21,9 +22,12 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
   filteredUpdates: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
-  
+  itemsPerPage = ItemsPerPage.Ten; //default
+
   showConfirmationModal = false;
   updateToDeleteId!: number;
 
@@ -37,7 +41,7 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService
-  ) {}
+  ) { }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
@@ -101,7 +105,7 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {
@@ -114,14 +118,26 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.isSpinnerLoading = true;
 
-      this.fetchupdatesData(this.currentPage);
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.isSpinnerLoading = true;
+      this.fetchupdatesData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchupdatesData(page: number) {
-    this.usersManagementService.getAllUpdates(page).subscribe((res) => {
+  fetchupdatesData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+    this.usersManagementService.getAllUpdates(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.updatesData = res[0];
       this.filteredUpdates = this.updatesData?.data;
@@ -137,19 +153,30 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.updatesData?.total / this.updatesData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchupdatesData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

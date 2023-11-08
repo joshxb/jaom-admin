@@ -5,6 +5,7 @@ import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-todo',
@@ -20,9 +21,12 @@ export class TodoComponent implements OnInit, AfterViewInit {
   filteredTodos: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
-    
+  itemsPerPage = ItemsPerPage.Ten; //default
+
   showConfirmationModal = false;
   todoToDeleteId!: number;
 
@@ -35,7 +39,7 @@ export class TodoComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService
-  ) {}
+  ) { }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
@@ -84,9 +88,9 @@ export class TodoComponent implements OnInit, AfterViewInit {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
-          }else if (typeof value === 'number') {
-            return value == Number(this.searchTerm.toLowerCase());
-          }
+            } else if (typeof value === 'number') {
+              return value == Number(this.searchTerm.toLowerCase());
+            }
             return false;
           })
       );
@@ -98,7 +102,7 @@ export class TodoComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {
@@ -111,13 +115,26 @@ export class TodoComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchTodoData(this.currentPage);
+  
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchTodoData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchTodoData(page: number) {
+  fetchTodoData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
-    this.usersManagementService.getAllTodoData(page).subscribe((res) => {
+    this.usersManagementService.getAllTodoData(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.todoData = res[0];
       this.filteredTodos = this.todoData?.data;
@@ -133,19 +150,30 @@ export class TodoComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.todoData?.total / this.todoData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchTodoData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

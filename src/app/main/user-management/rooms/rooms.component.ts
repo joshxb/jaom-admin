@@ -13,6 +13,7 @@ import { ModalComponent } from '../../modal/modal.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { forkJoin } from 'rxjs';
+import { ItemsPerPage, Order } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-rooms',
@@ -33,12 +34,21 @@ export class RoomsComponent implements OnInit, AfterViewInit {
 
   currentPage = 1;
   currentPage2 = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
+  itemsPerPage2 = ItemsPerPage.Ten; //default
 
   showConfirmationModal = false;
   selectedToDeleteId!: number;
   selectedOption!: number;
   selectedDataList!: string;
+
+  order: Order = Order.Desc;
+  order2: Order = Order.Desc;
+
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
+
+  activeSelectedList: any = null;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -50,15 +60,15 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService,
     private imageService: ImageService
-  ) {}
+  ) { }
 
   openConfirmationModal(id: number, index: number) {
     this.isSpinnerLoading = true;
     this.selectedOption = index;
 
 
-    this.selectedDataList = index === 0 ? 'room' : 'room chat';
-    
+    this.selectedDataList = index === 0 ? 'room' : 'group message';
+
     setTimeout(() => {
       this.isSpinnerLoading = false;
       this.selectedToDeleteId = id;
@@ -137,7 +147,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {});
+    dialogRef.afterClosed().subscribe((result: any) => { });
   }
 
   ngOnInit(): void {
@@ -149,24 +159,58 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     );
 
     this.route.queryParams.subscribe(
-      (params: { [x: string]: string | number }) => {
+      (params) => {
+        ///////////////////////////////
         if (params['page']) {
           this.currentPage = +params['page'];
         } else {
           this.currentPage = 1;
         }
 
+        if (params['order']) {
+          this.order = params['order'];
+        } else {
+          this.order = Order.Desc;
+        }
+        if (params['items']) {
+          this.itemsPerPage = params['items'];
+        } else {
+          this.itemsPerPage = ItemsPerPage.Ten;
+        }
+
+        ////////////////////////////////
+        if (params['page2']) {
+          this.currentPage2 = +params['page2'];
+        } else {
+          this.currentPage2 = 1;
+        }
+        if (params['order2']) {
+          this.order2 = params['order2'];
+        }
+        if (params['items2']) {
+          this.itemsPerPage2 = params['items2'];
+        }
+
         this.isSpinnerLoading = true;
-        this.fetchRoomList(this.currentPage);
-        this.fetchRoomChatList(this.currentPage2);
+
+        if (!this.activeSelectedList) {
+          this.fetchRoomList(this.currentPage, this.order, this.itemsPerPage);
+          this.fetchRoomChatList(this.currentPage2, this.order2, this.itemsPerPage2);
+        } else {
+          if (this.activeSelectedList === 'room') {
+            this.fetchRoomList(this.currentPage, this.order, this.itemsPerPage);
+          } else {
+            this.fetchRoomChatList(this.currentPage2, this.order2, this.itemsPerPage2);
+          }
+        }
       }
     );
   }
 
-  fetchRoomList(page: number) {
+  fetchRoomList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getRoomList(page, 'v2').subscribe((res: any) => {
+    this.usersManagementService.getRoomList(page, 'v2', order, items).subscribe((res: any) => {
       this.isSpinnerLoading = false;
       this.roomListData = res;
       this.filteredRooms = this.roomListData?.data;
@@ -184,8 +228,8 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  fetchRoomChatList(page: number) {
-    this.usersManagementService.getRoomChatList(page).subscribe((res: any) => {
+  fetchRoomChatList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+    this.usersManagementService.getRoomChatList(page, order, items).subscribe((res: any) => {
       this.isSpinnerLoading = false;
 
       this.roomChatListData = res;
@@ -204,17 +248,38 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     return Math.ceil(data.total / data.per_page);
   }
 
-  onPageChange(page: number, selection: number) {
+  onPageChange(page: number, selection: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     const currentPageKey = selection === 0 ? 'page' : 'page2';
     const currentPageProperty =
       selection === 0 ? 'currentPage' : 'currentPage2';
-    const fetchFunction =
-      selection === 0 ? this.fetchRoomList : this.fetchRoomChatList;
 
     this[currentPageProperty] = page;
-    fetchFunction.call(this, page);
 
-    const queryParams = { [currentPageKey]: this[currentPageProperty] };
+    if (order) {
+      if (selection === 0) {
+        this.order = order;
+      } else {
+        this.order2 = order;
+      }
+    }
+
+    if (items) {
+      if (selection === 0) {
+        this.itemsPerPage = items;
+      } else {
+        this.itemsPerPage2 = items;
+      }
+    }
+
+    this.activeSelectedList = selection === 0 ? 'room' : 'room_chat';
+
+    const queryParams = {
+      [currentPageKey]: this[currentPageProperty],
+      order: this.order,
+      order2: this.order2,
+      items: this.itemsPerPage,
+      items2: this.itemsPerPage2
+    };
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
@@ -224,7 +289,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
 
   getStartingIndex(selection: number): number {
     const currentPage = selection === 0 ? this.currentPage : this.currentPage2;
-    return (currentPage - 1) * this.itemsPerPage + 1;
+    return (currentPage - 1) + 1;
   }
 
   getPageRange(selection: number): number[] {

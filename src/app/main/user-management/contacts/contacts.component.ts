@@ -7,6 +7,7 @@ import { OfferService } from 'src/app/configuration/services/pages/offer.service
 import { ModalComponent } from '../../modal/modal.component';
 import { ContactsService } from 'src/app/configuration/services/contacts/contacts.service';
 import { DataName, ExportToExcelService, ExportType } from 'src/app/configuration/assets/export-to-excel.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-contacts',
@@ -22,8 +23,11 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   filteredContacts: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
 
   showConfirmationModal = false;
   contactsToDeleteId!: number;
@@ -38,7 +42,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private contactService: ContactsService,
     private exportToExcelService: ExportToExcelService
-  ) {}
+  ) { }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
@@ -83,7 +87,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {
@@ -100,7 +104,20 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchContactsData(this.currentPage);
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
+      this.fetchContactsData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
@@ -122,10 +139,10 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  fetchContactsData(page: number) {
+  fetchContactsData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
-    this.contactService.getContact(page).subscribe((res) => {
+    this.contactService.getContact(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
 
       this.contactsData = res;
@@ -142,19 +159,30 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.contactsData?.total / this.contactsData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchContactsData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {
@@ -230,12 +258,12 @@ export class ContactsComponent implements OnInit, AfterViewInit {
 
         res.map((item: ArrayLike<unknown> | { [s: string]: unknown; }) => {
           const newObject: { [key: string]: string | number } = {};
-            Object.entries(item).forEach(([key, value]) => {
-              if (typeof value === 'string') {
-                headers[key] = key;
-                newObject[value] = value;
-              }
-            });
+          Object.entries(item).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              headers[key] = key;
+              newObject[value] = value;
+            }
+          });
           data.push(newObject);
         });
 

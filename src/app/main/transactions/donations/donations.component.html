@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,25 +16,71 @@
       <div class="content-container">
         <p>Donations</p>
         <div class="d-flex justify-content-end" style="margin: 20px">
-          <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-download"></i> Export
-          </button>
-          <ul class="dropdown-menu">
-            <li style="
+          <div class="btn-group dropnone">
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-sort"></i> Sort Items
+            </button>
+            <ul class="dropdown-menu">
+              <li style="
+                    border-bottom: 1px solid #eee;
+                    text-align: center;
+                    padding-bottom: 10px;
+                  ">
+                <b>Order Items</b>
+              </li>
+              <a [class.active]="order === orderEnum.Asc" class="export-item dropdown-item" style="cursor: pointer"
+                (click)="onPageChange(currentPage, orderEnum.Asc)">Sort as Ascending Order</a>
+              <a [class.active]="order === orderEnum.Desc" class="export-item dropdown-item" style="cursor: pointer"
+                (click)="onPageChange(currentPage, orderEnum.Desc)">Sort as Descending Order</a>
+            </ul>
+          </div>&nbsp;
+          <div class="btn-group dropnone">
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-list"></i> Per Items
+            </button>
+            <ul class="dropdown-menu">
+              <li style="
+                    border-bottom: 1px solid #eee;
+                    text-align: center;
+                    padding-bottom: 10px;
+                  ">
+                <b>Show Per Items</b>
+              </li>
+              <a [class.active]="itemsPerPage === itemEnum.Five" class="export-item dropdown-item"
+                style="cursor: pointer" (click)="onPageChange(currentPage, orderEnum.Null, itemEnum.Five)">5 Items per
+                Page</a>
+              <a [class.active]="itemsPerPage === itemEnum.Ten" class="export-item dropdown-item"
+                style="cursor: pointer" (click)="onPageChange(currentPage, orderEnum.Null, itemEnum.Ten)">10 Items per
+                Page</a>
+            </ul>
+          </div>&nbsp;
+          <div class="btn-group dropnone">
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-download"></i> Export
+            </button>
+            <ul class="dropdown-menu">
+              <li style="
                   border-bottom: 1px solid #eee;
                   text-align: center;
                   padding-bottom: 10px;
                 ">
-              <b>Export to Excel</b>
-            </li>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL()">Export by Page</a>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(50)">Export by 50</a>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(100)">Export by 100</a>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(200)">Export by 200</a>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(300)">Export by 300</a>
-            <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(500)">Export by 500</a>
-          </ul>&nbsp;&nbsp;
+                <b>Export to Excel</b>
+              </li>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL()">Export by Page</a>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(50)">Export by 50</a>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(100)">Export by
+                100</a>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(200)">Export by
+                200</a>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(300)">Export by
+                300</a>
+              <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(500)">Export by
+                500</a>
+            </ul>&nbsp;&nbsp;
+          </div>
           <div class="input-group" style="width: 20%">
             <input type="text" [(ngModel)]="searchTerm" (input)="applySearchFilter()"
               placeholder="Search by ID, Fullname, Phone, Email...." class="form-control filter-user-search" />

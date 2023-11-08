@@ -5,6 +5,7 @@ import { imageUrls } from 'src/app/app.component';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 import { ModalComponent } from '../../modal/modal.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
+import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-chats',
@@ -21,7 +22,10 @@ export class ChatsComponent implements OnInit, AfterViewInit {
   isSpinnerLoading: boolean = false;
 
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
 
   showConfirmationModal = false;
   chatToDeleteId!: number;
@@ -111,14 +115,24 @@ export class ChatsComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
-      this.fetchchatsData(this.currentPage);
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+      this.fetchchatsData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
-  fetchchatsData(page: number) {
+  fetchchatsData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
-    this.usersManagementService.getAllChatsData(page).subscribe((res) => {
+    this.usersManagementService.getAllChatsData(page, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
 
       this.chatsData = res;
@@ -135,19 +149,29 @@ export class ChatsComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.chatsData?.total / this.chatsData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchchatsData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage, order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {

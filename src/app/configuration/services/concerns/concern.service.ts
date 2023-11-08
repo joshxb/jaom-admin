@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FeedbackService } from '../pages/feedback.service';
 import { NotificationService } from '../pages/notification.service';
+import { ItemsPerPage, Order } from '../../enums/order.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,8 @@ export class ConcernService {
     private notificationService: NotificationService
   ) {}
 
-  getFeedbacks(page: number): Observable<any> {
-    return this.feedbacksService.getFeedbacks(page);
+  getFeedbacks(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+    return this.feedbacksService.getFeedbacks(page, order, items);
   }
 
   addResponseFeedback(id: number, data: any): Observable<any> {

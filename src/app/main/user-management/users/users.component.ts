@@ -15,6 +15,7 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
+import { ItemsPerPage, Order } from 'src/app/configuration/enums/order.enum';
 
 @Component({
   selector: 'app-users',
@@ -30,8 +31,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
   filteredUsers: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  order: Order = Order.Desc;
+  orderEnum = Order;
+  itemEnum = ItemsPerPage;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = ItemsPerPage.Ten; //default
   userImage: Blob | null = null;
   data: any;
 
@@ -53,7 +57,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private profileImageCacheService: ProfileImageCacheService
   ) { }
 
-  
+
   openConfirmationModal(user_id: number) {
     this.isSpinnerLoading = true;
     setTimeout(() => {
@@ -104,8 +108,21 @@ export class UsersComponent implements OnInit, AfterViewInit {
       } else {
         this.currentPage = 1;
       }
+
+      if (params['order']) {
+        this.order = params['order'];
+      } else {
+        this.order = Order.Desc;
+      }
+
+      if (params['items']) {
+        this.itemsPerPage = params['items'];
+      } else {
+        this.itemsPerPage = ItemsPerPage.Ten;
+      }
+
       this.isSpinnerLoading = true;
-      this.fetchUsersData(this.currentPage);
+      this.fetchUsersData(this.currentPage, this.order, this.itemsPerPage);
     });
   }
 
@@ -147,8 +164,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
   }
 
-  fetchUsersData(page: number) {
-    this.usersManagementService.getAllUserData(page).subscribe((res) => {
+  fetchUsersData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+    this.usersManagementService.getAllUserData(page, null, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
 
       this.usersData = res[0];
@@ -161,23 +178,36 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
-  getCurrentPageEnd(): number {
+getCurrentPageEnd(): number {
     return Math.ceil(this.usersData?.total / this.usersData?.per_page);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
-    this.fetchUsersData(page);
+
+    if (order) {
+      this.order = order;
+    }
+
+    if (items) {
+      this.itemsPerPage = items;
+    }
+    
+    this.isSpinnerLoading = true;
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page: this.currentPage },
+      queryParams: {
+        page: this.currentPage,
+        order: this.order,
+        items: this.itemsPerPage
+      },
       queryParamsHandling: 'merge',
     });
   }
 
   getStartingIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return (this.currentPage - 1) + 1;
   }
 
   getPageRange(): number[] {
