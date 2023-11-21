@@ -80,6 +80,7 @@
                   <th>User ID</th>
                   <th>Title / Subject</th>
                   <th>Content</th>
+                  <th>Type</th>
                   <th>Permission</th>
                   <th>Date</th>
                   <th>Time</th>
@@ -100,6 +101,7 @@
                       extractStylesAndText(update?.content).innerHTML
                     "
                   ></td>
+                  <td>{{ update?.type }}</td>
                   <td class="text-center">
                     <ng-container
                       *ngIf="

@@ -200,6 +200,7 @@
                   <th>Sender Name</th>
                   <th>Room ID</th>
                   <th>Chat</th>
+                  <th>Type</th>
                   <th>Date</th>
                   <th>Time</th>
                   <th>Action</th>
@@ -212,6 +213,7 @@
                   <td>{{ data?.sender_name }}</td>
                   <td>{{ data?.group_id }}</td>
                   <td>{{ data?.content }}</td>
+                  <td>{{ data?.type }}</td>
                   <td>{{ data?.created_at | date : "MMMM d, y" }}</td>
                   <td>{{ data?.created_at | date : "h:mm a" }}</td>
                   <td class="action-cont">
