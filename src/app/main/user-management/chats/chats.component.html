@@ -76,11 +76,13 @@
           <div class="table-responsive">
             <table class="table table-bordered users-table">
               <thead>
-                <tr>
+                <tr style="text-align: center;">
                   <th>ID</th>
                   <th>Sender ID</th>
                   <th>Receiver ID</th>
                   <th>Data</th>
+                  <th>Type</th>
+                  <th>Files</th>
                   <th>Date</th>
                   <th>Time</th>
                   <th>Action</th>
@@ -92,14 +94,12 @@
                   <td>{{ chat?.sender_id }}</td>
                   <td>{{ chat?.receiver_id }}</td>
                   <td>{{ chat?.body }}</td>
-                  <td>{{ chat?.date }}</td>
-                  <td>{{ chat?.time }}</td>
+                  <td style="text-align: center;">{{ chat?.type }}</td>
+                  <td style="text-align: center;"><button class="btn show-files-btn" (click)="openEditModal(chat?.messages_blob_id)" [disabled]="chat?.type == 'text'">Show Files</button></td>
+                  <td style="text-align: center;">{{ chat?.date }}</td>
+                  <td style="text-align: center;">{{ chat?.time }}</td>
                   <td class="action-cont">
-                    <img
-                      (click)="openConfirmationModal(chat?.id)"
-                      [src]="imageUrls.delete"
-                      alt=""
-                    />
+                    <img (click)="openConfirmationModal(chat?.id)" [src]="imageUrls.delete" alt="" />
                   </td>
                 </tr>
               </tbody>
@@ -166,6 +166,30 @@
           <div class="modal-footer-conf">
             <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
             <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-content">
+          <button (click)="closeEditModal()" type="button" class="close exit-modal" aria-label="Close">
+            X
+          </button>
+          <h2>Files</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="text-align: center;">
+                  <th>File Name</th>
+                  <th>File Type</th>
+                  <th>File Size</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody class="attachment-table" [innerHTML]="dynamicContentMap.get(selectedBlobId)">
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

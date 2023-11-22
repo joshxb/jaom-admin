@@ -172,6 +172,11 @@ a.download:hover {
   z-index: -1;
 }
 
+.show-files-btn:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 @media (maz-width: 768px) {
   #sidebar {
     margin-left: -250px;
