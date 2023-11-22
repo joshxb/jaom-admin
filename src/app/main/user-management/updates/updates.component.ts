@@ -7,6 +7,9 @@ import { ModalComponent } from '../../modal/modal.component';
 import { TextService } from 'src/app/configuration/assets/text.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FileService } from 'src/app/configuration/assets/file.service';
+import { UpdateBlobService } from 'src/app/configuration/services/ext/update-blob.service';
 
 @Component({
   selector: 'app-updates',
@@ -15,21 +18,27 @@ import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 })
 export class UpdatesComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
-
   searchTerm: string = '';
   updatesData!: any;
   selectedUser: any;
   filteredUpdates: any[] = [];
   isSpinnerLoading: boolean = false;
-
   order: Order = Order.Desc;
   orderEnum = Order;
   itemEnum = ItemsPerPage;
   currentPage = 1;
   itemsPerPage = ItemsPerPage.Ten; //default
-
   showConfirmationModal = false;
   updateToDeleteId!: number;
+  selectedBlobId: number | null = null;
+  imagePreview: string | null = null;
+  imagePreviews: { [key: string]: string } = {};
+  blobIds: { [key: string]: any } = {};
+  fileNames: { [key: string]: string } = {};
+  dbImagePreviews: { [update_blob_id: string]: { [id: string]: string } } = {};
+  dbFileNames: { [update_blob_id: string]: { [id: string]: string } } = {};
+  dbBlobIds: { [update_blob_id: string]: { [id: string]: any } } = {};
+  dynamicContentMap: Map<number | null, SafeHtml> = new Map();
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -40,8 +49,146 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private textService: TextService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private fileService: FileService,
+    private sanitizer: DomSanitizer,
+    private updateBlobService: UpdateBlobService
   ) { }
+
+  createUpdateAttachmentElement = async (update_blob_id: any) => {
+    const modalOverlay = this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    if (update_blob_id === null) {
+      return;
+    }
+
+    if (this.dynamicContentMap.has(update_blob_id)) {
+      // If update_blob_id is already in the map, return the existing value
+      modalOverlay.style.display = 'flex';
+      this.isSpinnerLoading = false;
+      return this.dynamicContentMap.get(update_blob_id);
+    }
+
+    const blobInfo = await this.getUpdateBlobInfo(update_blob_id);
+    const blobDataPromises = blobInfo.update_blob_ids.map(
+      (blobId: number, index: number) =>
+        this.getUpdateBlobDataFile(
+          update_blob_id,
+          blobId,
+          blobInfo.file_names[index]
+        )
+    );
+    const blobDataArray = await Promise.all(blobDataPromises);
+    const imageElements = blobDataArray.map((data) => {
+      if (data?.dataType.startsWith('image/')) {
+        // If it's an image type
+        return this.fileService.imageFilePreview(data?.file_name, data?.blobData, data?.dataType, 'update');
+      } else {
+        // If it's not an image type
+        return this.fileService.nonImageFilePreview(
+          data?.file_name,
+          data?.blobData,
+          data?.dataType
+        );
+      }
+    });
+
+    const imageElementsString = imageElements.join('');
+    const newDiv = imageElementsString;
+
+    // Store the new value in the map and return it
+    const sanitizedValue = this.sanitizer.bypassSecurityTrustHtml(newDiv);
+    this.dynamicContentMap.set(update_blob_id, sanitizedValue);
+
+    modalOverlay.style.display = 'flex';
+    this.isSpinnerLoading = false;
+
+    return sanitizedValue;
+  };
+
+  async getUpdateBlobInfo(update_blob_id: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (update_blob_id === null) {
+        resolve({ update_blob_ids: [], file_names: [] }); // Resolve with empty arrays
+        return;
+      }
+
+      this.updateBlobService.getUpdateBlobInfo(update_blob_id).subscribe(
+        (blob) => {
+          resolve({
+            update_blob_ids: blob?.updates_blob_ids || [],
+            file_names: blob?.file_names || [],
+          });
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  async getUpdateBlobDataFile(
+    update_blob_id: number,
+    id: number,
+    file_name: string
+  ) {
+    return new Promise((resolve, reject) => {
+      this.updateBlobService
+        .getUpdateBlobDataFile(update_blob_id, id)
+        .subscribe(
+          async (data) => {
+            try {
+              const { blob, dataType } = data;
+              if (blob instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const blobData = reader.result as string;
+
+                  if (!this.dbImagePreviews[update_blob_id]) {
+                    this.dbImagePreviews[update_blob_id] = {};
+                  }
+
+                  if (!this.dbFileNames[update_blob_id]) {
+                    this.dbFileNames[update_blob_id] = {};
+                  }
+
+                  if (!this.dbBlobIds[update_blob_id]) {
+                    this.dbBlobIds[update_blob_id] = {};
+                  }
+
+                  this.dbImagePreviews[update_blob_id][id] = blobData;
+                  this.dbFileNames[update_blob_id][id] = file_name;
+                  this.dbBlobIds[update_blob_id][id] = id;
+
+                  resolve({ blobData, dataType, file_name });
+                };
+                reader.readAsDataURL(blob);
+              } else {
+                reject(new Error('Invalid blob data.'));
+              }
+            } catch (error) {
+              reject(error);
+            }
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
+  }
+
+  closeEditModal() {
+    const modalOverlay =
+      this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    modalOverlay.style.display = 'none';
+  }
+
+  openEditModal(blobId: number) {
+    this.isSpinnerLoading = true;
+    this.createUpdateAttachmentElement(blobId);
+    this.selectedBlobId = blobId;
+  }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;

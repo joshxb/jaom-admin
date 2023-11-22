@@ -177,14 +177,6 @@ a.download:hover {
   opacity: 0.8;
 }
 
-.show-files-modal {
-  background-color: red !important;
-}
-
-.show-files-modal .modal-dialog-conf {
-  width: 80% !important;
-}
-
 @media (maz-width: 768px) {
   #sidebar {
     margin-left: -250px;

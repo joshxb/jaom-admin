@@ -6,6 +6,9 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
 import { ModalComponent } from '../../modal/modal.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FileService } from 'src/app/configuration/assets/file.service';
+import { ChatBlobService } from 'src/app/configuration/services/ext/chat-blob.service';
 
 @Component({
   selector: 'app-chats',
@@ -14,21 +17,27 @@ import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 })
 export class ChatsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
-
   searchTerm: string = '';
   chatsData!: any;
   selectedUser: any;
   filteredChats: any[] = [];
   isSpinnerLoading: boolean = false;
-
   currentPage = 1;
   itemsPerPage = ItemsPerPage.Ten; //default
   order: Order = Order.Desc;
   orderEnum = Order;
   itemEnum = ItemsPerPage;
-
   showConfirmationModal = false;
   chatToDeleteId!: number;
+  selectedBlobId: number | null = null;
+  imagePreview: string | null = null;
+  imagePreviews: { [key: string]: string } = {};
+  blobIds: { [key: string]: any } = {};
+  fileNames: { [key: string]: string } = {};
+  dbImagePreviews: { [chat_blob_id: string]: { [id: string]: string } } = {};
+  dbFileNames: { [chat_blob_id: string]: { [id: string]: string } } = {};
+  dbBlobIds: { [chat_blob_id: string]: { [id: string]: any } } = {};
+  dynamicContentMap: Map<number | null, SafeHtml> = new Map();
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -38,8 +47,146 @@ export class ChatsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    private cacheService: CacheService
-  ) {}
+    private cacheService: CacheService,
+    private fileService: FileService,
+    private sanitizer: DomSanitizer,
+    private chatBlobService: ChatBlobService
+  ) { }
+
+  createChatAttachmentElement = async (chat_blob_id: any) => {
+    const modalOverlay = this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    if (chat_blob_id === null) {
+      return;
+    }
+
+    if (this.dynamicContentMap.has(chat_blob_id)) {
+      // If chat_blob_id is already in the map, return the existing value
+      modalOverlay.style.display = 'flex';
+      this.isSpinnerLoading = false;
+      return this.dynamicContentMap.get(chat_blob_id);
+    }
+
+    const blobInfo = await this.getChatBlobInfo(chat_blob_id);
+    const blobDataPromises = blobInfo.chat_blob_ids.map(
+      (blobId: number, index: number) =>
+        this.getChatBlobDataFile(
+          chat_blob_id,
+          blobId,
+          blobInfo.file_names[index]
+        )
+    );
+    const blobDataArray = await Promise.all(blobDataPromises);
+    const imageElements = blobDataArray.map((data) => {
+      if (data?.dataType.startsWith('image/')) {
+        // If it's an image type
+        return this.fileService.imageFilePreview(data?.file_name, data?.blobData, data?.dataType, 'update');
+      } else {
+        // If it's not an image type
+        return this.fileService.nonImageFilePreview(
+          data?.file_name,
+          data?.blobData,
+          data?.dataType
+        );
+      }
+    });
+
+    const imageElementsString = imageElements.join('');
+    const newDiv = imageElementsString;
+
+    // Store the new value in the map and return it
+    const sanitizedValue = this.sanitizer.bypassSecurityTrustHtml(newDiv);
+    this.dynamicContentMap.set(chat_blob_id, sanitizedValue);
+
+    modalOverlay.style.display = 'flex';
+    this.isSpinnerLoading = false;
+
+    return sanitizedValue;
+  };
+
+  async getChatBlobInfo(chat_blob_id: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (chat_blob_id === null) {
+        resolve({ chat_blob_ids: [], file_names: [] }); // Resolve with empty arrays
+        return;
+      }
+
+      this.chatBlobService.getChatBlobInfo(chat_blob_id).subscribe(
+        (blob) => {
+          resolve({
+            chat_blob_ids: blob?.messages_blob_ids || [],
+            file_names: blob?.file_names || [],
+          });
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  async getChatBlobDataFile(
+    chat_blob_id: number,
+    id: number,
+    file_name: string
+  ) {
+    return new Promise((resolve, reject) => {
+      this.chatBlobService
+        .getChatBlobDataFile(chat_blob_id, id)
+        .subscribe(
+          async (data) => {
+            try {
+              const { blob, dataType } = data;
+              if (blob instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const blobData = reader.result as string;
+
+                  if (!this.dbImagePreviews[chat_blob_id]) {
+                    this.dbImagePreviews[chat_blob_id] = {};
+                  }
+
+                  if (!this.dbFileNames[chat_blob_id]) {
+                    this.dbFileNames[chat_blob_id] = {};
+                  }
+
+                  if (!this.dbBlobIds[chat_blob_id]) {
+                    this.dbBlobIds[chat_blob_id] = {};
+                  }
+
+                  this.dbImagePreviews[chat_blob_id][id] = blobData;
+                  this.dbFileNames[chat_blob_id][id] = file_name;
+                  this.dbBlobIds[chat_blob_id][id] = id;
+
+                  resolve({ blobData, dataType, file_name });
+                };
+                reader.readAsDataURL(blob);
+              } else {
+                reject(new Error('Invalid blob data.'));
+              }
+            } catch (error) {
+              reject(error);
+            }
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
+  }
+
+  closeEditModal() {
+    const modalOverlay =
+      this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    modalOverlay.style.display = 'none';
+  }
+
+  openEditModal(blobId: number) {
+    this.isSpinnerLoading = true;
+    this.createChatAttachmentElement(blobId);
+    this.selectedBlobId = blobId;
+  }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
@@ -102,7 +249,7 @@ export class ChatsComponent implements OnInit, AfterViewInit {
       data: { content: `${s}`, level: type },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   ngOnInit(): void {

@@ -14,6 +14,9 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { forkJoin } from 'rxjs';
 import { ItemsPerPage, Order } from 'src/app/configuration/enums/order.enum';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { RoomBlobService } from 'src/app/configuration/services/ext/room-blob.service';
+import { FileService } from 'src/app/configuration/assets/file.service';
 
 @Component({
   selector: 'app-rooms',
@@ -22,7 +25,6 @@ import { ItemsPerPage, Order } from 'src/app/configuration/enums/order.enum';
 })
 export class RoomsComponent implements OnInit, AfterViewInit {
   imageUrls = new imageUrls();
-
   searchTerm: string = '';
   searchTerm2: string = '';
   roomListData!: any;
@@ -31,24 +33,28 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   filteredRooms: any[] = [];
   filteredRoomChats: any[] = [];
   isSpinnerLoading: boolean = false;
-
   currentPage = 1;
   currentPage2 = 1;
   itemsPerPage = ItemsPerPage.Ten; //default
   itemsPerPage2 = ItemsPerPage.Ten; //default
-
   showConfirmationModal = false;
   selectedToDeleteId!: number;
   selectedOption!: number;
   selectedDataList!: string;
-
   order: Order = Order.Desc;
   order2: Order = Order.Desc;
-
   orderEnum = Order;
   itemEnum = ItemsPerPage;
-
   activeSelectedList: any = null;
+  selectedBlobId: number | null = null;
+  imagePreview: string | null = null;
+  imagePreviews: { [key: string]: string } = {};
+  blobIds: { [key: string]: any } = {};
+  fileNames: { [key: string]: string } = {};
+  dbImagePreviews: { [room_blob_id: string]: { [id: string]: string } } = {};
+  dbFileNames: { [room_blob_id: string]: { [id: string]: string } } = {};
+  dbBlobIds: { [room_blob_id: string]: { [id: string]: any } } = {};
+  dynamicContentMap: Map<number | null, SafeHtml> = new Map();
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -59,8 +65,146 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private fileService: FileService,
+    private sanitizer: DomSanitizer,
+    private roomBlobService: RoomBlobService
   ) { }
+
+  createChatAttachmentElement = async (room_blob_id: any) => {
+    const modalOverlay = this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    if (room_blob_id === null) {
+      return;
+    }
+
+    if (this.dynamicContentMap.has(room_blob_id)) {
+      // If room_blob_id is already in the map, return the existing value
+      modalOverlay.style.display = 'flex';
+      this.isSpinnerLoading = false;
+      return this.dynamicContentMap.get(room_blob_id);
+    }
+
+    const blobInfo = await this.getRoomBlobInfo(room_blob_id);
+    const blobDataPromises = blobInfo.room_blob_ids.map(
+      (blobId: number, index: number) =>
+        this.getChatBlobDataFile(
+          room_blob_id,
+          blobId,
+          blobInfo.file_names[index]
+        )
+    );
+    const blobDataArray = await Promise.all(blobDataPromises);
+    const imageElements = blobDataArray.map((data) => {
+      if (data?.dataType.startsWith('image/')) {
+        // If it's an image type
+        return this.fileService.imageFilePreview(data?.file_name, data?.blobData, data?.dataType, 'update');
+      } else {
+        // If it's not an image type
+        return this.fileService.nonImageFilePreview(
+          data?.file_name,
+          data?.blobData,
+          data?.dataType
+        );
+      }
+    });
+
+    const imageElementsString = imageElements.join('');
+    const newDiv = imageElementsString;
+
+    // Store the new value in the map and return it
+    const sanitizedValue = this.sanitizer.bypassSecurityTrustHtml(newDiv);
+    this.dynamicContentMap.set(room_blob_id, sanitizedValue);
+
+    modalOverlay.style.display = 'flex';
+    this.isSpinnerLoading = false;
+
+    return sanitizedValue;
+  };
+
+  async getRoomBlobInfo(room_blob_id: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (room_blob_id === null) {
+        resolve({ room_blob_ids: [], file_names: [] }); // Resolve with empty arrays
+        return;
+      }
+
+      this.roomBlobService.getRoomBlobInfo(room_blob_id).subscribe(
+        (blob) => {
+          resolve({
+            room_blob_ids: blob?.group_messages_blob_ids || [],
+            file_names: blob?.file_names || [],
+          });
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  async getChatBlobDataFile(
+    room_blob_id: number,
+    id: number,
+    file_name: string
+  ) {
+    return new Promise((resolve, reject) => {
+      this.roomBlobService
+        .getChatBlobDataFile(room_blob_id, id)
+        .subscribe(
+          async (data) => {
+            try {
+              const { blob, dataType } = data;
+              if (blob instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const blobData = reader.result as string;
+
+                  if (!this.dbImagePreviews[room_blob_id]) {
+                    this.dbImagePreviews[room_blob_id] = {};
+                  }
+
+                  if (!this.dbFileNames[room_blob_id]) {
+                    this.dbFileNames[room_blob_id] = {};
+                  }
+
+                  if (!this.dbBlobIds[room_blob_id]) {
+                    this.dbBlobIds[room_blob_id] = {};
+                  }
+
+                  this.dbImagePreviews[room_blob_id][id] = blobData;
+                  this.dbFileNames[room_blob_id][id] = file_name;
+                  this.dbBlobIds[room_blob_id][id] = id;
+
+                  resolve({ blobData, dataType, file_name });
+                };
+                reader.readAsDataURL(blob);
+              } else {
+                reject(new Error('Invalid blob data.'));
+              }
+            } catch (error) {
+              reject(error);
+            }
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
+  }
+
+  closeEditModal() {
+    const modalOverlay =
+      this.elRef.nativeElement.querySelector('.modal-overlay');
+
+    modalOverlay.style.display = 'none';
+  }
+
+  openEditModal(blobId: number) {
+    this.isSpinnerLoading = true;
+    this.createChatAttachmentElement(blobId);
+    this.selectedBlobId = blobId;
+  }
 
   openConfirmationModal(id: number, index: number) {
     this.isSpinnerLoading = true;

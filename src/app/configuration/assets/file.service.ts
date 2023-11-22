@@ -18,7 +18,7 @@ export class FileService {
                     .map((byte) => byte.toString(16).padStart(2, '0'))
                     .join('');
 
-                observer.next(this.getDataType(hex));
+                observer.next(blob.type || this.getDataType(hex));
                 observer.complete();
             };
 
@@ -170,22 +170,51 @@ export class FileService {
         }
     }
 
-    nonImageFilePreview(file_name: string, blobData: any) {
-        const isMobile = window.innerWidth <= 768;
+    formatFileSize(fileSizeInBytes: number): string {
+        if (fileSizeInBytes >= 1024 * 1024) {
+            return `${(fileSizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
+        } else {
+            return `${(fileSizeInBytes / 1024).toFixed(2)} KB`;
+        }
+    }
 
-        return `&nbsp;&nbsp;&nbsp;<div class="message-file-preview-non-image" style="box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                padding:10px;width:200px;overflow:hidden;text-overflow: ellipsis;">
+    nonImageFilePreview(file_name: string, blobData: any, dataType: string) {
+        const base64String = blobData.split(',')[1]; // Get the base64 data (remove data:image/jpeg;base64,)
+        const byteArray = atob(base64String);
+        const byteNumbers = new Array(byteArray.length);
+
+        for (let i = 0; i < byteArray.length; i++) {
+            byteNumbers[i] = byteArray.charCodeAt(i);
+        }
+
+        const uint8Array = new Uint8Array(byteNumbers);
+        const mimeType = this.getImageMimeType(base64String);
+        const blob = new Blob([uint8Array], { type: mimeType });
+        const fileSizeDisplay = this.formatFileSize(blob.size);
+
+        //mobile responsive
+        const isMobile = window.innerWidth <= 768;
+        const div = `
+            <tr>
+                <td style="text-align: center;">${file_name}</td>
+                <td style="text-align: center;">${dataType}</td>
+                <td style="text-align: center;">${fileSizeDisplay}</td>
+                <td style="text-align: center;">
+                <div class="message-file-preview-non-image" style="box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                padding:10px;width:100px;overflow:auto;text-overflow: ellipsis;margin:auto">
                     <div style="margin-bottom:10px;${isMobile ? 'text-align:center;' : ''}">
-                        <small>${file_name}</small><br>
                         <a href="${blobData}" download style="color: #999999; font-size: 12px;">download</a><br>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:center">
                         ${this.nonImageFileTypeGenerate(file_name, 'v1')}
                     </div>
-                </div>&nbsp;&nbsp;&nbsp;<br>`;
+                </td>
+            </tr>`;
+
+            return div;
     }
 
-    imageFilePreview(blobData: any, selection: any = null) {
+    imageFilePreview(file_name: string, blobData: any, dataType: string, selection: any = null) {
         const base64String = blobData.split(',')[1]; // Get the base64 data (remove data:image/jpeg;base64,)
         const byteArray = atob(base64String);
         const byteNumbers = new Array(byteArray.length);
@@ -198,18 +227,23 @@ export class FileService {
         const mimeType = this.getImageMimeType(base64String);
         const blob = new Blob([uint8Array], { type: mimeType });
         const imageUrl = URL.createObjectURL(blob);
+
+        const fileSizeDisplay = this.formatFileSize(blob.size);
+
         //mobile responsive
         const isMobile = window.innerWidth <= 768;
-        const div = `<a style="cursor:pointer; ${isMobile ? 'width:100%' : ''
-                            }" href="${imageUrl}" target="_blank">
-                        <img class="message-file-preview-img" src="${imageUrl}" style="width: ${isMobile ? '100%' : selection === 'update' ? '30%' : '150px'
-                            };
-                        ${isMobile ? 'border-radius:5px;' : ''}${selection === 'update' ? 'border-radius:5px;' : ''
-                            }
-                        height: ${selection === 'update' ? '200px' : isMobile ? '200px' : '100px'
-                            }; margin: 5px;">
-                    </a>`;
+        const div = `
+            <tr>
+                <td style="text-align: center;">${file_name}</td>
+                <td style="text-align: center;">${dataType}</td>
+                <td style="text-align: center;">${fileSizeDisplay}</td>
+                <td style="text-align: center;">
+                <a style="cursor:pointer;" href="${imageUrl}" target="_blank">
+                    <img class="message-file-preview-img" src="${imageUrl}" style="width: 50px; height: 50px; margin: 5px;">
+                </a>
+                </td>
+            </tr>`;
 
-        return imageUrl;
+        return div;
     }
 }

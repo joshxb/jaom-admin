@@ -81,6 +81,7 @@
                   <th>Title / Subject</th>
                   <th>Content</th>
                   <th>Type</th>
+                  <th>Files</th>
                   <th>Permission</th>
                   <th>Date</th>
                   <th>Time</th>
@@ -102,6 +103,7 @@
                     "
                   ></td>
                   <td>{{ update?.type }}</td>
+                  <td style="text-align: center;"><button class="btn show-files-btn" (click)="openEditModal(update?.updates_blob_id)" [disabled]="update?.type == 'text'">Show Files</button></td>
                   <td class="text-center">
                     <ng-container
                       *ngIf="
@@ -204,6 +206,30 @@
           <div class="modal-footer-conf">
             <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
             <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-content">
+          <button (click)="closeEditModal()" type="button" class="close exit-modal" aria-label="Close">
+            X
+          </button>
+          <h2>Files</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="text-align: center;">
+                  <th>File Name</th>
+                  <th>File Type</th>
+                  <th>File Size</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody class="attachment-table" [innerHTML]="dynamicContentMap.get(selectedBlobId)">
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

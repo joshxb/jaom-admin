@@ -70,7 +70,7 @@ export enum DataTypes {
     SVG = 'image/svg+xml',
     TIFF = 'image/tiff',
     BMP = 'image/bmp',
-    UNKNOWN = 'unknown',
+    UNKNOWN = 'other',
 
     // Not supported
 
@@ -82,7 +82,7 @@ export enum DataTypes {
 }
 
 export enum DataSupportType {
-  TEXTBLOB = 'text-blob',
-  TEXT = 'text',
-  BLOB = 'blob'
+    TEXTBLOB = 'text-blob',
+    TEXT = 'text',
+    BLOB = 'blob'
 }

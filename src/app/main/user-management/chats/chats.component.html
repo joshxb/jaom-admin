@@ -95,7 +95,7 @@
                   <td>{{ chat?.receiver_id }}</td>
                   <td>{{ chat?.body }}</td>
                   <td style="text-align: center;">{{ chat?.type }}</td>
-                  <td style="text-align: center;"><button class="btn show-files-btn">Show Files</button></td>
+                  <td style="text-align: center;"><button class="btn show-files-btn" (click)="openEditModal(chat?.messages_blob_id)" [disabled]="chat?.type == 'text'">Show Files</button></td>
                   <td style="text-align: center;">{{ chat?.date }}</td>
                   <td style="text-align: center;">{{ chat?.time }}</td>
                   <td class="action-cont">
@@ -170,28 +170,24 @@
         </div>
       </div>
     </div>
-    <div class="modal-conf show-files-modal" id="confirmationModal">
-      <div class="modal-dialog-conf">
-        <div class="modal-content-conf">
-          <div class="modal-header-conf">
-            <h5 class="modal-title-conf">Confirmation</h5>
-            <button type="button" class="close-conf" (click)="closeConfirmationModal()">&times;</button>
-          </div>
-          <div class="modal-body-conf">
-            <table class="table table-bordered users-table">
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-content">
+          <button (click)="closeEditModal()" type="button" class="close exit-modal" aria-label="Close">
+            X
+          </button>
+          <h2>Files</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered">
               <thead>
                 <tr style="text-align: center;">
                   <th>File Name</th>
                   <th>File Type</th>
-                  <th>Preview</th>
+                  <th>File Size</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>hat?.id</td>
-                  <td>chat?.sender_id</td>
-                  <td>chat?.receiver_id</td>
-                </tr>
+              <tbody class="attachment-table" [innerHTML]="dynamicContentMap.get(selectedBlobId)">
               </tbody>
             </table>
           </div>
