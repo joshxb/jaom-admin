@@ -170,6 +170,9 @@ table tbody tr:hover {
   display: none;
 }
 
+.input-group {
+  width: 20%;
+}
 
 /* transaction-list.component.css */
 /* Style for the modal */
@@ -211,4 +214,3 @@ table tbody tr:hover {
 .show-modal-ss {
   display: block;
 }
-
