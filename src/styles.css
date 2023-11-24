@@ -215,7 +215,6 @@ a.download:hover {
 }
 
 .content-header-filter {
-  overflow-x: auto;
   display: flex;
   justify-content: end;
   margin: 20px;
@@ -291,7 +290,6 @@ a.download:hover {
     width: 100% !important;
   }
 }
-
 
 /*# globalize modal confirmation for delete*/
 /* Add this CSS to your component's CSS file or global stylesheet */

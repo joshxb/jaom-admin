@@ -168,3 +168,9 @@ table tbody tr:hover {
   font-size: 15px;
   display: none;
 }
+
+@media screen and (max-width: 360px) {
+  .content-header-filter .btn-group button {
+    font-size: 9px !important;
+  }
+}

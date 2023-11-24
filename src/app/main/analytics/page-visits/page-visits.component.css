@@ -201,3 +201,13 @@ table tbody tr:hover {
     font-size: 13px !important;
   }
 }
+
+@media screen and (max-width: 767px) {
+  .visits-information {
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.395);
+  }
+}

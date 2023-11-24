@@ -220,6 +220,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.395);
   }
 
   .donation-sub-list {
