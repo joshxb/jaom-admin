@@ -214,6 +214,13 @@ a.download:hover {
   display: none;
 }
 
+.content-header-filter {
+  overflow-x: auto;
+  display: flex;
+  justify-content: end;
+  margin: 20px;
+}
+
 @media screen and (max-width: 800px) {
   .exit-icon {
     display: block;
@@ -228,6 +235,16 @@ a.download:hover {
   #sidebar.active {
     transform: translateX(100%);
     position: fixed;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content-header-filter .btn-group button {
+    font-size: 11px !important;
+  }
+
+  .show-files-btn {
+    font-size: 12px;
   }
 }
 

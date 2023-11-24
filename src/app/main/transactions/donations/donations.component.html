@@ -15,7 +15,7 @@
       <app-top-bar id="top-bar"></app-top-bar>
       <div class="content-container">
         <p>Donations</p>
-        <div class="d-flex justify-content-end" style="margin: 20px">
+        <div class="content-header-filter">
           <div class="btn-group dropnone">
             <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
@@ -80,8 +80,8 @@
               <a class="export-item dropdown-item" style="cursor: pointer;" (click)="exportToEXCEL(500)">Export by
                 500</a>
             </ul>&nbsp;&nbsp;
-          </div>
-          <div class="input-group" style="width: 20%">
+          </div>&nbsp;
+          <div class="input-group">
             <input type="text" [(ngModel)]="searchTerm" (input)="applySearchFilter()"
               placeholder="Search by ID, Fullname, Phone, Email...." class="form-control filter-user-search" />
             <div class="input-group-append">

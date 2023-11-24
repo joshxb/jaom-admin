@@ -208,4 +208,11 @@ nav {
     position: relative;
     top: 5px;
   }
+
+  .logo {
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.331);
+    padding: 5px;
+    border-radius: 50%;
+  }
 }
