@@ -55,6 +55,7 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   dbFileNames: { [room_blob_id: string]: { [id: string]: string } } = {};
   dbBlobIds: { [room_blob_id: string]: { [id: string]: any } } = {};
   dynamicContentMap: Map<number | null, SafeHtml> = new Map();
+  selectedConfirmationType: string = 'delete';
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -206,12 +207,12 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     this.selectedBlobId = blobId;
   }
 
-  openConfirmationModal(id: number, index: number) {
+  openConfirmationModal(id: number, index: number, option: number) {
     this.isSpinnerLoading = true;
     this.selectedOption = index;
 
-
     this.selectedDataList = index === 0 ? 'room' : 'group message';
+    this.selectedConfirmationType = option === 0 ? 'clear' : 'delete';
 
     setTimeout(() => {
       this.isSpinnerLoading = false;
@@ -224,12 +225,17 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     this.showConfirmationModal = false;
   }
 
-  confirmDelete() {
-    if (this.selectedOption === 0) {
-      this.deleteSpecificRoom(this.selectedToDeleteId);
+  confirmDelete(selectedConfirmationType: string) {
+    if (selectedConfirmationType == 'delete') {
+      if (this.selectedOption === 0) {
+        this.deleteSpecificRoom(this.selectedToDeleteId);
+      } else {
+        this.deleteSpecificRoomChat(this.selectedToDeleteId);
+      }
     } else {
-      this.deleteSpecificRoomChat(this.selectedToDeleteId);
+      this.clearChatRoom(this.selectedToDeleteId);
     }
+    
     this.closeConfirmationModal();
   }
 
@@ -483,6 +489,29 @@ export class RoomsComponent implements OnInit, AfterViewInit {
     this.isSpinnerLoading = true;
     this.usersManagementService
       .deleteSpecificRoomChat(id)
+      .subscribe((res: { message: any }) => {
+        this.isSpinnerLoading = false;
+
+        const deleteDialogMessage = this.elRef.nativeElement.querySelector(
+          '.delete-dialog-message'
+        );
+        const deleteDialogMessageP = this.elRef.nativeElement.querySelector(
+          '.delete-dialog-message p'
+        );
+
+        deleteDialogMessageP.textContent = res?.message;
+        deleteDialogMessage.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      });
+  }
+
+  clearChatRoom(id: any) {
+    this.isSpinnerLoading = true;
+    this.usersManagementService
+      .clearChatRoom(id)
       .subscribe((res: { message: any }) => {
         this.isSpinnerLoading = false;
 

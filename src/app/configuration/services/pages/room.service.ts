@@ -106,6 +106,17 @@ export class RoomService {
     });
   }
 
+  clearChatRoom(group_id: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.auth.getToken()}`
+    );
+
+    return this.http.delete<any>(`${this.apiRoomChatsUrl}/${group_id}`, {
+      headers,
+    });
+  }
+
   deleteSpecificRoomChat(id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',

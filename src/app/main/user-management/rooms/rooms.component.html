@@ -77,10 +77,10 @@
                   <th>ID</th>
                   <th>Group Icon</th>
                   <th>Name</th>
-                  <th>Owner</th>
+                  <th>Creator</th>
                   <th>Date</th>
                   <th>Time</th>
-                  <th>Action</th>
+                  <th style="text-align:center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +96,8 @@
                   <td>{{ data?.created_at | date : "MMMM d, y" }}</td>
                   <td>{{ data?.created_at | date : "h:mm a" }}</td>
                   <td class="action-cont">
-                    <img (click)="openConfirmationModal(data?.id, 0)" [src]="imageUrls.delete" alt="" />
+                    <button (click)="openConfirmationModal(data?.id, 0, 0)" class="btn btn-danger btn-sm">Clear</button>&nbsp;
+                    <img (click)="openConfirmationModal(data?.id, 0, 1)" [src]="imageUrls.delete" alt="" />
                   </td>
                 </tr>
               </tbody>
@@ -219,7 +220,7 @@
                   <td>{{ data?.created_at | date : "MMMM d, y" }}</td>
                   <td>{{ data?.created_at | date : "h:mm a" }}</td>
                   <td class="action-cont">
-                    <img (click)="openConfirmationModal(data?.id, 1)" [src]="imageUrls.delete" alt="" />
+                    <img (click)="openConfirmationModal(data?.id, 1, 1)" [src]="imageUrls.delete" alt="" />
                   </td>
                 </tr>
               </tbody>
@@ -272,11 +273,11 @@
           <button type="button" class="close-conf" (click)="closeConfirmationModal()">&times;</button>
         </div>
         <div class="modal-body-conf">
-          Do you want to remove this {{selectedDataList}}?
+          Do you want to {{selectedConfirmationType == 'delete' ? 'remove' : 'clear all data in'}} this {{selectedDataList}}?
         </div>
         <div class="modal-footer-conf">
           <button type="button" class="btn btn-secondary-conf" (click)="closeConfirmationModal()">Cancel</button>&nbsp;
-          <button type="button" class="btn btn-danger-conf" (click)="confirmDelete()">Remove</button>
+          <button type="button" class="btn btn-danger-conf" (click)="confirmDelete(selectedConfirmationType)">Remove</button>
         </div>
       </div>
     </div>

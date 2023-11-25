@@ -65,6 +65,10 @@ export class UsersManagementService {
     return this.roomService.deleteSpecificRoomChat(id);
   }
 
+  clearChatRoom(id: number): Observable<any> {
+    return this.roomService.clearChatRoom(id);
+  }
+
   getAllUpdates(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
     return this.updateService.getAllUpdates(page, order, items);
   }
