@@ -96,8 +96,14 @@ export class CacheService {
         .faqs-table p, .faqs-table span,
         .user-card p,
         .empty-data p,
-        .search-input input {
+        .search-input input,
+        .db-value
+        {
           color: rgba(0, 0, 0, 0.829) !important;
+        }
+
+        .chart-panel .percent-text{
+          color: #fffffff3 !important;
         }
       `;
 
