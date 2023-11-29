@@ -112,7 +112,7 @@
                 <td>{{ transac?.id }}</td>
                 <td>{{ transac?.fullname }}</td>
                 <td>{{ transac?.phone }}</td>
-                <td>{{ transac?.email }}</td>
+                <td [title]="transac?.email"><p style="width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ transac?.email }}</p></td>
                 <td>{{ transac?.location }}</td>
                 <td>{{ transac?.payment_method }}</td>
                 <td>{{ transac?.amount }}</td>
