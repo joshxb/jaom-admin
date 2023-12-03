@@ -55,6 +55,10 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private updateBlobService: UpdateBlobService
   ) { }
 
+  plainTextContent(content: string) {
+    return content.replace(/<[^>]*>/g, ''); // Removes all HTML tags
+  }
+
   createUpdateAttachmentElement = async (update_blob_id: any) => {
     const modalOverlay = this.elRef.nativeElement.querySelector('.modal-overlay');
 
