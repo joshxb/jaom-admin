@@ -55,6 +55,14 @@ export class UpdatesComponent implements OnInit, AfterViewInit {
     private updateBlobService: UpdateBlobService
   ) { }
 
+  processHtmlContent(input: string): string {
+    const withoutTags = input.replace(/<[^>]*>/g, '');
+    const decodedContent = new DOMParser().parseFromString(withoutTags, 'text/html').body.textContent || "";
+    const trimmedContent = decodedContent.trim();
+
+    return trimmedContent;
+  }
+
   plainTextContent(content: string) {
     return content.replace(/<[^>]*>/g, ''); // Removes all HTML tags
   }

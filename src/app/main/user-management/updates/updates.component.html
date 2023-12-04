@@ -99,7 +99,7 @@
                   ></td>
                   <td
                     [innerHTML]=" update?.content.includes('=>') ?
-                      extractStylesAndText(update?.content).innerHTML : update?.content
+                      extractStylesAndText(update?.content).innerHTML : processHtmlContent(update?.content)
                     "
                   ></td>
                   <td>{{ update?.type }}</td>
