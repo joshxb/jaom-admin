@@ -136,6 +136,15 @@ export class DonationsInfoComponent implements OnInit, AfterViewInit {
           return;
         }
 
+        if (this.selectedBankType.toLowerCase() === 'other') {
+          setTimeout(() => {
+            this.isSpinnerLoading = false;
+            handleEmptyValue('selectedBankType', 'Other is not supported for now!');
+          }, 1000);
+
+          return;
+        }
+
         for (const key in contactDetails.bank_type) {
           if (contactDetails.bank_type.hasOwnProperty(key)) {
             contactDetails.bank_type[key] =
