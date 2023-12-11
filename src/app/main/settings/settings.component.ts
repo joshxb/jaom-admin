@@ -14,6 +14,7 @@ import { ValidationService } from 'src/app/configuration/assets/validation.servi
 import { Base, Redirects } from 'src/app/configuration/configuration.component';
 import { AdminService } from 'src/app/configuration/services/pages/admin.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
+import { UsersService } from 'src/app/configuration/services/pages/users.service';
 import { SettingsService } from 'src/app/configuration/services/settings/settings.service';
 import { UsersManagementService } from 'src/app/configuration/services/user-management/user.management.service';
 
@@ -54,7 +55,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     private adminService: AdminService,
     private ng2ImgMax: Ng2ImgMaxService,
     private profileImageCacheService: ProfileImageCacheService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private usersService: UsersService
   ) { }
 
   ngAfterViewInit() {
@@ -73,6 +75,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  dateToAgeNumber(value: any): number {
+    return this.usersService.dateToAgeNumber(value);
   }
 
   updateConfigurations(index: number) {
@@ -135,12 +141,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           this.isSpinnerLoading = false;
           return;
         }
-        data['age'] = this.textService
-          .calculateAge(this.modifiedAccountAge)
-          .toString();
+        data['age'] = this.modifiedAccountAge;
         this.updateCachedAdminData(
-          'age',
-          this.textService.calculateAge(this.modifiedAccountAge)
+          'age', this.modifiedAccountAge
         );
         name = 'Age';
         break;

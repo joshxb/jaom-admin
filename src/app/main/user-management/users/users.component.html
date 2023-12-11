@@ -173,7 +173,11 @@
             <label for="defaultAge" class="col-sm-3 col-form-label">Age</label>
             <div class="col-sm-9 d-flex align-items-center">
               <input id="defaultAge" type="text" class="form-control mr-3" value="" disabled />
-              <input id="inputAge" type="number" class="form-control" placeholder="Input new value" />
+              <input id="inputAge" type="number" class="form-control"
+                (focus)="focusNewAgeDateInput($event)"
+                (input)="focusNewAgeDateInput($event)"
+                placeholder="Input new value"
+              />
             </div>
           </div>
           <div class="form-group row">

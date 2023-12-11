@@ -16,6 +16,7 @@ import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { ImageService } from 'src/app/configuration/services/pages/image.service';
 import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
 import { ItemsPerPage, Order } from 'src/app/configuration/enums/order.enum';
+import { UsersService } from 'src/app/configuration/services/pages/users.service';
 
 @Component({
   selector: 'app-users',
@@ -41,6 +42,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   showConfirmationModal = false;
   userToDeleteId!: number;
+  newAge: any = null;
 
   constructor(
     private usersManagementService: UsersManagementService,
@@ -54,9 +56,20 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private cacheService: CacheService,
     private imageService: ImageService,
-    private profileImageCacheService: ProfileImageCacheService
+    private profileImageCacheService: ProfileImageCacheService,
+    private usersService: UsersService
   ) { }
 
+  focusNewAgeDateInput(event: Event) {
+    const element = event.target as HTMLInputElement;
+    element.setAttribute('type', 'date');
+    const ageInYears = this.dateToAgeNumber(element.value);
+    this.newAge = ageInYears;
+  }
+
+  dateToAgeNumber(value: any): number {
+    return this.usersService.dateToAgeNumber(value);
+  }
 
   openConfirmationModal(user_id: number) {
     this.isSpinnerLoading = true;
@@ -178,7 +191,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
-getCurrentPageEnd(): number {
+  getCurrentPageEnd(): number {
     return Math.ceil(this.usersData?.total / this.usersData?.per_page);
   }
 
@@ -192,7 +205,7 @@ getCurrentPageEnd(): number {
     if (items) {
       this.itemsPerPage = items;
     }
-    
+
     this.isSpinnerLoading = true;
 
     this.router.navigate([], {
@@ -250,7 +263,7 @@ getCurrentPageEnd(): number {
                 property: 'value',
                 value: data?.lastname,
               },
-              { selector: '#defaultAge', property: 'value', value: data?.age },
+              { selector: '#defaultAge', property: 'value', value: this.dateToAgeNumber(data?.age) ? this.dateToAgeNumber(data?.age) : 'Not Set' },
               {
                 selector: '#defaultEmail',
                 property: 'value',
@@ -264,7 +277,7 @@ getCurrentPageEnd(): number {
               {
                 selector: '#defaultLocation',
                 property: 'value',
-                value: data?.location,
+                value: data?.location ? data?.location : 'Not Set',
               },
               {
                 selector: '#defaultStatus',
@@ -301,7 +314,7 @@ getCurrentPageEnd(): number {
             const defaultNickName =
               this.elRef.nativeElement.querySelector('#defaultNickName');
             if (defaultNickName) {
-              defaultNickName.value = realNickname;
+              defaultNickName.value = realNickname ? realNickname : 'Not Set';
             }
 
             const hiddenFullNickName = this.elRef.nativeElement.querySelector(
@@ -463,7 +476,7 @@ getCurrentPageEnd(): number {
           }
         }
         if (field.key == 'age') {
-          if (!this.validationService.isValidAge(fieldValue)) {
+          if (!this.validationService.isValidAge(this.dateToAgeNumber(fieldValue))) {
             const noChangesTxt =
               this.elRef.nativeElement.querySelector('.no-changes-txt');
             noChangesTxt.textContent =

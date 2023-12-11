@@ -88,4 +88,22 @@ export class UsersService {
     );
     return this.http.get<any>(`${this.apiUserUrl}/administrative-access`, { headers });
   }
+
+  dateToAgeNumber(value: any): number {
+    const enteredDate = new Date(value);
+    const currentDate = new Date();
+
+    if (!value) {
+      return 0;
+    }
+
+    if (enteredDate <= currentDate) {
+      const ageInMilliseconds = currentDate.getTime() - enteredDate.getTime();
+      const ageInYears = Math.floor(ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000));
+
+      return ageInYears;
+    }
+
+    return 0;
+  }
 }

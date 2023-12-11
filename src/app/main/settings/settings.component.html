@@ -130,7 +130,7 @@
               <p style="font-size: 14px">Age</p>
               <div class="s-panel-item">
                 <input
-                  value="{{getCachedAdminData('age')}} years old"
+                  value="{{ dateToAgeNumber(getCachedAdminData('age')) ? dateToAgeNumber(getCachedAdminData('age')) + ' years old' : 'Not Set'  }}"
                   type="text"
                   class=""
                   style="
@@ -259,7 +259,7 @@
               <p style="font-size: 14px">Location</p>
               <div class="s-panel-item">
                 <input
-                  [value]="getCachedAdminData('location')"
+                  [value]="getCachedAdminData('location') ? getCachedAdminData('location') : 'Not Set'"
                   type="text"
                   class=""
                   style="
