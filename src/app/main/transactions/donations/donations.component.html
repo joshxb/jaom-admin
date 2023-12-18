@@ -104,6 +104,7 @@
                 <th>Amount</th>
                 <th style="text-align: center">Proof of Transac</th>
                 <th>Date</th>
+                <th>Time</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -120,7 +121,8 @@
                   <img style="width: 100px; height: 100px; cursor: pointer" [src]="transac?.screenshot_img"
                     (click)="openModal(transac?.screenshot_img)" />
                 </td>
-                <td>{{ transac?.created_at | date : "longDate" }}</td>
+                <td>{{ transac?.created_at | date : "MMMM d, y" }}</td>
+                <td>{{ transac?.created_at | date : "h:mm a" }}</td>
                 <td class="action-cont">
                   <img (click)="openConfirmationModal(transac?.id)" [src]="imageUrls.delete" alt="" />
                 </td>

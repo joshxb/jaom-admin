@@ -81,7 +81,8 @@
                   <th>Title</th>
                   <th>Description</th>
                   <th>Due</th>
-                  <th>Created</th>
+                  <th>Date</th>
+                  <th>Time</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -93,6 +94,7 @@
                   <td>{{ todo?.description }}</td>
                   <td>{{ todo?.due_date }}</td>
                   <td>{{ todo?.created_at | date : "MMMM d, y" }}</td>
+                  <td>{{ todo?.created_at | date : "h:mm a" }}</td>
                   <td class="action-cont">
                     <img
                       (click)="openConfirmationModal(todo?.id)"

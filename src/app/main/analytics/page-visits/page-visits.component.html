@@ -130,7 +130,8 @@
                 <th>Browser</th>
                 <th>OS</th>
                 <th>Orientation</th>
-                <th>Date Created</th>
+                <th>Date</th>
+                <th>Time</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -143,7 +144,10 @@
                 <td>{{ data?.os }} - {{ data?.os_version }}</td>
                 <td>{{ data?.orientation }}</td>
                 <td>
-                  {{ data?.created_at | date : "MM/dd/yyyy - h:mm a" }}
+                  {{ data?.created_at | date : "MMMM d, y" }}
+                </td>
+                <td>
+                  {{ data?.created_at | date : "h:mm a" }}
                 </td>
                 <td class="action-cont">
                   <img (click)="deleteAnalytics(data?.id)" [src]="imageUrls.delete" alt="" />
