@@ -1,154 +1,146 @@
 import { AuthService } from './../../configuration/services/auth.service';
 import {
-  Component,
+  Comp,onent,
   ElementRef,
   OnInit,
   Renderer2,
-  ViewChild,
+ , ViewChild,
 } from '@angular/core';
-import { imageUrls } from 'src/app/app.component';
-import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
-import { Base, Redirects } from 'src/app/configuration/configuration.component';
-import { AdminService } from 'src/app/configuration/services/pages/admin.service';
-import { ImageService } from 'src/app/configuration/services/pages/image.service';
-import { NotificationService } from 'src/app/configuration/services/pages/notification.service';
+import { ,imageUrls } from 'src/app/app.component';
+imp,ort { ProfileImageCacheService } from 'src/ap,p/configuration/assets/profile_image.cache.se,rvice';
+import { Base, Redirects } from 'src/,app/configuration/configuration.component';
+i,mport { AdminService } from 'src/app/configurat,ion/services/pages/admin.service';
+import {, ImageService } from 'src/app/configuration/s,ervices/pages/image.service';
+import { Notifi,cationService } from 'src/app/configuration/s,ervices/pages/notification.service';
 
-@Component({
+// Top bar component
+@Compon,ent({
   selector: 'app-top-bar',
-  templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.css'],
+  templateUr,l: './top-bar.component.html',
+  styleUrls: [,'./top-bar.component.css'],
 })
-export class TopBarComponent implements OnInit {
-  imageUrls = new imageUrls();
-  settingsVisible = false;
+export class T,opBarComponent implements OnInit {
+  // Image URLs
+  imageUrl,s = new imageUrls();
+  // Settings visibility flag
+  settingsVisible = fals,e;
+  // View child element reference for profile logo
   @ViewChild('profile_logo')
-  profile_logo!: ElementRef;
+  profile_log,o!: ElementRef;
+  // Notifications data
   notificationsData: any;
-  lastPage: any;
+  // Last page of notifications
+  l,astPage: any;
+  // Selected image source
   selectedImageSrc: any;
-  isSpinnerLoading: boolean = false;
+  // Spinner loading flag
+  isSp,innerLoading: boolean = false;
 
-  constructor(
-    private authService: AuthService,
-    private adminService: AdminService,
-    private notificationService: NotificationService,
-    private imageService: ImageService,
-    private profileImageCacheService: ProfileImageCacheService
+  constructor,(
+    private authService: AuthService, // Authentication service
+    p,rivate adminService: AdminService, // Admin service
+    privat,e notificationService: NotificationService, // Notification service
+   ,  private imageService: ImageService, // Image service
+    pr,ivate profileImageCacheService: ProfileImageC,acheService // Profile image cache service
   ) {}
 
-  base = new Base();
-  private baseUrl = this.base.baseUrl;
-  public data: any;
-  notificationPage: number = 1;
+  base = new Base(); // Base class instance
+  pr,ivate baseUrl = this.base.baseUrl; // Base URL
+  public d,ata: any;
+  notificationPage: number = 1; // Current notification page
 
-  ngOnInit() {
-    const cookieKey = 'userAdminData'; // Define a cookie key
-    const cachedData = localStorage.getItem(cookieKey);
-    if (cachedData) {
+  ,ngOnInit() {
+    const cookieKey = 'userAdmin,Data'; // Define a cookie key
+    const cache,dData = localStorage.getItem(cookieKey);
+    ,if (cachedData) {
       try {
-        this.data = JSON.parse(cachedData);
-        this.getProfileImage(this.data?.id);
-      } catch (error) {
-        console.error('Error parsing cached data:', error);
+        this.da,ta = JSON.parse(cachedData);
+        this.get,ProfileImage(this.data?.id);
+      } catch (e,rror) {
+        console.error('Error parsing ,cached data:', error);
       }
     } else {
-      this.adminService.getUserData().subscribe(
+      this.adminService.getUserData().subscrib,e(
         (response) => {
-          if (response?.type === 'admin') {
-            this.data = response;
-            this.getProfileImage(this.data?.id);
+          if (resp,onse?.type === 'admin') {
+            this.da,ta = response;
+            this.getProfileIma,ge(this.data?.id);
           } else {
             this.redirectToUserPage();
           }
         },
         () => {
-          this.redirectToUserPage();
+          this.redi,rectToUserPage();
         }
       );
     }
-    this.getAllNotification(this.notificationPage);
+    this.getAllNotification(this.notificationPa,ge);
   }
 
   getProfileImage(id : number) {
-    const cachedImage = this.profileImageCacheService.getProfileImage(id);
-    if (cachedImage) {
-      this.selectedImageSrc = cachedImage;
+    const cachedImage = this.profileImageCacheS,ervice.getProfileImage(id);
+    if (cachedIma,ge) {
+      this.selectedImageSrc = cachedIma,ge;
     } else {
-      this.imageService.getOtherUserImageData(id).subscribe(
-        (imageData : Blob) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const imageBlobData = reader.result as string;
-            this.selectedImageSrc = imageBlobData;
-            this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
+      this.imageService.getO,therUserImageData(id).subscribe(
+        (ima,geData : Blob) => {
+          const reader = ,new FileReader();
+          reader.onloadend ,= () => {
+            const imageBlobData = r,eader.result as string;
+            this.sele,ctedImageSrc = imageBlobData;
+            thi,s.profileImageCacheService.cacheProfileImage(,id, imageBlobData);
           };
-          reader.readAsDataURL(imageData);
+          re,ader.readAsDataURL(imageData);
         });
-    }
   }
 
-  getAllNotification(page: number = 1) {
-    this.notificationService.getAllNotification(page).subscribe((res) => {
-      const { data } = res;
-      this.notificationsData = data;
-      this.lastPage = res?.last_page;
+  getAllNotification(page: number = ,1) {
+    this.notificationService.getAllNotif,ication(page).subscribe((res) => {
+      cons,t { data } = res;
+      this.notificationsDat,a = data;
+      this.lastPage = res?.last_pag,e;
       this.isSpinnerLoading = false;
-    });
+    },);
   }
 
   getNotificationObject(
-    notificationObject: string,
+    notifica,tionObject: string,
     key: string
-  ): string | null {
+  ): stri,ng | null {
     try {
-      const parsedNotification = JSON.parse(notificationObject);
-      let data = null;
-      if (key === 'title') {
+      const parsedNotif,ication = JSON.parse(notificationObject);
+   ,   let data = null;
+      if (key === 'title',) {
         data = parsedNotification.title;
-      }
+,      }
       if (key === 'content') {
-        data = parsedNotification.content;
+      ,  data = parsedNotification.content;
       }
-      return data;
+,      return data;
     } catch (error) {
-      console.error('Error parsing JSON:', error);
+    ,  console.error('Error parsing JSON:', error),;
       return null;
     }
   }
 
-  private redirectToUserPage(): void {
-    if (this.baseUrl === Redirects.localServerUrl) {
-      window.location.href = Redirects.localUserUrl;
-    } else {
-      window.location.href = Redirects.deployUserUrl;
+  private red,irectToUserPage(): void {
+    if (this.baseUr,l === Redirects.localServerUrl) {
+      windo,w.location.href = Redirects.localUserUrl;
+   , } else {
+      window.location.href = Redire,cts.deployUserUrl;
     }
   }
 
-  prevNotif(event: any) {
-    if (this.notificationPage > 1) {
+  prevNotif(eve,nt: any) {
+    if (this.notificationPage > 1), {
       this.isSpinnerLoading = true;
-      this.notificationPage = this.notificationPage - 1;
-      this.getAllNotification(this.notificationPage);
+      ,this.notificationPage = this.notificationPage, - 1;
+      this.getAllNotification(this.noti,ficationPage);
     }
   }
 
-  nextNotif(event: any) {
-    if (this.notificationPage < this.lastPage) {
-      this.isSpinnerLoading = true;
-      this.notificationPage = this.notificationPage + 1;
-      this.getAllNotification(this.notificationPage);
-    }
-  }
-
-  stopPropagation(event: Event) {
-    event.stopPropagation();
-  }
-
-  logOut() {
-    this.isSpinnerLoading = true;
-    setTimeout(() => {
-      this.isSpinnerLoading = false;
-      this.authService.logout();
-    }, 2000);
-  }
-}
+  nextNotif(event: ,any) {
+    if (this.notificationPage < this.l,astPage) {
+      this.isSpinnerLoading = true,;
+      this.notificationPage = this.notifica,tionPage + 1;
+      this.getAllNotification(t,
