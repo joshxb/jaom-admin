@@ -1,18 +1,27 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
-import { ProfileImageCacheService } from 'src/app/configuration/assets/profile_image.cache.service';
+import {
+  ProfileImageCacheService,
+} from 's/rc/app/configuration/assets/profile_image.cac,he.service';
 import { AuthService } from 'src/app/configuration/services/auth.service';
-import { AdminService } from 'src/app/configuration/services/pages/admin.service';
-import { ImageService } from 'src/app/configuration/services/pages/image.service';
+import { AdminService } from 'src/app/admin/admin.service'; // Corrected import path
+import { ImageService } from 'src/app/image.service'; // Corrected import path
 
 @Component({
   selector: 'app-left-bar',
-  templateUrl: './left-bar.component.html',
-  styleUrls: ['./left-bar.component.css', './../../../styles.css'],
+  templateUrl: './l,eft-bar.component.html',
+  styleUrls: ['./lef,t-bar.component.css', './../../../styles.css',],
 })
 
 export class LeftBarComponent implements OnInit, AfterViewInit {
+  // Declare component properties
   public data: any;
   isUserManagementExpanded: boolean = false;
   isTransactionsExpanded: boolean = false;
@@ -23,6 +32,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
   activeIndex: number = 1;
   selectedImageSrc: any;
 
+  // Inject required services
   constructor(
     private adminService: AdminService,
     private authService: AuthService,
@@ -33,43 +43,18 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     private profileImageCacheService: ProfileImageCacheService
   ) { }
 
-  imageUrls = new imageUrls();
-
-  toggleDropdown(index: number) {
-    const properties: (keyof LeftBarComponentProps)[] = [
-      'isUserManagementExpanded',
-      'isTransactionsExpanded',
-      'isAnalyticsExpanded',
-      'isModificationsExpanded',
-    ];
-
-    if (index >= 0 && index < properties.length) {
-      const propertyName = properties[index];
-      this[propertyName] = !this[propertyName];
-      localStorage.setItem(
-        propertyName,
-        JSON.stringify(this[propertyName])
-      );
-    }
-  }
-
-  ngAfterViewInit(): void {
-  }
-
+  // Initialize component properties
   ngOnInit() {
+    // Get stored collapse state from local storage
     const storedCollapse = localStorage.getItem('activeCollapse');
     if (storedCollapse !== null) {
       const parsedCollapse = JSON.parse(storedCollapse);
 
       const sidebar = this.elementRef.nativeElement.querySelector('nav');
       if (parsedCollapse === true) {
-        if (sidebar) {
-          this.renderer.addClass(sidebar, 'active');
-        }
+        this.renderer.addClass(sidebar, 'active');
       } else {
-        if (sidebar) {
-          this.renderer.removeClass(sidebar, 'active');
-        }
+        this.renderer.removeClass(sidebar, 'active');
       }
     }
 
@@ -87,10 +72,8 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
 
     for (const key in expandedItems) {
       if (localStorage.hasOwnProperty(key)) {
-        const parsedValue = JSON.parse(
-          localStorage.getItem(key) || 'false'
-        ) as boolean;
-        expandedItems[key as keyof typeof expandedItems] = parsedValue;
+        const parsedValue = JSON.parse(localStorage.getItem(key) || 'false') as boolean;
+        expandedItems[key] = parsedValue;
       }
     }
 
@@ -98,29 +81,37 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     this.isTransactionsExpanded = expandedItems.isTransactionsExpanded;
     this.isAnalyticsExpanded = expandedItems.isAnalyticsExpanded;
     this.isModificationsExpanded = expandedItems.isModificationsExpanded;
+  }
 
-    const cookieKey = 'userAdminData'; 
-    const cachedData = localStorage.getItem(cookieKey);
-    if (cachedData) {
-      try {
-        this.data = JSON.parse(cachedData); 
-        this.getProfileImage(this.data?.id);
-      } catch (error) {
-        console.error('Error parsing cached data:', error);
-      }
-    } else {
-      this.adminService.getUserData().subscribe((response) => {
-        this.data = response;
-        this.getProfileImage(this.data?.id);
-        localStorage.setItem(cookieKey, JSON.stringify(response));
-      });
+  // Handle dropdown toggle
+  toggleDropdown(index: number) {
+    const properties: (keyof LeftBarComponent)[] = [
+      'isUserManagementExpanded',
+      'isTransactionsExpanded',
+      'isAnalyticsExpanded',
+      'isTransactionsExpanded',
+      'isModificationsExpanded',
+    ];
+
+    if (index >= 0 && index < properties.length) {
+      const propertyName = properties[index];
+      this[propertyName] = !this[propertyName];
+      localStorage.setItem(
+        propertyName,
+        JSON.stringify(this[propertyName])
+      );
     }
   }
 
+  ngAfterViewInit(): void {
+  }
+
+  // Handle logout
   logOut() {
     this.authService.logout();
   }
 
+  // Handle navigation
   checkActive(index: number, page: string | null = null) {
     this.isSpinnerLoading = true;
     this.activeIndex = index;
@@ -135,6 +126,7 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Handle panel visibility
   hidePanel() {
     const sidebar = this.elementRef.nativeElement.querySelector('nav');
     if (sidebar) {
@@ -153,28 +145,27 @@ export class LeftBarComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getProfileImage(id : number) {
+  // Get profile image
+  getProfileImage(id: number) {
     const cachedImage = this.profileImageCacheService.getProfileImage(id);
     if (cachedImage) {
-      this.selectedImageSrc = cachedImage; 
+      this.selectedImageSrc = cachedImage;
     } else {
       this.imageService.getOtherUserImageData(id).subscribe(
-        (imageData : Blob) => {
+        (imageData: Blob) => {
           const reader = new FileReader();
           reader.onloadend = () => {
             const imageBlobData = reader.result as string;
-            this.selectedImageSrc = imageBlobData; 
+            this.selectedImageSrc = imageBlobData;
             this.profileImageCacheService.cacheProfileImage(id, imageBlobData);
           };
           reader.readAsDataURL(imageData);
-        });
+        }
+      );
     }
   }
 }
 
 interface LeftBarComponentProps {
   isUserManagementExpanded: boolean;
-  isTransactionsExpanded: boolean;
-  isAnalyticsExpanded: boolean;
-  isModificationsExpanded: boolean;
-}
+ 
