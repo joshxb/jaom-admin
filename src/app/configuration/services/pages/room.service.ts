@@ -12,11 +12,13 @@ import { ItemsPerPage, Order } from '../../enums/order.enum';
   providedIn: 'root',
 })
 export class RoomService {
+  // Initialize the base and auth objects
   base = new Base();
   auth = new AuthService(this.http, this.cookieService);
   private baseUrl = this.base.baseUrl;
   private suffixUrl = this.base.suffixUrl;
 
+  // Define the API endpoints
   private apiRoomUrl = `${this.baseUrl}/${this.suffixUrl}/group_chats`;
   private apiRoomChatsUrl = `${this.baseUrl}/${this.suffixUrl}/group_messages`;
   private apiRoomImageUpdateUrl = `${this.baseUrl}/${this.suffixUrl}/group-image/update`;
@@ -25,8 +27,9 @@ export class RoomService {
     private http: HttpClient,
     private cookieService: CookieService,
     private imageService: ImageService
-  ) { }
+  ) {}
 
+  // Add a group chat
   addGroupChat(
     groupChatName: string,
     userIds: number[],
@@ -36,16 +39,17 @@ export class RoomService {
 
     const formData: FormData = new FormData();
     formData.append('name', groupChatName);
-    formData.append('user_ids', JSON.stringify([]));
+    formData.append('user_ids', JSON.stringify(userIds));
     formData.append('image', image);
 
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.auth.getToken()
     ); // Replace with your authentication mechanism
-    return this.http.post<any>(endpoint, formData, { headers: headers });
+    return this.http.post<any>(endpoint, formData, { headers });
   }
 
+  // Get the count of group chats
   getRoomCounts(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -55,7 +59,13 @@ export class RoomService {
     return this.http.get<any>(`${this.apiRoomUrl}/count`, { headers });
   }
 
-  getRoomList(page: number, type: string, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+  // Get the list of group chats
+  getRoomList(
+    page: number,
+    type: string,
+    order: Order = Order.Null,
+    items: ItemsPerPage = ItemsPerPage.Null
+  ): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
@@ -81,7 +91,12 @@ export class RoomService {
     return this.http.get<any>(url, { headers });
   }
 
-  getRoomChatList(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null): Observable<any> {
+  // Get the list of messages in a group chat
+  getRoomChatList(
+    page: number,
+    order: Order = Order.Null,
+    items: ItemsPerPage = ItemsPerPage.Null
+  ): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.auth.getToken()}`
@@ -95,6 +110,7 @@ export class RoomService {
     );
   }
 
+  // Delete a group chat
   deleteRoom(id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -106,6 +122,7 @@ export class RoomService {
     });
   }
 
+  // Clear the messages in a group chat
   clearChatRoom(group_id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -117,6 +134,7 @@ export class RoomService {
     });
   }
 
+  // Delete a specific message in a group chat
   deleteSpecificRoomChat(id: number): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -125,12 +143,11 @@ export class RoomService {
 
     return this.http.delete<any>(
       `${this.apiRoomChatsUrl}/v2/${id}?role=admin`,
-      {
-        headers,
-      }
+      { headers }
     );
   }
 
+  // Update the name and image of a specific group chat
   updateSpecificGroupChat(
     groupChatId: number,
     groupChatName: string,
@@ -145,33 +162,3 @@ export class RoomService {
     if (image) {
       this.updateGroupChatImage(groupChatId, image).subscribe((res) => { });
     }
-
-    const body = { name: groupChatName };
-    return this.http.put<any>(endpoint, body, { headers: headers });
-  }
-
-  updateGroupChatImage(id: number, file: any): Observable<any> {
-    const endpoint = `${this.apiRoomImageUpdateUrl}?groupId=${id}&role=admin`;
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.auth.getToken()
-    );
-
-    return this.imageService.compressImage(file).pipe(
-      switchMap((compressedImage: File) => {
-        const compressedFile = new File(
-          [compressedImage],
-          compressedImage.name,
-          {
-            type: compressedImage.type,
-          }
-        );
-
-        const formData: FormData = new FormData();
-        formData.append('image', compressedFile);
-
-        return this.http.post<any>(endpoint, formData, { headers: headers });
-      })
-    );
-  }
-}
