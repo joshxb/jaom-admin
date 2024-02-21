@@ -1,281 +1,133 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
+  Elem,
+  entRef,
   OnInit,
   Renderer2,
-} from '@angular/core';
+} from '@angul/ar/core'; // Importing Angular core modules
 import { ActivatedRoute, Router } from '@angular/router';
-import { imageUrls } from 'src/app/app.component';
-import { CacheService } from 'src/app/configuration/assets/cache.service';
-import ChartType, { ChartService } from 'src/app/configuration/assets/chart.service';
-import { DateService } from 'src/app/configuration/assets/date.service';
-import { Base } from 'src/app/configuration/configuration.component';
-import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
-import { AnalyticsService } from 'src/app/configuration/services/analytics/analytics.service';
+import { imageUrls } from 'src/app/app.component'; // Importing image URLs
+import { CacheService } from 'src/app/configuration/assets/ca,che.service'; // Importing cache service
+import { ChartType, ChartServic} from 'src/app/configuration/assets/chart.,service'; // Importing chart service
+import { DateService } from 'src/ap/configuration/assets/date.service'; // Importing date service
+import { Base } from 'src/app/configuration/configur,ation.component'; // Importing base configuration
+import { Order, ItemsPerPage} from 'src/app/configuration/enums/order.e,num'; // Importing order and items per page enumerations
+import { AnalyticsService } from 'src/a,pp/configuration/services/analytics/analytics,.service'; // Importing analytics service
 
 @Component({
-  selector: 'app-page-visits',
-  templateUrl: './page-visits.component.html',
-  styleUrls: ['./page-visits.component.css']
+  selector: 'app-pag,e-visits', // Component selector
+  templateUrl: './page-visits.comp,onent.html', // Component template URL
+  styleUrls: ['./page-visits.com,ponent.css'] // Component style URLs
 })
-export class PageVisitsComponent implements OnInit, AfterViewInit {
-  imageUrls = new imageUrls();
+export class PageVisitsCompon,ent implements OnInit, AfterViewInit {
+  imag,eUrls = new imageUrls(); // Creating an instance of image URLs
 
   constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2,
-    private elementRef: ElementRef,
-    private route: ActivatedRoute,
-    private router: Router,
-    private dateService: DateService,
-    private analyticsService: AnalyticsService,
-    private chartService: ChartService,
-    private cacheService: CacheService
+    private elRef: ElementRef, // Reference to the element
+    private render,er: Renderer2, // Renderer for manipulating the DOM
+    private elementRef: Elemen,tRef, // Reference to the element
+    private route: ActivatedRoute, // Route information
+    private router: Router, // Router for navigation
+    private dateServi,ce: DateService, // Date service
+    private analyticsService,: AnalyticsService, // Analytics service
+    private chartService:, ChartService, // Chart service
+    private cacheService: Cach,eService // Cache service
   ) { }
-  base = new Base();
-  public analytics: any;
 
-  order: Order = Order.Desc;
-  orderEnum = Order;
-  itemEnum = ItemsPerPage;
-  currentPage = 1;
-  itemsPerPage = ItemsPerPage.Ten; //default
-  searchTerm: string = '';
-  filteredData: any[] = [];
-  isSpinnerLoading: boolean = false;
+  base = new Base(); // Base configuration object
+  publi,c analytics: any; // Analytics data
 
-  selectedMonth: string = '';
-  selectedMonthIndex: number = Number(new Date().getMonth());
-  selectedYear: number = new Date().getFullYear();
+  order: Order = Order.Des,c; // Order enumeration value
+  orderEnum = Order; // Order enumeration
+  itemEnum = ItemsPer,Page; // Items per page enumeration
+  currentPage = 1; // Current page number
+  itemsPerPage = Ite,msPerPage.Ten; // Default items per page value
+  searchTerm: string, = ''; // Search term
+  filteredData: any[] = []; // Filtered data array
+  isSpinne,rLoading: boolean = false; // Spinner loading indicator
 
-  yearOptions: number[] = this.dateService.generateYearOptions();
+  selectedMonth: ,string = ''; // Selected month
+  selectedMonthIndex: number = N,umber(new Date().getMonth()); // Selected month index
+  selectedYear:, number = new Date().getFullYear(); // Selected year
 
-  activeSelectedList: any = null;
+  yearOp,tions: number[] = this.dateService.generateYe,arOptions(); // Year options array
 
+  activeSelectedList: any = nul,l; // Active selected list
+
+  // Applying search filter
   applySearchFilter() {
-    if (!this.searchTerm) {
-      this.filteredData = this.analytics?.data;
+    if (!this.sea,rchTerm) {
+      this.filteredData = this.ana,lytics?.data;
     } else {
-      this.filteredData = this.analytics?.data.filter(
-        (data: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(data).some((value) => {
-            if (typeof value === 'string') {
+      this.filtere,dData = this.analytics?.data.filter(
+        (data: { [s: string]: unknown } | ArrayLike<u,nknown>) =>
+          Object.values(data).som,e((value) => {
+            if (typeof value =,== 'string') {
               return value
-                .toLowerCase()
-                .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
-              return value == Number(this.searchTerm.toLowerCase());
+   ,             .toLowerCase()
+                .,includes(this.searchTerm.toLowerCase());
+    ,        } else if (typeof value === 'number'), {
+              return value == Number(this.,searchTerm.toLowerCase());
             }
-            return false;
+    ,        return false;
           })
       );
-    }
+ ,   }
   }
 
   ngOnInit() {
-    const theme = this.cacheService.getCachedAdminData('theme');
-    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+    const theme = th,is.cacheService.getCachedAdminData('theme');
+,    this.cacheService.themeChange(this.render,er, this.elRef.nativeElement, theme);
 
-    if (!this.activeSelectedList) {
-      this.setCurrentMonthAndYear();
+    if, (!this.activeSelectedList) {
+      this.setC,urrentMonthAndYear();
     } else {
-      if (this.activeSelectedList === 'table') {
-        this.setCurrentMonthAndYear();
+      if (,this.activeSelectedList === 'table') {
+      ,  this.setCurrentMonthAndYear();
       }
-    }
+    ,}
   }
 
   ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
-      '#sidebarCollapseBtn'
+    const scb = ,this.elementRef.nativeElement.querySelector(
+,      '#sidebarCollapseBtn'
     );
-    this.renderer.listen(scb, 'click', () => {
-      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
-      if (sidebar) {
-        if (sidebar.classList.contains('active')) {
-          this.renderer.removeClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(false));
+    this.r,enderer.listen(scb, 'click', () => {
+      co,nst sidebar = this.elementRef.nativeElement.q,uerySelector('#sidebar');
+      if (sidebar) ,{
+        if (sidebar.classList.contains('act,ive')) {
+          this.renderer.removeClass(,sidebar, 'active');
+          localStorage.se,tItem('activeCollapse', JSON.stringify(false),);
         } else {
-          this.renderer.addClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(true));
+          this.renderer.a,ddClass(sidebar, 'active');
+          localSt,orage.setItem('activeCollapse', JSON.stringif,y(true));
         }
       }
     });
 
-    if (!this.activeSelectedList) {
-      this.renderChartData();
+    if (,!this.activeSelectedList) {
+      this.render,ChartData();
     } else {
-      if (this.activeSelectedList === 'graph') {
-        this.renderChartData();
+      if (this.acti,veSelectedList === 'graph') {
+        this.re,nderChartData();
       }
     }
   }
 
-  setCurrentMonthAndYear() {
-    const currentDate = new Date();
+  setCurr,entMonthAndYear() {
+    const currentDate = n,ew Date();
 
-    this.selectedMonth = this.dateService.getMonths()[currentDate.getMonth()];
+    this.selectedMonth = this.dat,eService.getMonths()[currentDate.getMonth()];,
 
     if (
       !(
-        this.route.snapshot.queryParamMap.has('month') &&
-        this.route.snapshot.queryParamMap.has('year')
-      )
+        this.route.snapsh,ot.queryParamMap.has('month') &&
+        this,.route.snapshot.queryParamMap.has('year')
+   ,   )
     ) {
       this.setParams();
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    } else {
-      this.route.queryParamMap.subscribe(async (queryParams) => {
-        const month = queryParams.get('month');
-        const year = queryParams.get('year');
-        const order = queryParams.get('order');
-        const items = queryParams.get('items');
-
-        if (order && items) {
-          this.order = order as Order;
-          this.itemsPerPage = items as ItemsPerPage;
-        }
-
-        if (month && year) {
-          this.selectedMonth = month;
-          this.selectedYear = Number(year);
-
-          await this.getPageVisits(this.currentPage, month, Number(year), this.order, this.itemsPerPage);
-        }
-      });
-    }
-  }
-
-  setParams() {
-    this.isSpinnerLoading = true;
-
-    const defaultParams = {
-      month: this.selectedMonth,
-      year: this.selectedYear,
-    };
-
-    this.router.navigate(['analytics/page-visits'], {
-      queryParams: defaultParams,
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  async getPageVisits(
-    page: number,
-    selectedMonth: string,
-    selectedYear: number,
-    order: Order = Order.Null,
-    items: ItemsPerPage = ItemsPerPage.Null
-  ) {
-    this.isSpinnerLoading = true;
-
-    try {
-      const res = await this.analyticsService
-        .getPageVisits(page, selectedMonth, selectedYear, order, items)
-        .toPromise();
-      this.isSpinnerLoading = false;
-      this.analytics = res;
-      this.filteredData = this.analytics?.data;
-      this.renderChartData();
-    } catch (error) {
-      console.error('Error fetching donation transactions:', error);
-    }
-  }
-
-  renderChartData() {
-    if (this.analytics) {
-      let chartDataPoints: { x: Date; y: number; indexLabel: string }[] = [];
-
-      this.analytics.page_visits.forEach((response: any) => {
-        const date = new Date(response?.date);
-        const monthIndex = date.getMonth();
-        const dayOfMonth = date.getDate();
-        const year = date.getFullYear();
-
-        chartDataPoints.push({
-          x: new Date(year, monthIndex, dayOfMonth),
-          y: Number(response?.visits),
-          indexLabel: String(response?.visits),
-        });
-      });
-
-      this.chartService.initializeChart(ChartType.Area, 'page-visit', ...chartDataPoints);
-    }
-  }
-
-  onMonthYearChange() {
-    this.activeSelectedList = 'graph';
-    this.setParams();
-  }
-
-  getPages(): number[] {
-    const totalPages = this.analytics?.last_page || 0;
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
-
-  getCurrentPageEnd(): number {
-    return Math.ceil(this.analytics?.total_visits / this.analytics?.per_page);
-  }
-
-  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
-    this.currentPage = page;
-
-    if (order) {
-      this.order = order;
-    }
-
-    if (items) {
-      this.itemsPerPage = items;
-    }
-
-    this.activeSelectedList = 'table';
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: this.currentPage,
-        order: this.order,
-        items: this.itemsPerPage
-      },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  getStartingIndex(): number {
-    return (this.currentPage - 1) + 1;
-  }
-
-  getPageRange(): number[] {
-    const totalPages = this.analytics?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
-  }
-
-  deleteAnalytics(id: number) {
-    this.isSpinnerLoading = true;
-
-    this.analyticsService.deleteAnalytics(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
-}
+      s,etTimeout(() => {
+        window.location.rel,oad();
+      }, 10
