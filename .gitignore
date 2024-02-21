@@ -1,4 +1,5 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# This is a Git ignore file. It specifies intentionally untracked files that Git should ignore when checking for changes in the project.
+# For more information, see http://help.github.com/ignore-files/
 
 # Compiled output
 /dist
@@ -6,7 +7,7 @@
 /out-tsc
 /bazel-out
 
-# Node
+# Node.js
 /node_modules
 npm-debug.log
 yarn-error.log
@@ -21,12 +22,13 @@ yarn-error.log
 *.sublime-workspace
 
 # Visual Studio Code
-.vscode/*
+.vscode/
+# The following files are excluded from the .vscode/ directory
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
+.history/
 
 # Miscellaneous
 /.angular/cache
@@ -34,7 +36,7 @@ yarn-error.log
 /connect.lock
 /coverage
 /libpeerconnection.log
-testem.log
+test.log
 /typings
 
 # System files
