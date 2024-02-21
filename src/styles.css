@@ -1,70 +1,91 @@
+/* Reset default styles for all elements */
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
+/* Import Poppins font from Google Fonts */
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+/* Set font and background for entire document */
 body {
   font-family: sans-serif;
-  background: #fafafa;
-  zoom: 0.95;
+  background-color: #fafafa;
+  zoom: 0.95; /* Zoom out the entire document */
 }
+
+/* Set height for html and body elements */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
+
+/* Set font style for p elements */
 p {
   font-size: 1.1em;
   font-weight: 300;
   line-height: 1.7em;
   color: #999;
 }
+
+/* Set font style for a elements */
 a,
 a:hover,
 a:focus {
-  color: inherit;
-  text-decoration: none;
-  transition: all 0.3s;
+  color: inherit; /* Inherit font color from parent element */
+  text-decoration: none; /* Remove underline from links */
+  transition: all 0.3s; /* Add smooth transition to links */
 }
+
+/* Set style for navigation bar */
 .navbar {
   padding: 15px 10px;
-  background: #fff;
+  background-color: #fff;
   border: none;
   border-radius: 0;
   margin-bottom: 40px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* Remove box-shadow and outline from navbar buttons */
 .navbar-btn {
   box-shadow: none;
   outline: none !important;
   border: none;
 }
 
+/* Set style for admin text */
 #admin-txt {
   text-align: center;
   font-size: 19px !important;
 }
 
+/* Set style for left bar */
 .left-bar {
-  flex: 0 0 auto; /* This will make the left-bar not grow or shrink */
+  flex: 0 0 auto; /* Prevent left bar from growing or shrinking */
   width: 250px;
   background-color: #171717;
-  /* Other styles you might have */
+  /* Other styles for left bar */
 }
 
+/* Add horizontal line */
 .line {
   width: 100%;
   height: 1px;
   border-bottom: 1px dashed #ddd;
 }
+
+/* Set display style for wrapper element */
 .wrapper {
   display: flex;
   width: 100%;
   height: 100%;
 }
+
+/* Set style for sidebar element */
 #sidebar {
   min-width: 250px;
   max-width: 250px;
@@ -74,49 +95,67 @@ a:focus {
   background-color: #343a40;
   overflow-y: auto;
 }
+
+/* Hide scrollbar for sidebar element */
 #sidebar::-webkit-scrollbar {
   display: none;
 }
 
+/* Set style for active sidebar */
 #sidebar.active {
   margin-left: -250px;
 }
 
+/* Set style for sidebar header */
 #sidebar .sidebar-header {
   padding: 10px;
-  background: #17a2b8;
+  background-color: #17a2b8;
   display: flex;
   align-items: center;
   gap: 7px;
 }
+
+/* Set style for sidebar components */
 #sidebar ul.components {
   padding: 20px 0px;
   border-bottom: 1px solid #47748b;
 }
+
+/* Set style for sidebar p elements */
 #sidebar ul p {
   padding: 10px;
   font-size: 15px;
   display: block;
   color: #fff;
 }
+
+/* Set style for sidebar li a elements */
 #sidebar ul li a {
   padding: 10px;
   font-size: 0.95em;
   display: block;
 }
+
+/* Set style for hovered sidebar li a elements */
 #sidebar ul li a:hover {
   color: #fff;
-  background: #292d2e;
+  background-color: #292d2e;
   opacity: 0.8;
 }
+
+/* Set style for active sidebar li a elements */
 #sidebar ul li.active > a,
 a[aria-expanded="true"] {
   color: #fff;
-  background: #292d2e;
+  background-color: #292d2e;
 }
+
+/* Set style for dropdown toggle elements */
 a[data-toggle="collapse"] {
   position: relative;
 }
+
+/* Set style for sidebar element */
 #sidebar {
   height: 100%;
   width: 250px;
@@ -125,10 +164,12 @@ a[data-toggle="collapse"] {
   z-index: 1;
 }
 
+/* Set style for active sidebar */
 #sidebar.active {
   width: 0px;
 }
 
+/* Set style for dropdown toggle ::after element */
 .dropdown-toggle::after {
   display: block;
   position: absolute;
@@ -137,224 +178,21 @@ a[data-toggle="collapse"] {
   transform: translateY(-50%);
 }
 
+/* Set style for nested ul ul a elements */
 ul ul a {
   font-size: 0.9em !important;
   padding-left: 30px !important;
-  background: #292d2e;
+  background-color: #292d2e;
 }
+
+/* Set style for CTAs ul element */
 ul.CTAs {
   padding: 20px;
 }
+
+/* Set style for CTAs ul a elements */
 ul.CTAs a {
   text-align: center;
   font-size: 0.9em !important;
   display: block;
-  border-radius: 5px;
-  margin-bottom: 5px;
-}
-a.download,
-a.download:hover {
-  background: #318fb5;
-  color: #fff;
-}
-.content-container {
-  padding: 0px 30px;
-}
-.content-wrapper {
-  overflow-y: auto;
-}
-.content {
-  width: 100%;
-  height: 100%;
-}
-
-.pagination-cont {
-  z-index: -1;
-}
-
-.show-files-btn:hover {
-  text-decoration: underline;
-  opacity: 0.8;
-}
-
-@media (maz-width: 768px) {
-  #sidebar {
-    margin-left: -250px;
-  }
-  #sidebar.active {
-    margin-left: 0px;
-  }
-  #sidebarCollapse span {
-    display: none;
-  }
-}
-
-.exit-icon {
-  cursor: pointer;
-  position: absolute;
-  top: 10px; /* Adjust the top position as needed */
-  right: 10px; /* Adjust the right position as needed */
-  cursor: pointer;
-  color: #fff; /* Change the color of the exit icon */
-  font-size: 20px; /* Adjust the font size of the exit icon */
-  transition: opacity 0.3s ease;
-  display: none;
-}
-
-.exit-icon:hover {
-  opacity: 0.8;
-}
-
-.export-item:active {
-  background-color: #00000038;
-  opacity: 0.8;
-}
-
-.btn-group.dropnone .dropdown-toggle::after {
-  display: none;
-}
-
-.content-header-filter {
-  display: flex;
-  justify-content: end;
-  margin: 20px;
-}
-
-@media screen and (max-width: 800px) {
-  .exit-icon {
-    display: block;
-  }
-
-  #sidebar {
-    position: fixed;
-    transform: translateX(-100%);
-    transition: all 0.3s ease;
-  }
-
-  #sidebar.active {
-    transform: translateX(100%);
-    position: fixed;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .content-header-filter .btn-group button {
-    font-size: 11px !important;
-  }
-
-  .show-files-btn {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 767px) {
-  .table th {
-    font-size: 12px;
-  }
-
-  .table td {
-    font-size: 11px;
-  }
-
-  .pagination-cont {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .pagination {
-    margin-top: 10px;
-    overflow-x: auto;
-    width: 90%;
-  }
-
-  .pagination a {
-    font-size: 12px;
-  }
-
-  .s-panel-item {
-    flex-direction: column;
-    text-align: left;
-    align-items: start !important;
-    gap: 10px !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .input-group {
-    width: 80% !important;
-  }
-}
-
-@media (max-width: 300px) {
-  .input-group {
-    width: 100% !important;
-  }
-}
-
-/*# globalize modal confirmation for delete*/
-/* Add this CSS to your component's CSS file or global stylesheet */
-.modal-conf {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  border: 1px solid #ccc;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  max-width: 400px;
-  text-align: center;
-  z-index: 9999; /* Ensure the modal appears on top of other content */
-}
-
-.modal-content-conf {
-  position: relative;
-}
-
-.modal-header-conf {
-  padding: 10px;
-  color: #000;
-}
-
-.modal-body-conf {
-  padding: 20px;
-}
-
-.modal-footer-conf {
-  padding: 10px;
-  background: #f7f7f7;
-}
-
-.close-conf {
-  position: absolute;
-  top: 0;
-  right: 10px;
-  cursor: pointer;
-  border-radius: 50%;
-  border: 2px solid black;
-  width: 30px;
-  height: 30px;
-}
-
-/* Style the buttons as needed */
-.btn-conf {
-  padding: 10px 20px;
-  margin: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-secondary-conf {
-  background: #ccc;
-  color: #000;
-}
-
-.btn-danger-conf {
-  background: #dc3545;
-  color: #fff;
-}
-
-.btn-danger-conf:hover {
-  opacity: 0.8;
-  color: #fff;
-}
+  border-radius: 5
