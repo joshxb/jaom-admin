@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { imageUrls } from 'src/app/app.component';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
-import { ModificationsService } from 'src/app/configuration/services/modifications/modifcations.service';
+import { ModificationsService } from 'src/app/configuration/services/modifications/modifications.service';
 
 @Component({
   selector: 'app-faqs',
@@ -9,18 +9,29 @@ import { ModificationsService } from 'src/app/configuration/services/modificatio
   styleUrls: ['./faqs.component.css']
 })
 export class FaqsComponent implements OnInit, AfterViewInit {
+  // Initialize imageUrls object
   imageUrls = new imageUrls();
 
+  // faqsData property to store the FAQs data
   faqsData: any = null;
+  // selectedUser property to store the selected user
   selectedUser: any;
+  // selectedFaqID property to store the ID of the selected FAQ
   selectedFaqID!: number;
+  // addNewQuestion property to store the new question input by the user
   addNewQuestion: string = '';
+  // addNewDefinition property to store the new definition input by the user
   addNewDefinition: string = '';
+  // newQuestion property to store the new question input by the user in the edit modal
   newQuestion: string = '';
+  // newDefinition property to store the new definition input by the user in the edit modal
   newDefinition: string = '';
+  // isSpinnerLoading property to control the display of the spinner
   isSpinnerLoading: boolean = false;
 
+  // showConfirmationModal property to control the display of the confirmation modal
   showConfirmationModal = false;
+  // faqsToDeleteId property to store the ID of the FAQ to be deleted
   faqsToDeleteId!: number;
 
   constructor(
@@ -32,16 +43,21 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    // Get the cached theme from the cacheService
     const theme = this.cacheService.getCachedAdminData('theme');
+    // Set the theme using the renderer and elRef
     this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
 
+    // Subscribe to the showAllFAQS() method of the modificationService
     this.modificationService.showAllFAQS().subscribe((res) => {
+      // Set the faqsData property to the response from the server
       this.faqsData = res;
     });
   }
 
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
+    // Set a timeout to set the isSpinnerLoading property to false after 1 second
     setTimeout(() => {
       this.isSpinnerLoading = false;
       this.faqsToDeleteId = chat_id;
@@ -59,9 +75,9 @@ export class FaqsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
-      '#sidebarCollapseBtn'
-    );
+    // Get the sidebarCollapseBtn element
+    const scb = this.elementRef.nativeElement.querySelector('#sidebarCollapseBtn');
+    // Add a click event listener to the sidebarCollapseBtn element
     this.renderer.listen(scb, 'click', () => {
       const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
       if (sidebar) {
@@ -83,9 +99,7 @@ export class FaqsComponent implements OnInit, AfterViewInit {
 
     if (trimmedQuestion === '' && trimmedDefinition === '') {
       this.isSpinnerLoading = false;
-      const infoDialogMessage = this.elRef.nativeElement.querySelector(
-        '.info-dialog-message p'
-      );
+      const infoDialogMessage = this.elRef.nativeElement.querySelector('.info-dialog-message p');
 
       infoDialogMessage.textContent = 'No changes made!';
       infoDialogMessage.style.display = 'block';
@@ -106,14 +120,10 @@ export class FaqsComponent implements OnInit, AfterViewInit {
       .updateFAQS(this.selectedFaqID, data)
       .subscribe(() => {
         this.isSpinnerLoading = false;
-        const updateDialogMessage = this.elRef.nativeElement.querySelector(
-          '.update-dialog-message'
-        );
+        const updateDialogMessage = this.elRef.nativeElement.querySelector('.update-dialog-message');
 
         updateDialogMessage.style.display = 'block';
-        const updateDialogMessageP = this.elRef.nativeElement.querySelector(
-          '.update-dialog-message p'
-        );
+        const updateDialogMessageP = this.elRef.nativeElement.querySelector('.update-dialog-message p');
 
         updateDialogMessageP.textContent = 'FAQ updated successfully!';
         updateDialogMessage.style.display = 'block';
@@ -129,99 +139,10 @@ export class FaqsComponent implements OnInit, AfterViewInit {
     this.isSpinnerLoading = true;
     const question = this.addNewQuestion.trim();
     const definition = this.addNewDefinition.trim();
-    const infoDialogMessageP = this.elRef.nativeElement.querySelector(
-      '.info-dialog-message p'
-    );
+    const infoDialogMessageP = this.elRef.nativeElement.querySelector('.info-dialog-message p');
 
     if (question === '' && definition === '') {
       this.displayInfoMessage(infoDialogMessageP, 'No any changes!');
     } else if (question === '') {
       this.displayInfoMessage(infoDialogMessageP, 'Question should not be empty!');
-    } else if (definition === '') {
-      this.displayInfoMessage(
-        infoDialogMessageP,
-        'Definition should not be empty!'
-      );
-    } else {
-      const data = {
-        title: question,
-        definition: definition,
-      };
-
-      this.modificationService.addFAQS(data).subscribe((res) => {
-        this.isSpinnerLoading = false;
-        const infoDialogMessage = this.elRef.nativeElement.querySelector(
-          '.success-dialog-message'
-        );
-        const infoDialogMessageP = this.elRef.nativeElement.querySelector(
-          '.success-dialog-message p'
-        );
-
-        infoDialogMessage.style.display = 'block';
-
-        infoDialogMessageP.textContent = 'New Faq added successfully!';
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
-    }
-  }
-
-  private displayInfoMessage(element: HTMLElement, message: string) {
-    this.isSpinnerLoading = false;
-    element.textContent = message;
-    const infoDialogMessage = this.elRef.nativeElement.querySelector(
-      '.info-dialog-message'
-    );
-    infoDialogMessage.style.display = 'block';
-
-    setTimeout(() => {
-      infoDialogMessage.style.display = 'none';
-    }, 2000);
-  }
-
-  deleteFaq(id: any) {
-    this.isSpinnerLoading = true;
-    this.modificationService.deleteFAQS(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      const deleteDialogMessageP = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message p'
-      );
-
-      deleteDialogMessageP.textContent = 'Faq deleted successfully!';
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
-
-  openEditModal(id: number) {
-    this.isSpinnerLoading = true;
-    this.selectedFaqID = id;
-
-    this.modificationService.showFAQS(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-      const modalOverlay =
-        this.elRef.nativeElement.querySelector('.modal-overlay');
-
-      modalOverlay.style.display = 'flex';
-
-      this.newQuestion = res?.title;
-      this.newDefinition = res?.definition;
-
-    });
-  }
-
-  closeEditModal() {
-    const modalOverlay =
-      this.elRef.nativeElement.querySelector('.modal-overlay');
-
-    modalOverlay.style.display = 'none';
-  }
-}
+    } else if (definition
