@@ -1,15 +1,20 @@
+/* Odd table rows will have a light gray background color */
 .table tbody tr:nth-child(odd) {
   background: rgba(217, 217, 217, 0.486);
 }
 
+/* Decrease the font size of table cells in the 'table-date' class and make it important */
 .table-date {
   font-size: 10px !important;
 }
 
+/* Set the height of the content container to 80% and add vertical scrollbars */
 .content-container {
   height: 80%;
   overflow-y: auto;
 }
+
+/* Center the content of the action container */
 .action-cont {
   display: flex;
   align-items: center;
@@ -17,23 +22,28 @@
   gap: 5px;
 }
 
+/* Add a cursor pointer and transition effect to the images in the action container */
 .action-cont img {
   cursor: pointer;
   transition: all 0.2s;
 }
 
+/* Change the opacity of the images in the action container on hover */
 .action-cont img:hover {
   opacity: 0.8;
 }
 
+/* Add a transition effect to table rows on hover */
 table tbody tr:hover {
   opacity: 0.9;
 }
 
+/* Make the pagination items cursor pointers */
 .page-item {
   cursor: pointer;
 }
 
+/* Style the pagination container */
 .pagination-cont {
   display: flex;
   justify-content: space-between;
@@ -41,10 +51,12 @@ table tbody tr:hover {
   text-align: left; /* To align the "Showing" message to the left */
 }
 
+/* Style the showing pagination text */
 .showing-pagination {
   font-size: 15px;
 }
 
+/* Style the profile image container */
 .profile-image-cont {
   margin-bottom: 30px;
   display: flex;
@@ -52,12 +64,14 @@ table tbody tr:hover {
   gap: 10px;
 }
 
+/* Style the profile image */
 .profile-image {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
 
+/* Style the modal overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -71,18 +85,21 @@ table tbody tr:hover {
   z-index: 1000;
   opacity: 1;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s, ease;
 }
 
+/* Style the modal content */
 .modal-content {
   border: 0px;
   position: relative;
 }
 
+/* Style the content container */
 .content {
   position: relative;
 }
 
+/* Style the update dialog message */
 .update-dialog-message {
   position: absolute;
   top: 50%;
@@ -96,7 +113,8 @@ table tbody tr:hover {
   display: none;
 }
 
-.dialog-messages{
+/* Style the dialog messages */
+.dialog-messages {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -109,17 +127,20 @@ table tbody tr:hover {
   display: none;
 }
 
+/* Style the dialog messages and update dialog message paragraphs */
 .dialog-messages p, .update-dialog-message p {
   position: relative;
   top: 7px;
 }
 
+/* Style the modal content heading */
 .modal-content h2 {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 30px;
 }
 
+/* Style the modal container */
 .modal-container {
   background-color: #fff;
   border-radius: 8px;
@@ -135,16 +156,19 @@ table tbody tr:hover {
   position: relative;
 }
 
+/* Style the modal overlay and modal container when active */
 .modal-overlay.active,
 .modal-container.active {
   opacity: 1;
   pointer-events: auto;
 }
 
+/* Style the modal container when active */
 .modal-container.active {
   transform: translateY(0);
 }
 
+/* Style the exit modal button */
 .exit-modal {
   position: absolute;
   top: 0;
@@ -156,56 +180,6 @@ table tbody tr:hover {
   font-size: 15px;
 }
 
+/* Change the background color of the exit modal button on hover */
 .exit-modal:hover {
-  background-color: rgba(0, 0, 0, 0.082);
-}
-
-.invalid-image {
-  font-size: 15px;
-  display: none;
-}
-
-.no-changes-txt {
-  font-size: 15px;
-  display: none;
-}
-
-.s-panel-item {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  gap: 50px;
-  position: relative;
-  top: -10px;
-}
-
-.s-panel-inputs {
-  padding: 7px;
-  border-color: transparent;
-  border-radius: 5px;
-  font-size: 15px;
-  width: 200px;
-  box-sizing: border-box;
-  background: rgba(16, 136, 152, 0.14);
-  color: rgb(128, 128, 128);
-  text-overflow: ellipsis;
-}
-
-.dialog-messages{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
-  display: none;
-}
-
-.dialog-messages p, .update-dialog-message p {
-  position: relative;
-  top: 7px;
-}
-
+  background-color: rgba(0,
