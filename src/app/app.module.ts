@@ -1,20 +1,23 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core'; // Importing NgModule from Angular's core module
 
+// Importing necessary modules for the Angular app
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { Ng2ImgMaxModule } from 'ng2-img-max';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+
+// Importing components, directives, pipes, and services used in the app
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './main/dashboard/dashboard.component';
 import { LeftBarComponent } from './sidebar/left-bar/left-bar.component';
 import { SidebarToggleDirective } from './sidebar-toggle.directive';
-import { DatePipe } from '@angular/common';
-import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
-import { AuthGuard } from './configuration/services/auth.guard';
-import { HttpClientModule } from '@angular/common/http';
-import { Ng2ImgMaxModule } from 'ng2-img-max';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TopBarComponent } from './sidebar/top-bar/top-bar.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { ProcessLoginComponent } from './process-login/process-login.component';
 import { UsersComponent } from './main/user-management/users/users.component';
 import { ModalComponent } from './main/modal/modal.component';
@@ -24,7 +27,6 @@ import { UpdatesComponent } from './main/user-management/updates/updates.compone
 import { TodoComponent } from './main/user-management/todo/todo.component';
 import { ConfigurationsComponent } from './main/user-management/configurations/configurations.component';
 import { DonationsComponent } from './main/transactions/donations/donations.component';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { PageVisitsComponent } from './main/analytics/page-visits/page-visits.component';
 import { UserHistoryComponent } from './main/user-management/user-history/user-history.component';
 import { DonationsInfoComponent } from './main/modifications/donations-info/donations-info.component';
@@ -40,11 +42,11 @@ import { OffersComponent } from './main/user-management/offers/offers.component'
 import { SpinnerLoadingComponent } from './common/assets/spinner-loading/spinner-loading.component';
 import { ContactsComponent } from './main/user-management/contacts/contacts.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatSelectModule} from '@angular/material/select';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @NgModule({
   declarations: [
+    // Declaring the components, directives, and pipes used in the app
     AppComponent,
     DashboardComponent,
     LeftBarComponent,
@@ -73,9 +75,10 @@ import {MatSelectModule} from '@angular/material/select';
     OffersComponent,
     SpinnerLoadingComponent,
     ContactsComponent,
-    NotFoundComponent,
+    NotFoundComponent
   ],
   imports: [
+    // Importing the necessary Angular modules
     BrowserModule,
     AppRoutingModule,
     FormsModule,
@@ -89,9 +92,14 @@ import {MatSelectModule} from '@angular/material/select';
     MatProgressBarModule,
     MatSelectModule
   ],
-  exports: [NgModel],
+  exports: [NgModel], // Exporting NgModel for usage in other components
 
-  providers: [AuthGuard, DatePipe, DeviceDetectorService],
-  bootstrap: [AppComponent],
+  providers: [
+    // Providing the necessary services for dependency injection
+    AuthGuard,
+    DatePipe,
+    DeviceDetectorService
+  ],
+  bootstrap: [AppComponent] // Bootstrapping the AppComponent
 })
 export class AppModule {}
