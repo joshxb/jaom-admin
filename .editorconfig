@@ -1,16 +1,28 @@
-# Editor configuration, see https://editorconfig.org
+# This is an editor configuration file, for more information see <https://editorconfig.org>
+
+# The root property indicates that this is the top-level EditorConfig file
 root = true
 
+# The [*] block sets default configurations for all files
 [*]
+# The charset is set to utf-8
 charset = utf-8
+# The indent_style is set to space and the indent_size to 2
 indent_style = space
 indent_size = 2
+# A newline is inserted at the end of the file
 insert_final_newline = true
+# Trailing whitespace is trimmed
 trim_trailing_whitespace = true
 
+# The [*.ts] block sets configurations specific to TypeScript files
 [*.ts]
+# The quote_type is set to single
 quote_type = single
 
+# The [*.md] block sets configurations specific to Markdown files
 [*.md]
+# The max_line_length option is turned off
 max_line_length = off
+# Trailing whitespace is trimmed, but only for lines that are not empty
 trim_trailing_whitespace = false
