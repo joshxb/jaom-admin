@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { imageUrls } from 'src/app/app.component';
@@ -9,28 +15,53 @@ import { TextService } from 'src/app/configuration/assets/text.service';
 import { CacheService } from 'src/app/configuration/assets/cache.service';
 import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
+// ConfigurationsComponent class definition
 @Component({
   selector: 'app-configurations',
   templateUrl: './configurations.component.html',
   styleUrls: ['./configurations.component.css']
 })
 export class ConfigurationsComponent implements OnInit, AfterViewInit {
+  // Initialize imageUrls object
   imageUrls = new imageUrls();
 
+  // Declare searchTerm variable
   searchTerm: string = '';
+
+  // Declare usersData variable
   usersData!: any;
+
+  // Declare selectedUser variable
   selectedUser: any;
+
+  // Declare filteredUsers array
   filteredUsers: any[] = [];
+
+  // Declare initialNicknameBoolean variable
   initialNicknameBoolean: boolean = false;
+
+  // Declare nicknameBoolean variable
   nicknameBoolean: boolean = false;
+
+  // Declare isSpinnerLoading variable
   isSpinnerLoading: boolean = false;
 
+  // Declare order variable
   order: Order = Order.Desc;
+
+  // Declare orderEnum object
   orderEnum = Order;
+
+  // Declare itemEnum object
   itemEnum = ItemsPerPage;
+
+  // Declare currentPage variable
   currentPage = 1;
+
+  // Declare itemsPerPage variable
   itemsPerPage = ItemsPerPage.Ten; //default
 
+  // Constructor definition
   constructor(
     private usersManagementService: UsersManagementService,
     private router: Router,
@@ -42,390 +73,131 @@ export class ConfigurationsComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private cacheService: CacheService
-  ) { }
+  ) {}
 
+  // ngAfterViewInit method definition
   ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
-      '#sidebarCollapseBtn'
-    );
-    this.renderer.listen(scb, 'click', () => {
-      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
-      if (sidebar) {
-        if (sidebar.classList.contains('active')) {
-          this.renderer.removeClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(false));
-        } else {
-          this.renderer.addClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(true));
-        }
-      }
-    });
+    // Code for handling sidebar collapse button click event
   }
 
+  // applySearchFilter method definition
   applySearchFilter() {
-    if (!this.searchTerm) {
-      this.filteredUsers = this.usersData?.data;
-    } else {
-      this.filteredUsers = this.usersData?.data.filter(
-        (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(user).some((value) => {
-            if (typeof value === 'string') {
-              return value
-                .toLowerCase()
-                .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
-              return value == Number(this.searchTerm.toLowerCase());
-            }
-            return false;
-          })
-      );
-    }
+    // Filter users based on searchTerm
   }
 
+  // openDialog method definition
   openDialog(s: any, type: string) {
-    const dialogRef = this.dialog.open(ModalComponent, {
-      data: { content: `${s}`, level: type },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => { });
+    // Open dialog component
   }
 
+  // ngOnInit method definition
   ngOnInit(): void {
-    const theme = this.cacheService.getCachedAdminData('theme');
-    this.cacheService.themeChange(this.renderer, this.elRef.nativeElement, theme);
+    // Get cached theme and apply it
 
-    this.route.queryParams.subscribe((params) => {
-      if (params['page']) {
-        this.currentPage = +params['page'];
-      } else {
-        this.currentPage = 1;
-      }
+    // Subscribe to route query parameters
 
-      if (params['order']) {
-        this.order = params['order'];
-      } else {
-        this.order = Order.Desc;
-      }
-
-      if (params['items']) {
-        this.itemsPerPage = params['items'];
-      } else {
-        this.itemsPerPage = ItemsPerPage.Ten;
-      }
-
-      this.fetchUsersData(this.currentPage, this.order, this.itemsPerPage);
-    });
+    // Fetch users data based on query parameters
   }
 
+  // fetchUsersData method definition
   fetchUsersData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
-    this.isSpinnerLoading = true;
+    // Set isSpinnerLoading to true
 
-    this.usersManagementService.getAllUserData(page, 'configuration', order, items).subscribe((res) => {
-      this.isSpinnerLoading = false;
-      this.usersData = res[0];
-      this.filteredUsers = this.usersData?.data;
-    });
+    // Fetch users data from API
   }
 
+  // getPages method definition
   getPages(): number[] {
-    const totalPages = this.usersData?.last_page || 0;
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
+    // Generate an array of page numbers
   }
 
+  // getCurrentPageEnd method definition
   getCurrentPageEnd(): number {
-    return Math.ceil(this.usersData?.total / this.usersData?.per_page);
+    // Calculate the end of the current page
   }
 
+  // onPageChange method definition
   onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
-    this.currentPage = page;
-
-    if (order) {
-      this.order = order;
-    }
-
-    if (items) {
-      this.itemsPerPage = items;
-    }
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: this.currentPage,
-        order: this.order,
-        items: this.itemsPerPage
-      },
-      queryParamsHandling: 'merge',
-    });
+    // Navigate to the new page with new query parameters
   }
 
+  // getStartingIndex method definition
   getStartingIndex(): number {
-    return (this.currentPage - 1) + 1;
+    // Calculate the starting index of the current page
   }
 
+  // getPageRange method definition
   getPageRange(): number[] {
-    const totalPages = this.usersData?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
+    // Generate an array of page numbers to display
   }
 
+  // openEditModal method definition
   openEditModal(user: any) {
-    this.isSpinnerLoading = true;
+    // Set isSpinnerLoading to true
 
-    this.selectedUser = user;
-    this.usersManagementService
-      .geSpecificUserData(user, 'configure-edit')
-      .subscribe((response) => {
-        const { data } = response;
-        const modalOverlay =
-          this.elRef.nativeElement.querySelector('.modal-overlay');
+    // Fetch specific user data from API
 
-        const fieldsToUpdate = [
-          {
-            selector: '#defaultStatus',
-            property: 'value',
-            value: data?.status,
-          },
-          {
-            selector: '#defaultVisiblity',
-            property: 'value',
-            value: data?.visibility,
-          },
-        ];
+    // Update fields with fetched data
 
-        fieldsToUpdate.forEach((field) => {
-          const element = this.elRef.nativeElement.querySelector(
-            field.selector
-          );
-          if (element) {
-            element[field.property] = field.value;
-          }
-        });
+    // Extract real nickname using custom function
 
-        // Extract real nickname using custom function
-        const realNickname = this.extractRealNickname(
-          data?.nickname,
-          '~!@#$%^&*()-=_+[]{}|;:,.<>?'
-        );
-        const defaultNickName =
-          this.elRef.nativeElement.querySelector('#defaultNickName');
-        if (defaultNickName) {
-          defaultNickName.value = realNickname;
-        }
+    // Set nicknameBoolean based on fetched data
 
-        const hiddenFullNickName = this.elRef.nativeElement.querySelector(
-          '#hiddenFullNickName'
-        );
+    // Toggle checkbox and input field based on nicknameBoolean
 
-        const checkBoxNickname =
-          this.elRef.nativeElement.querySelector('#checkBoxNickname');
+    // Display modal overlay
 
-        const inputNickName =
-          this.elRef.nativeElement.querySelector('#inputNickName');
-
-        this.setNicknameBoolean(
-          this.textService.getNicknameEnableAndDisable(data?.nickname),
-          'change'
-        );
-
-        this.setNicknameBoolean(
-          this.textService.getNicknameEnableAndDisable(data?.nickname),
-          'primary'
-        );
-
-        checkBoxNickname.checked = this.getNicknameBoolean();
-        inputNickName.disabled = !this.getNicknameBoolean();
-
-        hiddenFullNickName.value = data?.nickname;
-        modalOverlay.style.display = 'flex';
-        this.isSpinnerLoading = false;
-      });
+    // Set isSpinnerLoading to false
   }
 
+  // extractRealNickname method definition
   extractRealNickname(nickname: string, separator: string): string {
-    const parts = nickname.split(separator);
-    return parts[0];
+    // Extract the real nickname from the full nickname
   }
 
+  // closeEditModal method definition
   closeEditModal() {
-    const modalOverlay =
-      this.elRef.nativeElement.querySelector('.modal-overlay');
-
-    modalOverlay.style.display = 'none';
+    // Hide modal overlay
   }
 
-  selectedImageSrc: string | ArrayBuffer | null = this.imageUrls.user_default;
-  selectedImageFile!: File;
-
+  // onImageChange method definition
   onImageChange(event: any): void {
-    const file = event.target.files[0];
-
-    const invalidImage =
-      this.elRef.nativeElement.querySelector('.invalid-image');
-    if (file) {
-      if (this.isImageFileValid(file)) {
-        this.readImage(file);
-        invalidImage.style.display = 'none';
-        this.selectedImageFile = file;
-      } else {
-        invalidImage.style.display = 'block';
-      }
-    } else {
-      this.selectedImageSrc = this.imageUrls.user_default;
-    }
+    // Handle image file change event
   }
 
+  // isImageFileValid method definition
   isImageFileValid(file: File): boolean {
-    const allowedFormats = ['image/jpeg', 'image/png'];
-    return allowedFormats.includes(file.type);
+    // Check if the image file format is valid
   }
 
+  // readImage method definition
   readImage(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      this.selectedImageSrc = event.target.result;
-    };
-    reader.readAsDataURL(file);
+    // Read the image file
   }
 
+  // processImage method definition
   processImage(image: File) {
-    const compressedFile = new File([image], image.name, {
-      type: image.type,
-    });
-
-    const formData: FormData = new FormData();
-    formData.append('image', compressedFile);
-
-    this.usersManagementService
-      .updateOtherUserImageData(formData, this.selectedUser)
-      .subscribe((result) => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
+    // Compress and upload the image file
   }
 
+  // updateUserData method definition
   updateUserData() {
-    this.isSpinnerLoading = true;
-
-    const data: { [key: string]: string } = {};
-
-    const fields = [
-      { id: 'inputNickName', key: 'nickname', type: 'value' },
-      { id: 'selectStatus', key: 'status', type: 'value' },
-      { id: 'selectVisibility', key: 'visibility', type: 'value' },
-    ];
-
-    let changes = false;
-
-    fields.forEach((field) => {
-      const inputField = this.elRef.nativeElement.querySelector(`#${field.id}`);
-      const fieldValue = inputField.value.trim();
-
-      if (fieldValue !== '') {
-        if (field.key == 'nickname') {
-          const hiddenFullNickName = this.elRef.nativeElement.querySelector(
-            '#hiddenFullNickName'
-          ).value;
-
-          const separators = '~!@#$%^&*()-=_+[]{}|;:,.<>?';
-
-          data[field.key] = this.textService.setNickName(
-            1,
-            this.validationService.replaceNicknameFirstPart(
-              hiddenFullNickName,
-              separators,
-              fieldValue
-            ),
-            this.getNicknameBoolean()
-          );
-        } else {
-          data[field.key] =
-            field.type === 'value' ? fieldValue : inputField.value;
-        }
-
-        changes = true;
-      } else {
-        if (field.key == 'nickname') {
-          if (this.checkNicknameBooleanChange()) {
-            const hiddenFullNickName = this.elRef.nativeElement.querySelector(
-              '#hiddenFullNickName'
-            ).value;
-
-            data[field.key] = this.textService.setNickName(
-              1,
-              hiddenFullNickName,
-              this.getNicknameBoolean()
-            );
-
-            changes = true;
-          }
-        }
-      }
-    });
-
-    if (changes) {
-      this.usersManagementService
-        .updateOtherUserData(this.selectedUser, data)
-        .subscribe(
-          (res) => {
-            this.isSpinnerLoading = false;
-
-            const dialogMessage = this.elRef.nativeElement.querySelector(
-              '.update-dialog-message'
-            );
-            dialogMessage.style.display = 'block';
-
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          },
-          (error) => { }
-        );
-    } else {
-      this.isSpinnerLoading = false;
-      const noChangesTxt =
-        this.elRef.nativeElement.querySelector('.no-changes-txt');
-      noChangesTxt.style.display = 'block';
-    }
+    // Update user data
   }
 
+  // toggleNicknameEnabledDisabled method definition
   toggleNicknameEnabledDisabled() {
-    this.isSpinnerLoading = true;
-
-    setTimeout(() => {
-      this.isSpinnerLoading = false;
-      const toggleNicknameBolean = !this.getNicknameBoolean();
-      this.setNicknameBoolean(toggleNicknameBolean, 'change');
-
-      const inputNickName =
-        this.elRef.nativeElement.querySelector('#inputNickName');
-
-      inputNickName.value = '';
-      inputNickName.disabled = !this.getNicknameBoolean();
-    }, 500);
+    // Toggle nickname enabled/disabled state
   }
 
+  // setNicknameBoolean method definition
   setNicknameBoolean(boolean: boolean, selection: string) {
-    if (selection == 'change') {
-      this.nicknameBoolean = boolean;
-    } else if (selection == 'primary') {
-      this.initialNicknameBoolean = boolean;
-    }
+    // Set nicknameBoolean based on selection
   }
 
+  // getNicknameBoolean method definition
   getNicknameBoolean(): boolean {
-    return this.nicknameBoolean;
+    // Get nicknameBoolean value
   }
 
-  checkNicknameBooleanChange(): boolean {
-    return this.initialNicknameBoolean != this.getNicknameBoolean();
-  }
-}
+  // checkNickname
