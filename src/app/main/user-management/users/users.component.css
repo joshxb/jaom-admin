@@ -1,16 +1,20 @@
+/* Odd table rows will have a light gray background color */
 .table tbody tr:nth-child(odd) {
-  background: rgba(217, 217, 217, 0.486);
+  background-color: rgba(217, 217, 217, 0.486);
 }
 
+/* Sets the font size of elements with class .table-date to 10px */
 .table-date {
   font-size: 10px !important;
 }
 
+/* The content container will have a height of 80% and will display a scrollbar when the content overflows */
 .content-container {
   height: 80%;
   overflow-y: auto;
 }
 
+/* The action container will be a flex container, align items to the center, and have a gap of 5px */
 .action-cont {
   display: flex;
   align-items: center;
@@ -18,35 +22,41 @@
   gap: 5px;
 }
 
+/* The action container images will have a cursor pointer and will transition on hover */
 .action-cont img {
   cursor: pointer;
   transition: all 0.2s;
 }
 
+/* The action container images will have an opacity of 0.8 on hover */
 .action-cont img:hover {
   opacity: 0.8;
 }
 
+/* The table rows will have an opacity of 0.9 on hover */
 table tbody tr:hover {
   opacity: 0.9;
 }
 
+/* The page items will have a cursor pointer */
 .page-item {
   cursor: pointer;
 }
 
+/* The pagination container will be a flex container, justify content to space-between, align items to center, and have a text-align of left */
 .pagination-cont {
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
-  /* To align the "Showing" message to the left */
 }
 
+/* The showing pagination will have a font size of 15px */
 .showing-pagination {
   font-size: 15px;
 }
 
+/* The profile image container will have a margin-bottom of 30px, display as a flex container, align items to center, and have a gap of 10px */
 .profile-image-cont {
   margin-bottom: 30px;
   display: flex;
@@ -54,12 +64,14 @@ table tbody tr:hover {
   gap: 10px;
 }
 
+/* The profile image will have a width and height of 50px and a border-radius of 50% */
 .profile-image {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
 
+/* The modal overlay will have a fixed position, cover the entire viewport, have a background color of rgba(0, 0, 0, 0.5), display as none, and have a transition for the opacity property */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -76,15 +88,18 @@ table tbody tr:hover {
   transition: opacity 0.3s ease;
 }
 
+/* The modal content will have a border of 0px and a position of relative */
 .modal-content {
   border: 0px;
   position: relative;
 }
 
+/* The content will have a position of relative */
 .content {
   position: relative;
 }
 
+/* The update dialog message will have a position of absolute, be centered horizontally and vertically, have a background color of white, text-align of center, padding of 10px 20px, border-radius of 5px, box-shadow, and display as none */
 .update-dialog-message {
   position: absolute;
   top: 50%;
@@ -95,86 +110,10 @@ table tbody tr:hover {
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  /* Add the desired box shadow */
   display: none;
 }
 
+/* The dialog messages will have a position of fixed, be centered horizontally and vertically, have a background color of white, text-align of center, padding of 10px 20px, border-radius of 5px, box-shadow, and display as none */
 .dialog-messages {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  /* Add the desired box shadow */
-  display: none;
-}
-
-.dialog-messages p,
-.update-dialog-message p {
-  position: relative;
-  top: 7px;
-}
-
-.modal-content h2 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.modal-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  max-width: 80%;
-  width: 800px;
-  height: 90%;
-  padding: 50px;
-  overflow-y: auto;
-  transform: translateY(-20px);
-  opacity: 1;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  position: relative;
-}
-
-.modal-overlay.active,
-.modal-container.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.modal-container.active {
-  transform: translateY(0);
-}
-
-.exit-modal {
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 15px;
-}
-
-.exit-modal:hover {
-  background-color: rgba(0, 0, 0, 0.082);
-}
-
-.invalid-image {
-  font-size: 15px;
-  display: none;
-}
-
-.no-changes-txt {
-  font-size: 15px;
-  display: none;
-}
-
-.input-group {
-  width: 20%;
-}
+  top: 5
