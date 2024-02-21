@@ -1,8 +1,8 @@
 import { NotificationService } from './../../configuration/services/pages/notification.service';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-import { imageUrls } from 'src/app/app.component';
+import { imageUrl, s } from 'src/app/app.component';
 import { ModalComponent } from '../modal/modal.component';
 import { ConcernService } from 'src/app/configuration/services/concerns/concern.service';
 import { NotificationEnum } from 'src/app/configuration/enums/notifications.enum';
@@ -15,20 +15,32 @@ import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
   styleUrls: ['./feedback.component.css']
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
+  // Initialize imageUrls object
   imageUrls = new imageUrls();
 
+  // Binding property for search input
   searchTerm: string = '';
+  // Binding property for feedbacks data
   feedbacksData!: any;
+  // Selected user object
   selectedUser: any;
+  // Filtered feedbacks array
   filteredFeedbacks: any[] = [];
-  textareaValues: string[] = [];
+  // Array to store textarea values
+  textareaVales: string[] = [];
+  // Spinner loading flag
   isSpinnerLoading: boolean = false;
 
+  // Order enum instance
   order: Order = Order.Desc;
+  // Order enum reference
   orderEnum = Order;
+  // Items per page enum reference
   itemEnum = ItemsPerPage;
+  // Current page number
   currentPage = 1;
-  itemsPerPage = ItemsPerPage.Ten; //default
+  // Default items per page value
+  itemsPerPage = ItemsPerPage.Ten;
 
   constructor(
     private router: Router,
@@ -43,9 +55,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
-      '#sidebarCollapseBtn'
-    );
+    // Get sidebar collapse button and add click event listener
+    const scb = this.elementRef.nativeElement.querySelector('#sidebarCollapseBtn');
     this.renderer.listen(scb, 'click', () => {
       const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
       if (sidebar) {
@@ -64,23 +75,22 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     if (!this.searchTerm) {
       this.filteredFeedbacks = this.feedbacksData?.data;
     } else {
-      this.filteredFeedbacks = this.feedbacksData?.data.filter(
-        (chat: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(chat).some((value) => {
-            if (typeof value === 'string') {
-              return value
-                .toLowerCase()
-                .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
-              return value == Number(this.searchTerm.toLowerCase());
-            }
-            return false;
-          })
+      this.filteredFeedbacks = this.feedbacksData?.data.filter((chat: { [s: string]: unknown } | ArrayLike<unknown>) =>
+        Object.values(chat).some((value) => {
+          if (typeof value === 'string') {
+            return value
+              .toLowerCase()
+              .includes(this.searchTerm.toLowerCase());
+          } else if (typeof value === 'number') {
+            return value == Number(this.searchTerm.toLowerCase());
+          }
+          return false;
+        })
       );
     }
   }
 
-  openDialog(s: any, type: string) {
+  openDialog(s: any, any, type: string) {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: { content: `${s}`, level: type },
     });
@@ -111,13 +121,13 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
         this.itemsPerPage = ItemsPerPage.Ten;
       }
 
-      this.fetchFeedbacksData(this.currentPage, this.order, this.itemsPerPage);
+      this.fetchFeedbacksData(this.currentPage, this.order, Order.Null, this.itemsPerPage, ItemsPerPage.Null);
     });
   }
 
-  fetchFeedbacksData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+  fetchFeedbacksData(page: number, order: Order, orderEnum: Order, items: ItemsPerPage, itemsPerPageEnum: ItemsPerPage) {
     this.isSpinnerLoading = true;
-    this.concernService.getFeedbacks(page, order, items).subscribe((res) => {
+    this.concernService.getFeedbacks(page, orderEnum, order, items).subscribe((res) => {
       this.isSpinnerLoading = false;
       this.feedbacksData = res;
       this.filteredFeedbacks = this.feedbacksData?.data;
@@ -133,125 +143,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     return Math.ceil(this.feedbacksData?.total / this.feedbacksData?.per_page);
   }
 
-  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
+  onPageChange(page: number, order: Order, orderEnum: Order, items: ItemsPerPage) {
     this.currentPage = page;
 
     if (order) {
       this.order = order;
     }
-
-    if (items) {
-      this.itemsPerPage = items;
-    }
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: this.currentPage,
-        order: this.order,
-        items: this.itemsPerPage
-      },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  getStartingIndex(): number {
-    return (this.currentPage - 1) + 1;
-  }
-
-  getPageRange(): number[] {
-    const totalPages = this.feedbacksData?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
-  }
-
-  deleteFeedback(id: any) {
-    this.isSpinnerLoading = true;
-    this.concernService.deleteFeedback(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
-
-  addResponse(
-    other_id: number,
-    id: number,
-    description: string,
-    responseObject: any,
-    response: string
-  ) {
-    this.isSpinnerLoading = true;
-    try {
-      const decodedResponse = JSON.parse(responseObject.trim());
-      if (Array.isArray(decodedResponse)) {
-        if (response) {
-          decodedResponse.unshift(response.trim());
-
-          const data = {
-            response_object: JSON.stringify(decodedResponse),
-            response: response.trim(),
-            description: description.trim()
-          };
-
-          this.concernService.addResponseFeedback(id, data).subscribe((res) => {
-            this.isSpinnerLoading = false;
-            let parsedData: number[] = [];
-            parsedData.push(other_id);
-
-            const data = {
-              userIds: parsedData,
-              title: `${NotificationEnum.ResponseConcernNotification}: ${description}`,
-              name: ``,
-              content: `Response: ${response.trim()}`,
-              type: 'newMemberChatNotification',
-            };
-
-            this.notificationService
-              .addNewNotification(data)
-              .subscribe((response) => {
-                this.elRef.nativeElement.querySelector(
-                  '.add-response-dialog-message'
-                ).style.display = 'block';
-
-                setTimeout(() => {
-                  window.location.reload();
-                }, 1000);
-              });
-          });
-        } else {
-          this.isSpinnerLoading = false;
-          const emptyDialog = this.elRef.nativeElement.querySelector(
-            '.empty-dialog-message'
-          );
-          emptyDialog.style.display = 'block';
-
-          setTimeout(() => {
-            emptyDialog.style.display = 'none';
-          }, 2000);
-        }
-      } else {
-        this.isSpinnerLoading = false;
-        console.error('Decoded response is not an array.');
-      }
-    } catch (error) {
-      this.isSpinnerLoading = false;
-      console.error('JSON parsing error:', error);
-    }
-  }
-}
