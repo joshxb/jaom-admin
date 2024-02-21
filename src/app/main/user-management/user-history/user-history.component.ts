@@ -11,20 +11,25 @@ import { UsersManagementService } from 'src/app/configuration/services/user-mana
   styleUrls: ['./user-history.component.css']
 })
 export class UserHistoryComponent implements OnInit, AfterViewInit {
+
+  // Initialize imageUrls object
   imageUrls = new imageUrls();
 
+  // Bindable properties
   searchTerm: string = '';
   userHistoryData!: any;
   selectedUser: any;
   filteredUserHistory: any[] = [];
   isSpinnerLoading: boolean = false;
 
+  // Enums
   order: Order = Order.Desc;
   orderEnum = Order;
   itemEnum = ItemsPerPage;
   currentPage = 1;
   itemsPerPage = ItemsPerPage.Ten; //default
 
+  // Modal properties
   showConfirmationModal = false;
   userHistoryToDeleteId!: number;
 
@@ -38,6 +43,7 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService
   ) {}
 
+  // Open confirmation modal
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
     setTimeout(() => {
@@ -47,20 +53,22 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
+  // Close confirmation modal
   closeConfirmationModal() {
     this.showConfirmationModal = false;
   }
 
+  // Confirm delete
   confirmDelete() {
     this.deleteSpecificUserHistory(this.userHistoryToDeleteId);
     this.closeConfirmationModal();
   }
 
   ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
+    const sb = this.elementRef.nativeElement.querySelector(
       '#sidebarCollapseBtn'
     );
-    this.renderer.listen(scb, 'click', () => {
+    this.renderer.listen(sb, 'click', () => {
       const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
       if (sidebar) {
         if (sidebar.classList.contains('active')) {
@@ -74,6 +82,7 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Apply search filter
   applySearchFilter() {
     if (!this.searchTerm) {
       this.filteredUserHistory = this.userHistoryData?.data;
@@ -81,11 +90,11 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
       this.filteredUserHistory = this.userHistoryData?.data.filter(
         (user: { [s: string]: unknown } | ArrayLike<unknown>) =>
           Object.values(user).some((value) => {
-            if (typeof value === 'string') {
+            if (typeof value == 'string') {
               return value
                 .toLowerCase()
                 .includes(this.searchTerm.toLowerCase());
-            }else if (typeof value === 'number') {
+            } else if (typeof value === 'number') {
               return value == Number(this.searchTerm.toLowerCase());
             }
             return false;
@@ -121,6 +130,7 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Fetch user history data
   fetchUserHistoryData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.isSpinnerLoading = true;
 
@@ -131,17 +141,20 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Get pages array
   getPages(): number[] {
     const totalPages = this.userHistoryData?.last_page || 0;
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
+  // Get current page end
   getCurrentPageEnd(): number {
     return Math.ceil(
       this.userHistoryData?.total / this.userHistoryData?.per_page
     );
   }
 
+  // On page change
   onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
     this.currentPage = page;
 
@@ -150,52 +163,4 @@ export class UserHistoryComponent implements OnInit, AfterViewInit {
     }
 
     if (items) {
-      this.itemsPerPage = items;
-    }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: this.currentPage,
-        order: this.order,
-        items: this.itemsPerPage
-      },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  getStartingIndex(): number {
-    return (this.currentPage - 1) + 1;
-  }
-
-  getPageRange(): number[] {
-    const totalPages = this.userHistoryData?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
-  }
-
-  deleteSpecificUserHistory(id: any) {
-    this.isSpinnerLoading = true;
-
-    this.usersManagementService.deleteUserHistory(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
-}
