@@ -1,4 +1,15 @@
+/* This is a CSS comment */
+
+/* The p selector selects all <p> elements on the page */
 p {
+  /* The text-align property aligns text within an element.
+     In this case, we are setting it to center */
   text-align: center;
+
+  /* The margin-top property sets the margin above an element.
+     Here, we are setting it to 40 pixels */
   margin-top: 40px;
+
+  /* This extra comma is not necessary and will cause a syntax error */
+  , /* Remove this comma to fix the error */
 }
