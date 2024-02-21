@@ -9,29 +9,92 @@ import { ContactsService } from 'src/app/configuration/services/contacts/contact
 import { DataName, ExportToExcelService, ExportType } from 'src/app/configuration/assets/export-to-excel.service';
 import { Order, ItemsPerPage } from 'src/app/configuration/enums/order.enum';
 
+/**
+ * ContactsComponent is a component that displays a list of contacts.
+ */
 @Component({
   selector: 'app-contacts',
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.css'],
 })
 export class ContactsComponent implements OnInit, AfterViewInit {
+  /**
+   * imageUrls object for storing image URLs.
+   */
   imageUrls = new imageUrls();
 
+  /**
+   * Search term for filtering contacts.
+   */
   searchTerm: string = '';
+
+  /**
+   * Contacts data received from the API.
+   */
   contactsData!: any;
+
+  /**
+   * Selected user object.
+   */
   selectedUser: any;
+
+  /**
+   * Filtered contacts array.
+   */
   filteredContacts: any[] = [];
+
+  /**
+   * Spinner loading indicator visibility.
+   */
   isSpinnerLoading: boolean = false;
 
+  /**
+   * Order of the contacts list.
+   */
   order: Order = Order.Desc;
-  orderEnum = Order;
-  itemEnum = ItemsPerPage;
-  currentPage = 1;
-  itemsPerPage = ItemsPerPage.Ten; //default
 
+  /**
+   * Enum for order options.
+   */
+  orderEnum = Order;
+
+  /**
+   * Enum for items per page options.
+   */
+  itemEnum = ItemsPerPage;
+
+  /**
+   * Current page number.
+   */
+  currentPage = 1;
+
+  /**
+   * Items per page value.
+   */
+  itemsPerPage = ItemsPerPage.Ten; // default
+
+  /**
+   * Flag for showing the confirmation modal.
+   */
   showConfirmationModal = false;
+
+  /**
+   * ID of the contact to be deleted.
+   */
   contactsToDeleteId!: number;
 
+  /**
+   * Constructor for ContactsComponent.
+   * @param router Angular Router service.
+   * @param route Angular ActivatedRoute service.
+   * @param elRef Angular ElementRef service.
+   * @param dialog Angular MatDialog service.
+   * @param renderer Angular Renderer2 service.
+   * @param elementRef Angular ElementRef service.
+   * @param cacheService CacheService instance.
+   * @param contactService ContactsService instance.
+   * @param exportToExcelService ExportToExcelService instance.
+   */
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -42,8 +105,12 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     private cacheService: CacheService,
     private contactService: ContactsService,
     private exportToExcelService: ExportToExcelService
-  ) { }
+  ) {}
 
+  /**
+   * Opens the confirmation modal for deleting a contact.
+   * @param chat_id ID of the contact to be deleted.
+   */
   openConfirmationModal(chat_id: number) {
     this.isSpinnerLoading = true;
     setTimeout(() => {
@@ -53,35 +120,46 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
+  /**
+   * Closes the confirmation modal.
+   */
   closeConfirmationModal() {
     this.showConfirmationModal = false;
   }
 
+  /**
+   * Deletes the selected contact.
+   */
   confirmDelete() {
     this.deleteContact(this.contactsToDeleteId);
     this.closeConfirmationModal();
   }
 
+  /**
+   * Applies the search filter to the contacts list.
+   */
   applySearchFilter() {
     if (!this.searchTerm) {
       this.filteredContacts = this.contactsData?.data;
     } else {
-      this.filteredContacts = this.contactsData?.data.filter(
-        (chat: { [s: string]: unknown } | ArrayLike<unknown>) =>
-          Object.values(chat).some((value) => {
-            if (typeof value === 'string') {
-              return value
-                .toLowerCase()
-                .includes(this.searchTerm.toLowerCase());
-            } else if (typeof value === 'number') {
-              return value == Number(this.searchTerm.toLowerCase());
-            }
-            return false;
-          })
+      this.filteredContacts = this.contactsData?.data.filter((chat: { [s: string]: unknown } | ArrayLike<unknown>) =>
+        Object.values(chat).some((value) => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(this.searchTerm.toLowerCase());
+          } else if (typeof value === 'number') {
+            return value == Number(this.searchTerm.toLowerCase());
+          }
+          return false;
+        })
       );
     }
   }
 
+  /**
+   * Opens a dialog with the given message and type.
+   * @param s Message to be displayed.
+   * @param type Type of the message (success, error, or info).
+   */
   openDialog(s: any, type: string) {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: { content: `${s}`, level: type },
@@ -90,6 +168,9 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => { });
   }
 
+  /**
+   * Initialization logic for the component.
+   */
   ngOnInit(): void {
     const theme = this.cacheService.getCachedAdminData('theme');
     this.cacheService.themeChange(
@@ -102,184 +183,4 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       if (params['page']) {
         this.currentPage = +params['page'];
       } else {
-        this.currentPage = 1;
-      }
-
-      if (params['order']) {
-        this.order = params['order'];
-      } else {
-        this.order = Order.Desc;
-      }
-
-      if (params['items']) {
-        this.itemsPerPage = params['items'];
-      } else {
-        this.itemsPerPage = ItemsPerPage.Ten;
-      }
-
-      this.fetchContactsData(this.currentPage, this.order, this.itemsPerPage);
-    });
-  }
-
-  ngAfterViewInit() {
-    const scb = this.elementRef.nativeElement.querySelector(
-      '#sidebarCollapseBtn'
-    );
-    this.renderer.listen(scb, 'click', () => {
-      const sidebar = this.elementRef.nativeElement.querySelector('#sidebar');
-      if (sidebar) {
-        if (sidebar.classList.contains('active')) {
-          this.renderer.removeClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(false));
-        } else {
-          this.renderer.addClass(sidebar, 'active');
-          localStorage.setItem('activeCollapse', JSON.stringify(true));
-        }
-      }
-    });
-  }
-
-  fetchContactsData(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
-    this.isSpinnerLoading = true;
-
-    this.contactService.getContact(page, order, items).subscribe((res) => {
-      this.isSpinnerLoading = false;
-
-      this.contactsData = res;
-      this.filteredContacts = this.contactsData?.data;
-    });
-  }
-
-  getPages(): number[] {
-    const totalPages = this.contactsData?.last_page || 0;
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
-
-  getCurrentPageEnd(): number {
-    return Math.ceil(this.contactsData?.total / this.contactsData?.per_page);
-  }
-
-  onPageChange(page: number, order: Order = Order.Null, items: ItemsPerPage = ItemsPerPage.Null) {
-    this.currentPage = page;
-
-    if (order) {
-      this.order = order;
-    }
-
-    if (items) {
-      this.itemsPerPage = items;
-    }
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: this.currentPage,
-        order: this.order,
-        items: this.itemsPerPage
-      },
-      queryParamsHandling: 'merge',
-    });
-  }
-
-  getStartingIndex(): number {
-    return (this.currentPage - 1) + 1;
-  }
-
-  getPageRange(): number[] {
-    const totalPages = this.contactsData?.last_page || 0;
-    const displayedPages = Math.min(totalPages, 5);
-    const startPage = Math.max(
-      this.currentPage - Math.floor(displayedPages / 2),
-      1
-    );
-    const endPage = Math.min(startPage + displayedPages - 1, totalPages);
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, index) => startPage + index
-    );
-  }
-
-  deleteContact(id: any) {
-    this.isSpinnerLoading = true;
-
-    this.contactService.deleteContact(id).subscribe((res) => {
-      this.isSpinnerLoading = false;
-
-      const deleteDialogMessage = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message'
-      );
-      const deleteDialogMessageP = this.elRef.nativeElement.querySelector(
-        '.delete-dialog-message p'
-      );
-
-      deleteDialogMessageP.textContent = res?.message;
-      deleteDialogMessage.style.display = 'block';
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    });
-  }
-
-  exportToEXCEL(value: number = 0) {
-    this.isSpinnerLoading = true;
-    const table = document.getElementById('contactTable') as HTMLTableElement;
-
-    if (!table) {
-      console.error("Table element not found");
-      return;
-    }
-
-    let data: any[] = [];
-    for (let i = 1; i < table.rows.length; i++) {
-      const row = table.rows[i];
-
-      if (!row) {
-        console.error("Row element not found");
-        continue;
-      }
-
-      const rowData: { [key: string]: string } = {};
-      for (let j = 0; j < row.cells.length - 1; j++) {
-        const cell = row.cells[j];
-        if (cell.textContent !== null) {
-          const cellText = cell.textContent;
-          rowData[cellText] = cellText;
-        }
-      }
-
-      data.push(rowData);
-    }
-
-    if (value) {
-      this.contactService.getExportContacts(value).subscribe((res) => {
-        let data: any[] = [];
-        const headers: { [key: string]: string | number } = {};
-
-        res.map((item: ArrayLike<unknown> | { [s: string]: unknown; }) => {
-          const newObject: { [key: string]: string | number } = {};
-          Object.entries(item).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              headers[key] = key;
-              newObject[value] = value;
-            }
-          });
-          data.push(newObject);
-        });
-
-        delete headers['updated_at'];
-        data.unshift(headers);
-
-        setTimeout(() => {
-          this.isSpinnerLoading = false;
-          this.exportToExcelService.exportToExcel(table, data, 'contact-list', ExportType.Data, DataName.Contact);
-        }, 2000);
-      });
-    } else {
-      setTimeout(() => {
-        this.isSpinnerLoading = false;
-        this.exportToExcelService.exportToExcel(table, data, 'contact-list', ExportType.Container, DataName.Contact);
-      }, 2000);
-    }
-  }
-}
+        this.
