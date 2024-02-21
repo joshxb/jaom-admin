@@ -1,265 +1,155 @@
+/* Table styles */
 .table {
-  border-collapse: collapse;
+  border-collapse: collapse; /* Collapse adjacent borders */
 }
 
-.table td {
-  border-top: none;
+.tab,
+td {
+  border-top: none; /* Remove top border from tab and td elements */
 }
 
+/* Custom date positioning */
 .custom-date {
   /* position: relative;
   top: 20px; */
 }
 
-/* Apply custom styles to the td element */
-.my-custom-td {
-  display: flex;
-  align-items: center;
-  text-align: justify;
+/* Custom styles for td elements */
+.,
+my-custom-td {
+  display: flex; /* Display as a flex container */
+  align-items: center; /* Align items to the center */
+  text-align: justify; /* Justify text within the td element */
 }
 
-/* Apply custom styles to the checkbox */
+/* Custom styles for checkbox */
 .my-custom-checkbox {
-  margin-right: 10px;
+  margin-right: 10px; /* Add margin to the right of the checkbox */
 }
 
-/* Apply custom styles to the highlighted text */
+/* Custom styles for highlighted text */
 .my-custom-highlighted-text {
-  color: #47C9D7;
-  font-weight: bold;
-  margin-bottom: 10px;
+  color: #47C9D7; /* Set text color */
+  font-weight: bold; /* Make text bold */
+  margin-bottom: 10px; /* Add margin to the bottom of the text */
 }
 
-/* Apply custom styles to the location text */
+/* Custom styles for location text */
 .my-custom-location {
-  color: #333;
+  color: #333; /* Set text color */
 }
 
-.content-container {
-  height: 80%;
-  overflow-y: auto;
+/* Content container styles */
+.co,ntent-container {
+  height: 80%; /* Set container height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
+/* Action container styles */
 .action-cont {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
+  display: flex; /* Display as a flex container */
+  justify-content: center; /* Center items horizontally */
+  gap: 5px; /* Add gap between items */
 }
 
-.action-cont img {
-  cursor: pointer;
-  transition: all 0.2s;
+/* Action content image styles */
+.acti,on-cont img {
+  cursor: pointer; /* Make image pointer-enabled */
+  transition: all 0.2s; /* Add transition effect */
 }
 
 .action-cont img:hover {
-  opacity: 0.8;
+  opacity: 0.8; /* Change opacity on hover */
 }
 
+/* Table row hover styles */
 table tbody tr:hover {
-  opacity: 0.9;
+  opacity: 0.9; /* Change opacity on hover */
 }
 
+/* Page item styles */
 .page-item {
-  cursor: pointer;
+  cursor: pointer; /* Make item pointer-enabled */
 }
 
+/* Pagination container styles */
 .pagination-cont {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: left; /* To align the "Showing" message to the left */
+  display: flex; /* Display as a flex container */
+  justify-content: space-between; /* Distribute items evenly in the container */
+  align-items: center; /* Align items to the center */
+  text-align: left; /* Align text to the left */
 }
 
+/* Showing pagination styles */
 .showing-pagination {
-  font-size: 15px;
+  font-size: 15px; /* Set font size */
 }
 
-.profile-image-cont {
-  margin-bottom: 30px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* Profile image container styles */
+.profile-image-,cont {
+  margin-bottom: 30px; /* Add margin to the bottom of the container */
+  display: flex; /* Display as a flex container */
+  align-items: center; /* Align items to the center */
+  gap: 10px; /* Add gap between items */
 }
 
-.profile-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+/* Profile image styles */
+.pro,file-image {
+  width: 50px; /* Set image width */
+  height: 50px; /* Set image height */
+  border-radius: 50%; /* Make image circular */
 }
 
+/* Modal overlay styles */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 1;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  position: fixed; /* Position the overlay fixed */
+  top: 0; /* Position the overlay at the top */
+  left: 0; /* Position the overlay at the left */
+  width: 100%; /* Set overlay width */
+  height: 100%; /* Set overlay height */
+  background-color: rgb(0, 0, 0, 0.5); /* Set overlay background color and opacity */
+  display: none; /* Hide the overlay initially */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  z-index: 1000; /* Set overlay z-index */
+  opacity: 1; /* Set overlay opacity */
+  pointer-events: none; /* Disable pointer events on the overlay */
+  transition: opacity 0.3s ease; /* Add transition effect to opacity */
 }
 
-.modal-content {
-  border: 0px;
-  position: relative;
+/* Modal content styles */
+.moda,l-content {
+  border: 0px; /* Remove border */
+  position: relative; /* Position the content relatively */
 }
 
+/* Content styles */
 .content {
-  position: relative;
+  position: relative; /* Position the content relatively */
 }
 
-.update-dialog-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
-  display: none;
+/* Update dialog message styles */
+.u,pdate-dialog-message {
+  position: absolute; /* Position the message absolutely */
+  top: 50%; /* Position the message at the center vertically */
+  left: 50%; /* Position the message at the center horizontally */
+  transform: translate(-50%, -50%); /* Move the message to the center */
+  background-color: white; /* Set message background color */
+  text-align: center; /* Align text to the center */
+  padding: 10px 20px; /* Add padding to the message */
+  border-radius: 5px; /* Add border radius to the message */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add box shadow to the message */
+  display: none; /* Hide the message initially */
 }
 
-.dialog-messages{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
-  display: none;
-}
-
-.dialog-messages p, .update-dialog-message p {
-  position: relative;
-  top: 7px;
-}
-
-.modal-content h2 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.modal-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  max-width: 80%;
-  width: 800px;
-  height: 90%;
-  padding: 50px;
-  overflow-y: auto;
-  transform: translateY(-20px);
-  opacity: 1;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  position: relative;
-}
-
-.modal-overlay.active,
-.modal-container.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.modal-container.active {
-  transform: translateY(0);
-}
-
-.exit-modal {
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 15px;
-}
-
-.exit-modal:hover {
-  background-color: rgba(0, 0, 0, 0.082);
-}
-
-.invalid-image {
-  font-size: 15px;
-  display: none;
-}
-
-.no-changes-txt {
-  font-size: 15px;
-  display: none;
-}
-
-.s-panel-item {
-  margin-top: 5px;
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  gap: 50px;
-}
-
-.s-panel-inputs {
-  padding: 7px;
-  border-color: transparent;
-  border-radius: 5px;
-  font-size: 15px;
-  width: 200px;
-  box-sizing: border-box;
-  background: rgba(16, 136, 152, 0.14);
-  color: rgb(128, 128, 128);
-  text-overflow: ellipsis;
-}
-
-.dialog-messages{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add the desired box shadow */
-  display: none;
-}
-
-.dialog-messages p, .update-dialog-message p {
-  position: relative;
-  top: 7px;
-}
-
-.faqs-sub-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-}
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-  .faqs-sub-container {
-    flex-direction: column;
-  }
-
-  .table tr {
-    display: grid;
-    text-align: left;
-  }
-
-  .action-cont {
-    justify-content: left;
-  }
-
-  .action-cont img {
-    width: 20px;
-  }
-  
-}
+/* Dialog messages styles */
+.dialog-messages,{
+  position: fixed; /* Position the messages fixed */
+  top: 50%; /* Position the messages at the center vertically */
+  left: 50%; /* Position the messages at the center horizontally */
+  transform: translate(-50%, -50%); /* Move the messages to the center */
+  background-color: white; /* Set messages background color */
+  text-align: center; /* Align text to the center */
+  padding: 10px 20px; /* Add padding to the messages */
+  border-radius: 5px; /* Add border radius to the messages */
+  box-shadow: 0px 0px 10px rg
